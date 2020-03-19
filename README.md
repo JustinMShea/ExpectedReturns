@@ -2,14 +2,30 @@
 
 ## Background
 
-[Expected Returns: _An Investors Guide to Harvesting Market Rewards_](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727) by [Antti Ilmanen](https://www.aqr.com/About-Us/OurFirm/Antti-Ilmanen) is one of the best investment references written this century.  
+As current market action has revealed, many investors are rarely as diversified 
+as they believe they are. While many financial advisors sell diversification as 
+a product, many fail to deliver in times of market turmoil. Why does diversification
+fail precisly when it is most needed and what can be done to solve this modern day
+portfolio management conundrum?
+
+Through this project, you shall explore potential solutions to these 
+challenging issues with one of the best investment references written
+in the last two decades, [Expected Returns: _An Investors Guide to Harvesting Market Rewards_](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727) by [Antti Ilmanen](https://www.aqr.com/About-Us/OurFirm/Antti-Ilmanen).
+
+Your objective will be to reproduce key sections of the work using best practices 
+in software development for quantitative finance using `R` and/or `C`/`C++`. 
+Mentors shall provide current, professional grade market data to mentees for 
+exploring and validating these approaches. Ultimately, this work will be compiled 
+and delivered as a complimentary, open source `R` package for all to use.
+
+  
 
 From the Description;
 
 > This comprehensive reference delivers a toolkit for harvesting market rewards from a wide range of investments. Written by a world-renowned industry expert, the reference discusses how to forecast returns under different parameters. Expected returns of major asset classes, investment strategies, and the effects of underlying risk factors such as growth, inflation, liquidity, and different risk perspectives, are also explained. Judging expected returns requires balancing historical returns with both theoretical considerations and current market conditions. Expected Returns provides extensive empirical evidence, surveys of risk-based and behavioral theories, and practical insights.
 
 
-Our goal is to reproducing key sections of the text and create a complimentary open source `R` package for the text.
+
 
 Particular attention paid to two parts:
 
