@@ -62,5 +62,5 @@ Students, please post a link to your test results here.
 
 ## References
 
-Ilmanen, Anti. 2011. “Expected Returns.” John Wiley & Sons Ltd. ISBN: 978-1-119-99072-7 [https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727)
+[Ilmanen, Anti. 2011. “Expected Returns.” John Wiley & Sons Ltd. ISBN: 978-1-119-99072-7](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727)
 
