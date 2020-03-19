@@ -9,7 +9,7 @@ From the Description;
 > This comprehensive reference delivers a toolkit for harvesting market rewards from a wide range of investments. Written by a world-renowned industry expert, the reference discusses how to forecast returns under different parameters. Expected returns of major asset classes, investment strategies, and the effects of underlying risk factors such as growth, inflation, liquidity, and different risk perspectives, are also explained. Judging expected returns requires balancing historical returns with both theoretical considerations and current market conditions. Expected Returns provides extensive empirical evidence, surveys of risk-based and behavioral theories, and practical insights.
 
 
-Our goal is to reproducing key sections of the text and create a complimentary `R` package to the text.
+Our goal is to reproducing key sections of the text and create a complimentary open source `R` package for the text.
 
 Particular attention paid to two parts:
 
