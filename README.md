@@ -2,18 +2,19 @@
 
 ## Background
 
-As current financial market behavior has revealed, many investors are often not 
-as diversified as they initially believe. This issue can impacts individual investor
-retirment accounts as well as University Endowment funds and Municipal Pensions. 
-While finacial advisors are adept at packaging various instruments into 
-"diversified portfolios", relationships among these instruments can change 
-suddenly during times of market crisis, and in the process remove the very 
-diversification properties the portfolio was selected to provide. Thus, many 
-fail to mitigate substantial short & intermediate term losses in their portfolios. 
-Why does diversification fail precisely when most needed and what can be done? 
+A lack of portfolio diversification can severely impact the financial goals and 
+long term plans for individual retirement accounts, University Endowment funds, 
+and Municipal Pension funds alike. And as current financial market behavior has 
+revealed, many investors are often not as diversified as they initially believe. 
+While advisors are adept at packaging various financial products into 
+"diversified portfolios", relationships among various asset classes can change 
+suddenly during times of market crisis, upending the very diversification
+an otherwise meticulous crafted portfolio was built to provide. Why does 
+diversification fail for so many precisely when it's most needed and what can be done? 
 
-In this project, you shall explore and implement several potential solutions 
-related to the problem with `R`, as discussed in one of the best investment references of the recent decade, 
+In this project, you shall explore and implement several potential solutions for
+enhancing portfolio diversification with `R`, as discussed in one of the best 
+investment references of the recent decade, 
 [Expected Returns: _An Investors Guide to Harvesting Market Rewards_](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727) by [Antti Ilmanen](https://www.aqr.com/About-Us/OurFirm/Antti-Ilmanen).
 
 From the Description;
@@ -31,16 +32,18 @@ practices in software development for quantitative finance using `R`, and
 provide current professional grade market data for validating these approaches 
 in the midst of the current crisis.
 
-Ultimately, your work will be organized into an open source `R` package which
-complements the book, with examples as vignettes that academics, practitioners, 
-and hobbyists alike can use for expanding their research and/or portfolio management.
+Ultimately, your work will be organized into an open source `R` package. The
+package will complement the book, and provide data, functions, and example to
+guide academics, practitioners, and hobbyists in the `R` community who wish
+to apply and expand on these solutions for their own research or portfolio 
+management endeavors.
 
 Students engaged in this project will obtain a deep understanding of:
 i) Data science for finance  
 ii) Quantitative risk management  
 iii) Quantitative portfolio management across asset classes  
 
-## Sections of the text of interest.
+## Areas of Interest
 
 We'll focus on three broad sections with specific subsection to explore
 
@@ -209,11 +212,11 @@ Lustig–Verdelhan (2010). See Kaya–Lee–Pornrojnangkool (2010) and Ang–Bek
 * Get familiar with sections of the text above
 * Work with the GSoC mentor(s) to lay out the script for each section
 * Gather data related to the project, which your GSoC mentors can access.
-* Document, compress, and save public data used in the text from [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), 
+* Write `R` scripts to gather, format, and save public data used in the text from [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), 
 [Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets)
 * Reproduce key sections using existing `R` packages & write custom functions where needed
 * Organize your work as an `R` package, in collaboration with Mentors
-* Complete minimal function documentation using roxygen2 
+* Complete minimal function and data documentation using roxygen2 
 * Create short vignettes using `R` markdown to share your code and findings.
 
 The project will be developed on https://github.com. In order to efficiently manage 
@@ -221,7 +224,7 @@ the development of the package, the various tasks and deadlines will be managed 
 
 ## Mentors
 
-Prof. Justin M. Shea, Prof. Brian Peterson, Erol Biceroglu, and  Peter Carl.
+Prof. Justin M. Shea, Prof. Brian Peterson, Erol Biceroglu, and Peter Carl.
 
 ## Tests
 
