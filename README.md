@@ -3,24 +3,28 @@
 ## Background
 
 As current financial market behavior has revealed, many investors are often not 
-as diversified as they initially believe. While financial advisors package various 
-instruments into "diversified portfolios", relationships among these instruments 
-can change suddenly during times of market crisis, and in the process remove the 
-very diversification properties portfolio was selected to provide. Thus, many 
+as diversified as they initially believe. This issue can impacts individual investor
+retirment accounts as well as University Endowment funds and Municipal Pensions. 
+While finacial advisors are adept at packaging various instruments into 
+"diversified portfolios", relationships among these instruments can change 
+suddenly during times of market crisis, and in the process remove the very 
+diversification properties the portfolio was selected to provide. Thus, many 
 fail to mitigate substantial short & intermediate term losses in their portfolios. 
 Why does diversification fail precisely when most needed and what can be done? 
 
-In this project, you shall explore and reproduce several potential solutions related
-to the problem, discussed in one of the best investment references of the recent decade, 
+In this project, you shall explore and implement several potential solutions 
+related to the problem with `R`, as discussed in one of the best investment references of the recent decade, 
 [Expected Returns: _An Investors Guide to Harvesting Market Rewards_](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727) by [Antti Ilmanen](https://www.aqr.com/About-Us/OurFirm/Antti-Ilmanen).
 
 From the Description;
 
 > This comprehensive reference delivers a toolkit for harvesting market rewards from a wide range of investments. Written by a world-renowned industry expert, the reference discusses how to forecast returns under different parameters. Expected returns of major asset classes, investment strategies, and the effects of underlying risk factors such as growth, inflation, liquidity, and different risk perspectives, are also explained. Judging expected returns requires balancing historical returns with both theoretical considerations and current market conditions. Expected Returns provides extensive empirical evidence, surveys of risk-based and behavioral theories, and practical insights.
 
-Your objective will be to reproduce key approaches offered by the text and test their 
-performance on current market conditions. This will mainly involve using functions 
-from existing R packages, but you will write a few of your own where needed.
+Your objective will be to reproduce key approaches offered by the text and test 
+performance on current market conditions with `R`. This will mainly involve function
+from widely used `R` packages in finance such as `PerformanceAnalytics` and 
+`PortfolioAnalytics`, but you will also need to write a few functions of your own 
+where needed.
 
 Mentors will guide your understanding of the topic, support your use of best 
 practices in software development for quantitative finance using `R`, and 
@@ -29,11 +33,9 @@ in the midst of the current crisis.
 
 Ultimately, your work will be organized into an open source `R` package which
 complements the book, with examples as vignettes that academics, practitioners, 
-and hobbyists alike can reference and use as a basis for their research and/or 
-portfolio management.
+and hobbyists alike can use for expanding their research and/or portfolio management.
 
-  
-Students engaged in this project will obtain a deep understanding of:  
+Students engaged in this project will obtain a deep understanding of:
 i) Data science for finance  
 ii) Quantitative risk management  
 iii) Quantitative portfolio management across asset classes  
@@ -56,7 +58,20 @@ We'll focus on three broad sections with specific subsection to explore
   * Tactical return forecasting models
   * Cyclical variation in asset returns
   
+### Data
 
+Most underlying data series are extracted from Bloomberg, including MSCI Barra’s
+equity indices, Barclays Capital and other banks’ bond indices, and S&P GSCI
+commodity futures indices. Other key sources include [Kenneth French’s website](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), 
+, [Robert Shiller’s website](http://www.econ.yale.edu/�shiller/data.htm), 
+Arnott–Bernstein (2002), Dimson–Marsh–Staunton (2002, 2010), and Ibbotson 
+Associates (now Morningstar) yearbooks.
+
+To create long data histories for major asset classes, the author concatenated 
+best quality recent data and best available older data series. Most exhibits 
+display total returns denominated in U.S. dollars; but some exhibits show real 
+(inflation-adjusted) returns or excess returns over cash or over 
+maturity/duration-matched Treasuries.
 
 ### Approaches to Dynamic asset weighting
 
@@ -86,7 +101,7 @@ Ang–Chen (2010).
 On carry strategies in various asset classes, see Cochrane (1999), 
 Asness–Moskowitz–Pedersen (2009), and Bacchetta–Mertens–van Wincoop (2009).
 
-**Momentum and trend following**, Chapter 14.
+**Commodity Momentum and trend following**, Chapter 14.
 
 Many authors have in recent years analyzed commodity momentum strategies: 
 Erb–Harvey (2006), Ribeiro–Normand–Loeys (2006), Gorton–Hayashi–Rouwenhorst (2007), 
@@ -191,13 +206,15 @@ Lustig–Verdelhan (2010). See Kaya–Lee–Pornrojnangkool (2010) and Ang–Bek
 
 ### We envision the following steps for this project:
 
-* Familiarization with the text
-* Work with the GSoC mentor(s) to lay out the script for that topic
-* Gather data related to the project, which your GSoC mentors can access
-* Reproduce key sections using existing `R` packages & write a minimal amount of custom functions where needed
+* Get familiar with sections of the text above
+* Work with the GSoC mentor(s) to lay out the script for each section
+* Gather data related to the project, which your GSoC mentors can access.
+* Document, compress, and save public data used in the text from [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), 
+[Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets)
+* Reproduce key sections using existing `R` packages & write custom functions where needed
 * Organize your work as an `R` package, in collaboration with Mentors
 * Complete minimal function documentation using roxygen2 
-* Create short vignettes using `R` markdown to summarize share your code and solutions.
+* Create short vignettes using `R` markdown to share your code and findings.
 
 The project will be developed on https://github.com. In order to efficiently manage 
 the development of the package, the various tasks and deadlines will be managed here.
@@ -213,7 +230,7 @@ The official test for this project can be found [at this link](https://drive.goo
 In addition to the test above, applicants should demonstrate that they have:  
 * A very good working knowledge of programming in R    
 * Familiarity with the construction of R packages  
-* Good coding standards (Google’s C++ and R style guide)  
+* Good coding standards (Google’s R style guide)  
 * Knowledge of Factor models and Active Portfolio Management  
 * Experience with multivariate statistics  
 * Experience with GitHub  
@@ -221,7 +238,7 @@ In addition to the test above, applicants should demonstrate that they have:
 
 ## Solutions of tests
 
-Students, please post a link to your test solution here
+Students, please send the results of your tests to your mentors.
 
 ## References
 
