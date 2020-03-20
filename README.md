@@ -21,27 +21,22 @@ From the Description;
 
 > This comprehensive reference delivers a toolkit for harvesting market rewards from a wide range of investments. Written by a world-renowned industry expert, the reference discusses how to forecast returns under different parameters. Expected returns of major asset classes, investment strategies, and the effects of underlying risk factors such as growth, inflation, liquidity, and different risk perspectives, are also explained. Judging expected returns requires balancing historical returns with both theoretical considerations and current market conditions. Expected Returns provides extensive empirical evidence, surveys of risk-based and behavioral theories, and practical insights.
 
-Your objective will be to reproduce key approaches offered by the text and test 
-performance on current market conditions with `R`. This will mainly involve function
-from widely used `R` packages in finance such as `PerformanceAnalytics` and 
-`PortfolioAnalytics`, but you will also need to write a few functions of your own 
-where needed.
+Your objective will be to reproduce key approaches suggested by the text and test 
+performance on current market conditions with `R`. You will use functions found
+in popular `R` in finance packages such as `PerformanceAnalytics` and `PortfolioAnalytics`, 
+but you will also need to write functions of your own to streamline workflows
+and implement solutions.
 
 Mentors will guide your understanding of the topic, support your use of best 
 practices in software development for quantitative finance using `R`, and 
 provide current professional grade market data for validating these approaches 
 in the midst of the current crisis.
 
-Ultimately, your work will be organized into an open source `R` package. The
-package will complement the book, and provide data, functions, and example to
-guide academics, practitioners, and hobbyists in the `R` community who wish
-to apply and expand on these solutions for their own research or portfolio 
-management endeavors.
+Ultimately, your work will be organized into an open source `R` package. It will complement the text and provide data, functions, and reproducible examples to guide academics, practitioners, and hobbyists in the `R` community in applying the work to their own research or portfolio management endeavors.
 
-Students engaged in this project will obtain a deep understanding of:
-i) Data science for finance  
-ii) Quantitative risk management  
-iii) Quantitative portfolio management across asset classes  
+Students engaged in this project will obtain a deep understanding of:  
+i) Data Science applications in finance  
+ii) Quantitative Analysis of Active portfolio management  
 
 ## Areas of Interest
 
@@ -65,8 +60,8 @@ We'll focus on three broad sections with specific subsection to explore
 
 Most underlying data series are extracted from Bloomberg, including MSCI Barra’s
 equity indices, Barclays Capital and other banks’ bond indices, and S&P GSCI
-commodity futures indices. Other key sources include [Kenneth French’s website](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), 
-, [Robert Shiller’s website](http://www.econ.yale.edu/�shiller/data.htm), 
+commodity futures indices. 
+Other key sources include [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), [Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets), as well as 
 Arnott–Bernstein (2002), Dimson–Marsh–Staunton (2002, 2010), and Ibbotson 
 Associates (now Morningstar) yearbooks.
 
