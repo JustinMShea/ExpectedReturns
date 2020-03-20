@@ -36,7 +36,7 @@ Ultimately, your work will be organized into an open source `R` package. It will
 
 Students engaged in this project will obtain a deep understanding of:  
 i) Data Science applications in finance  
-ii) Quantitative Analysis of Active portfolio management  
+ii) Quantitative Analysis of active portfolio management  
 
 ## Areas of Interest
 
