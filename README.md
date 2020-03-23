@@ -1,10 +1,11 @@
 # GSoC-2020-Expected-Returns-Ilmanen
 
+
 ## Background
 
 A lack of portfolio diversification can severely impact the financial goals and 
 long term plans for individual retirement accounts, University Endowment funds, 
-and Municipal Pension funds alike. And as current financial market behavior has 
+and Municipal Pension funds alike. And as financial market tumult surrounding `CoVid-19` has 
 revealed, many investors are often not as diversified as they initially believe. 
 While advisors are adept at packaging various financial products into 
 "diversified portfolios", relationships among various asset classes can change 
@@ -219,7 +220,12 @@ the development of the package, the various tasks and deadlines will be managed 
 
 ## Mentors
 
-Prof. Justin M. Shea, Prof. Brian Peterson, Erol Biceroglu, and Peter Carl.
+Students, please contact mentors below after completing at least one of the tests below
+
+- EVALUATING MENTOR [Prof. Justin M. Shea](https://www.linkedin.com/in/justinmshea/)
+- [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/)
+- [Erol Biceroglu, Senior Investment Policy Analyst](https://www.linkedin.com/in/erolbiceroglu/)
+- [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
 
 ## Tests
 
@@ -234,9 +240,19 @@ In addition to the test above, applicants should demonstrate that they have:
 * Experience with GitHub  
 * code for the `Expected Returns` project will be released under the [Affero Gnu Public License](https://www.gnu.org/licenses/agpl-3.0.en.html)
 
-## Solutions of tests
+## Submitting solutions to tests
 
-Students, please send the results of your tests to your mentors.
+Students, please email the results of your tests to the mentors and add a link to your profile or website below.   
+Brian Peterson: brian@braverock.com  
+Justin M. Shea: jshea@roosevelt.edu  
+Erol Biceroglu: erol.biceroglu@alumni.utoronto.ca  
+
+**Prospective Students:**
+[Anshul Goel](https://www.linkedin.com/in/anshul-goel-929111106/)
+
+## Note on Proposals
+
+Students should propose a realistic project plan. Quality is more important than quantity, so your proposal may  not contain all sections or targeted functionality.
 
 ## References
 
