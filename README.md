@@ -226,6 +226,7 @@ Students, please contact mentors below after completing at least one of the test
 - [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/)
 - [Erol Biceroglu, Senior Investment Policy Analyst](https://www.linkedin.com/in/erolbiceroglu/)
 - [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
+- [Soumya Kalra, Senior Quantitative Risk Specialist](https://www.linkedin.com/in/soumyakalra/)
 
 ## Tests
 
