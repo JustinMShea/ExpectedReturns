@@ -49,6 +49,7 @@ We'll focus on three broad sections with specific subsection to explore
   * Commodity Momentum and Trend following
   
 - Return Factors and their risk premia  
+  * Inflation factor and inflation premium
   * Liquidity factor and illiquidity premium
   * Tail risks (volatility, correlation, skewness)
 
