@@ -216,12 +216,7 @@ Lustig–Verdelhan (2010). See Kaya–Lee–Pornrojnangkool (2010) and Ang–Bek
 * Complete minimal function and data documentation using roxygen2 
 * Create short vignettes using `R` markdown to share your code and findings.
 
-The project will be developed on https://github.com. In order to efficiently manage 
-the development of the package, the various tasks and deadlines will be managed here.
-
 ## Mentors
-
-Students, please contact mentors below after completing at least one of the tests below
 
 - EVALUATING MENTOR [Prof. Justin M. Shea](https://www.linkedin.com/in/justinmshea/)
 - [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/)
@@ -229,32 +224,6 @@ Students, please contact mentors below after completing at least one of the test
 - [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
 - [Soumya Kalra, Senior Quantitative Risk Specialist](https://www.linkedin.com/in/soumyakalra/)
 
-## Tests
-
-The official test for this project can be found [at this link](https://drive.google.com/file/d/0Bx2D7if2YYptOW1VLXp1bTBMOExZOFhtWWJ3UGhSd0FtUlJj/view?usp=sharing).
-
-In addition to the test above, applicants should demonstrate that they have:  
-* A very good working knowledge of programming in R    
-* Familiarity with the construction of R packages  
-* Good coding standards (Google’s R style guide)  
-* Knowledge of Factor models and Active Portfolio Management  
-* Experience with multivariate statistics  
-* Experience with GitHub  
-* code for the `Expected Returns` project will be released under the [Affero Gnu Public License](https://www.gnu.org/licenses/agpl-3.0.en.html)
-
-## Submitting solutions to tests
-
-Students, please email the results of your tests to the mentors and add a link to your profile or website below.   
-Brian Peterson: brian@braverock.com  
-Justin M. Shea: jshea@roosevelt.edu  
-Erol Biceroglu: erol.biceroglu@alumni.utoronto.ca  
-
-**Prospective Students:**
-[Anshul Goel](https://www.linkedin.com/in/anshul-goel-929111106/)
-
-## Note on Proposals
-
-Students should propose a realistic project plan. Quality is more important than quantity, so your proposal may  not contain all sections or targeted functionality.
 
 ## References
 
