@@ -54,7 +54,7 @@
 #' @author Vito Lestingi
 #'
 #' @examples
-#' GetFactors('FF3', src=FF)
+#' GetFactors('FF3', src='FF')
 #'
 #' @export
 #'
