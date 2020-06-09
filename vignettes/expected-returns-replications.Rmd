@@ -36,10 +36,64 @@ This model was introduced by \textcite{fama-french-1993}, expanding the work beg
 
 Following \textcite{engle-16}, we express the so called Fama-French *three-factor model* as
 $$
-    r_{p,t} =  \beta_{0} + \beta_{1, p}MKT_{t} + \beta_{2, p}SMB_{t} + \beta_{3, p}HML_{t} + \epsilon_{t}
+    r_{p,t} = \beta_{0} + \beta_{1, p}MKT_{t} + \beta_{2, p}SMB_{t} + \beta_{3, p}HML_{t} + \epsilon_{t}
 $$
 where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $t$ (or, similarly, $r_{i,t}$ for a given security); $MKT_{t}$, $SMB_{t}$, and $HML_{t}$ are the returns of the "market", "small minus big" and "high minus low" factor mimicking portfolios, respectively. The intercept $\beta_{0}$ captures the average excess return that remain unexplained by the factors considered, whereas the remaining betas represent the sensitivities with respect to the each corresponding factor. The variable $\epsilon_{t}$ is the error term.
 
+```{r, echo=FALSE, results='hide'}
+# Following suggestions, I'm working on reproducing models with existing functionality first.
+# In particular, the 'FactorAnalytics' package has been suggest as useful. Which likely it is.
+# However, I'm encountering some small issues in first attempts.
+# 
+# TODO:
+# There are many aspects overlooked here. They must be included in our implementations 
+# to guarantee analysis accuracy and usage flexibility (e.g. data winsorization).
+# The examples below are first attempts to get the mechanics of some 'FactorAnalytics' 
+# functions and evaluate their feasibility for our purposes.
+# 
 
+# install_github('FactorAnalytics')
+library(FactorAnalytics)
+library(xts)
 
+### Experimenting fitFfm() to fit FF three-factor model ###
+
+## Get and set data to pass to fitFfm()
+# data("factorDataSetDjia5Yrs") # don't run upon knitting
+# select some variables needed
+factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
+# ff3.data <- GetFactors('FF3', 'FF') # don't run upon knitting
+ff3.data.monthly <- ff3.data$ff.data.monthly.xts
+
+# make 'ff3.data.monthly' and 'factorDataSetDjia5Yrs' compatible for testing
+ff3.data.monthly.dates <- index(ff3.data.monthly)
+ff3.data.monthly <- as.data.frame(coredata(ff3.data.monthly))
+ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
+colnames(ff3.data.monthly)[1] <- 'DATE'
+
+factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
+start <- which(ff3.data.monthly[, 'DATE'] == first(factorDataSetDjia5Yrs[, 'DATE']))
+end <- which(ff3.data.monthly[, 'DATE'] == last(factorDataSetDjia5Yrs[, 'DATE']))
+ff3.data.to.input <- ff3.data.monthly[start:end, ]
+
+test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
+
+# excess returns
+test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
+test.data$RF <- NULL
+
+# factor exposures
+exposure.vars <- c('Mkt.RF', 'SMB', 'HML')
+
+## Run fitFfm() to fit factor model using cross-sectional regression
+fit.test <- fitFfm(data=test.data, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", 
+                   exposure.vars=exposure.vars, addIntercept=TRUE)
+fit.test
+
+## On a single stock
+test.data.aa <- test.data[which(test.data[, 'TICKER'] == 'AA'), ]
+fit.test.aa <- fitFfm(data=test.data.aa, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", 
+                      exposure.vars=exposure.vars, lagExposures=TRUE, addIntercept=TRUE)
+fit.test.aa
+```
 
