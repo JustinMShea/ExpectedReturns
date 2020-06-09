@@ -70,11 +70,7 @@ ff3.data.monthly.dates <- index(ff3.data.monthly)
 ff3.data.monthly <- as.data.frame(coredata(ff3.data.monthly))
 ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
 colnames(ff3.data.monthly)[1] <- 'DATE'
-
 factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
-start <- which(ff3.data.monthly[, 'DATE'] == first(factorDataSetDjia5Yrs[, 'DATE']))
-end <- which(ff3.data.monthly[, 'DATE'] == last(factorDataSetDjia5Yrs[, 'DATE']))
-ff3.data.to.input <- ff3.data.monthly[start:end, ]
 
 test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
 
