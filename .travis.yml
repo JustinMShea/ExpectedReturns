@@ -9,7 +9,7 @@ sudo: true
 cache: packages
 
 # Be strict when checking our package
-warnings_are_errors: false
+warnings_are_errors: true
 
 # don't build the vignette
 r_build_args: "--no-build-vignettes"

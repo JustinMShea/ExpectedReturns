@@ -67,8 +67,8 @@ GetFactors <- function(x
                        # , country=NULL
                        , verbose=FALSE)
 {
-  require(xts) # TODO: momentary
-  require(XML)
+  # require(xts) # TODO: momentary
+  # require(XML)
   src.available <- c("FF")
   if(all(src != src.available)) {
     stop("src = ", sQuote(src), " is not currently implemented.")
