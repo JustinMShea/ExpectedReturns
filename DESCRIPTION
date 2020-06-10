@@ -20,7 +20,7 @@ Description: Collection of tools to replicate key functionality from Antti Ilman
   use their own data to apply models similar to those described in the book and 
   evaluate these models in current market conditions or in different markets than
   those utilized for the text.
-Imports:
+Depends:
   xts,
   XML,
 License: GPL-3

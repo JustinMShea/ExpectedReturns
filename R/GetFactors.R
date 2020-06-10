@@ -56,7 +56,7 @@
 #' @examples
 #' GetFactors('FF3', src='FF')
 #'
-#' @export
+#' @export GetFactors
 #'
 GetFactors <- function(x
                        , src="FF"
