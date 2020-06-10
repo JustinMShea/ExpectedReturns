@@ -51,12 +51,16 @@
 #' Also, note that not all the Fama-French's series are available with all the
 #' possible frequencies of `freq`.
 #'
+#' @importFrom xts XML
+#'
 #' @author Vito Lestingi
 #'
 #' @examples
+#' \dontrun{
 #' GetFactors('FF3', src='FF')
+#' } #end dontrun
 #'
-#' @export GetFactors
+#' @export
 #'
 GetFactors <- function(x
                        , src="FF"
