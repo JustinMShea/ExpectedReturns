@@ -1,3 +1,5 @@
+[![Travis build status](https://travis-ci.org/JustinMShea/ExpectedReturns.svg?branch=master)](https://travis-ci.org/JustinMShea/ExpectedReturns)
+
 # GSoC-2020-Expected-Returns-Ilmanen
 
 
