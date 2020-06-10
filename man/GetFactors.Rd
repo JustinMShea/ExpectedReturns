@@ -89,7 +89,7 @@ Also, note that not all the Fama-French's series are available with all the
 possible frequencies of `freq`.
 }
 \examples{
-GetFactors('FF3', src=FF)
+GetFactors('FF3', src='FF')
 
 }
 \author{
