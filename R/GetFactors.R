@@ -51,8 +51,6 @@
 #' Also, note that not all the Fama-French's series are available with all the
 #' possible frequencies of `freq`.
 #'
-#' @importFrom xts XML
-#'
 #' @author Vito Lestingi
 #'
 #' @examples
