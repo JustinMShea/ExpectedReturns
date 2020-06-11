@@ -56,6 +56,19 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 library(FactorAnalytics)
 library(xts)
 
+
+#### TEST :: RUN ON ORIGINAL DATA SETS ####
+data(factorDataSetDjia5Yrs)
+## Run fitFfm() to fit factor model using cross-sectional regression
+fit.test <- fitFfm(data=factorDataSetDjia5Yrs, asset.var="TICKER", ret.var="RETURN", 
+                   date.var="DATE", exposure.vars=c("MKTCAP", "ENTVAL", "SIZE"), 
+                   z.score="crossSection",
+                   addIntercept=TRUE)
+fit.test
+
+### PASS ###
+
+
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
 ## Get and set data to pass to fitFfm()
