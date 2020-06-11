@@ -75,8 +75,7 @@ fit.test
 # data("factorDataSetDjia5Yrs") # don't run upon knitting
 # select some variables needed
 factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
-# ff3.data <- GetFactors('FF3', 'FF') # don't run upon knitting
-ff3.data.monthly <- ff3.data$ff.data.monthly.xts
+# ff3.data.monthly <- GetFactors('FF3', 'FF', freq='monthly') # don't run upon knitting
 
 # make 'ff3.data.monthly' and 'factorDataSetDjia5Yrs' compatible for testing
 ff3.data.monthly.dates <- index(ff3.data.monthly)
