@@ -141,7 +141,11 @@ GetFactors <- function(x
                 ff5.idxs <- grep('5', ff.factors.plain.links, ignore.case=TRUE)
                 mom.idxs <- grep('mom', ff.factors.plain.links, ignore.case=TRUE)
                 rev.idxs <- grep('ST|LT', ff.factors.plain.links, ignore.case=TRUE)
-                if (x == 'FF5') {
+                if (x == 'FF3') {# by exclusion, as 'indistinguishable' pattern name
+                  ff3.idxs <- setdiff(1:length(ff.factors.plain.links), Reduce(union, c(ff5.idxs, mom.idxs, rev.idxs)))
+                  target.url <- ff.factors.plain.links[ff3.idxs]
+                  header.pattern <- ',Mkt-RF,SMB,HML,RF'
+                } else if (x == 'FF5') {
                   # Oversimplified regex would likely fail on portfolios, need to
                   # account for '25' and '5x5' as well in that case
                   target.url <- ff.factors.plain.links[ff5.idxs]
@@ -153,10 +157,6 @@ GetFactors <- function(x
                   if(missing(term)) term <- 'ST'
                   target.url <- grep(term, ff.factors.plain.links, ignore.case=TRUE, value=TRUE)
                   header.pattern <- ifelse(term == 'ST', ',ST_Rev', ',LT_Rev')
-                } else {# src='FF3' by exclusion, as 'indistinguishable' pattern name
-                  ff3.idxs <- setdiff(1:length(ff.factors.plain.links), Reduce(union, c(ff5.idxs, mom.idxs, rev.idxs)))
-                  target.url <- ff.factors.plain.links[ff3.idxs]
-                  header.pattern <- ',Mkt-RF,SMB,HML,RF'
                 }
               } else {# data by country
                 # TODO
