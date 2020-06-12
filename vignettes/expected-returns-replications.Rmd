@@ -40,6 +40,10 @@ $$
 $$
 where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $t$ (or, similarly, $r_{i,t}$ for a given security); $MKT_{t}$, $SMB_{t}$, and $HML_{t}$ are the returns of the "market", "small minus big" and "high minus low" factor mimicking portfolios, respectively. The intercept $\beta_{0}$ captures the average excess return that remain unexplained by the factors considered, whereas the remaining betas represent the sensitivities with respect to the each corresponding factor. The variable $\epsilon_{t}$ is the error term.
 
+# Estimating factor models
+
+
+
 ```{r, echo=FALSE, results='hide'}
 # Following suggestions, I'm working on reproducing models with existing functionality first.
 # In particular, the 'FactorAnalytics' package has been suggest as useful. Which likely it is.
@@ -103,5 +107,72 @@ test.data.aa <- test.data[which(test.data[, 'TICKER'] == 'AA'), ]
 fit.test.aa <- fitFfm(data=test.data.aa, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", 
                       exposure.vars=exposure.vars, lagExposures=TRUE, addIntercept=TRUE)
 fit.test.aa
+```
+
+
+```{r plain Fama-MacBeth, echo=FALSE, results='hide'}
+# 
+# TODO:
+# Again, there are aspects overlooked. Both in the pre-processing (winsorization,
+# truncation, etc.) and in the post-processing of the Fama-MacBeth methodology 
+# (standard error corrections, test statistics adjustements and so on). Then their
+# summaries as well.
+# Once the core method is in place they are both straightforward.
+# 
+# Also, it's rather naive in this form. However, it can be more or less easily 
+# improved and extended to other models. 
+# 
+
+library(FactorAnalytics) # for stock data
+
+# Import data
+
+# Get stocks data
+data("factorDataSetDjia5Yrs")
+factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'RETURN')]
+factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
+
+# Get FF3 factors data
+ff3.data.monthly <- GetFactors('FF3', freq='monthly')
+ff3.data.monthly.dates <- index(ff3.data.monthly)
+ff3.data.monthly <- as.data.frame(coredata(ff3.data.monthly))
+ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
+colnames(ff3.data.monthly)[1] <- 'DATE'
+
+# Merge & match FF3 factors data and stocks data
+test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
+
+## Fama-MacBeth for FF Three-factor model, looping over lm()
+test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
+periods <- unique(factorDataSetDjia5Yrs$DATE)
+tickers <- unique(factorDataSetDjia5Yrs$TICKER)
+factor.vars <- c('MKT.RF', 'SMB', 'HML')
+
+# Run N time-series regressions
+beta.coefs <- matrix(NA, length(tickers), length(factor.vars) + 1)
+for (i in 1:length(tickers)) {
+  asset.reg <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data=test.data[which(test.data[, 'TICKER'] == tickers[i]), ])
+  beta.coefs[i, ] <- asset.reg$coefficients
+}
+row.names(beta.coefs) <- tickers
+colnames(beta.coefs) <- c('(Intercept)', 'MKT.RF', 'SMB', 'HML')
+beta.coefs
+
+# Run T cross-sectional regressions 
+gamma.coefs <- matrix(NA, length(periods), length(factor.vars) + 1)
+gamma.rsq <- matrix(NA, length(periods), 1)
+for (t in 1:length(periods)) {
+  per.period.assets.ret <- test.data[which(test.data[, 'DATE'] == periods[t]), 'EXC.RETURN']
+  data <- data.frame('EXC.RETURN'=per.period.assets.ret, beta.coefs[, 2:4]) # excluding prev. est. intercepts
+  time.reg <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data=data)
+  gamma.coefs[t, ] <- time.reg$coefficients
+}
+gamma.coefs <- data.frame(periods, gamma.coefs)
+colnames(gamma.coefs) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
+gamma.coefs
+
+# Average last regression coefficients estimates
+avg.coefs <- colMeans(gamma.coefs[, 2:ncol(gamma.coefs)])
+avg.coefs
 ```
 
