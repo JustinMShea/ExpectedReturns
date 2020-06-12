@@ -23,6 +23,7 @@ Description: Collection of tools to replicate key functionality from Antti Ilman
 Imports:
   xts,
   XML,
+  FactorAnalytics
 License: GPL-3
 VignetteBuilder: knitr
 Encoding: UTF-8
@@ -30,4 +31,4 @@ LazyData: true
 URL: https://github.com/justinmshea/ExpectedReturns
 Copyright: (c) 2020
 RoxygenNote: 7.1.0
-Suggests: knitr, rmarkdown
+Suggests: knitr, rmarkdown, tinytest
