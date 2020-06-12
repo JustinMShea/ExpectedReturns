@@ -60,19 +60,6 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 library(FactorAnalytics)
 library(xts)
 
-
-#### TEST :: RUN ON ORIGINAL DATA SETS ####
-data(factorDataSetDjia5Yrs)
-## Run fitFfm() to fit factor model using cross-sectional regression
-fit.test <- fitFfm(data=factorDataSetDjia5Yrs, asset.var="TICKER", ret.var="RETURN", 
-                   date.var="DATE", exposure.vars=c("MKTCAP", "ENTVAL", "SIZE"), 
-                   z.score="crossSection",
-                   addIntercept=TRUE)
-fit.test
-
-### PASS ###
-
-
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
 ## Get and set data to pass to fitFfm()
@@ -102,12 +89,9 @@ fit.test <- fitFfm(data=test.data, asset.var="TICKER", ret.var="EXC.RETURN", dat
                    exposure.vars=exposure.vars, addIntercept=TRUE)
 fit.test
 
-## On a single stock
-test.data.aa <- test.data[which(test.data[, 'TICKER'] == 'AA'), ]
-fit.test.aa <- fitFfm(data=test.data.aa, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", 
-                      exposure.vars=exposure.vars, lagExposures=TRUE, addIntercept=TRUE)
-fit.test.aa
 ```
+
+
 
 
 ```{r plain Fama-MacBeth, echo=FALSE, results='hide'}
