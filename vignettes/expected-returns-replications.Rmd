@@ -160,3 +160,78 @@ avg.coefs <- colMeans(gamma.coefs[, 2:ncol(gamma.coefs)])
 avg.coefs
 ```
 
+
+```{r Fama-MacBeth method with 'plm', echo=FALSE, results='hide'}
+
+# NOTE: 
+# same limitations stated in previous TODOs still hold.
+# Only concerning with the core mechanics so far.
+
+library(FactorAnalytics) # to get stock data
+library(plm)             # to estimate model
+
+# Get stocks data
+data("factorDataSetDjia5Yrs")
+factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'RETURN')]
+factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
+
+# Get FF3 factors data
+ff3.data.monthly <- GetFactors('FF3', freq='monthly')
+ff3.data.monthly.dates <- zoo::index(ff3.data.monthly)
+ff3.data.monthly <- as.data.frame(zoo::coredata(ff3.data.monthly))
+ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
+colnames(ff3.data.monthly)[1] <- 'DATE'
+
+# match and merge FF3 factors data and stocks data
+test.data.plm <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
+
+# Indexes to determine panel structure
+# 'PERIOD.ID', each date gets same number id across
+periods <- unique(factorDataSetDjia5Yrs$DATE)
+periods.id <- 1:length(periods)
+periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
+test.data.plm <- merge(test.data.plm, periods.id, by='DATE')
+# 'ASSET.ID', each asset gets same number id across
+tickers <- unique(factorDataSetDjia5Yrs$TICKER)
+assets.id <- 1:length(tickers)
+assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
+test.data.plm <- merge(test.data.plm, assets.id) # this messes up dates order within a ticker
+
+# Sort data set
+test.data.plm <- test.data.plm[order(test.data.plm[, 'ASSET.ID'], test.data.plm[, 'PERIOD.ID']), ]
+row.names(test.data.plm) <- NULL
+
+test.data.plm$EXC.RETURN <- test.data.plm$RETURN - test.data.plm$RF # FF risk-free rate (1-month T-bill rate)
+test.data.input <- test.data.plm[, c("ASSET.ID", "PERIOD.ID", "DATE", "EXC.RETURN", "MKT.RF", "SMB", "HML")]
+
+# Time-series regressions
+fm.ts.reg <- plm::pmg(EXC.RETURN ~ MKT.RF + SMB + HML, 
+                      data=test.data.input, index=c('ASSET.ID', 'PERIOD.ID'))
+summary(fm.ts.reg)
+betas <- t(fm.ts.reg$indcoef) # all coefficients
+rownames(betas) <- tickers
+colnames(betas) <- paste('BETA', colnames(betas), sep='.')
+betas
+
+# (Check my Fama-MacBeth snippet vs. `plm` version)
+betas == beta.coefs
+
+# Cross-sectional regressions
+test.data.input.second <- test.data.input[order(test.data.input[, 'DATE']), ]
+test.data.input.second <- data.frame(
+  test.data.input.second[, c("PERIOD.ID", "ASSET.ID", "DATE", "EXC.RETURN")], 
+  betas[, 2:4]
+)
+
+fm.cs.reg <- plm::pmg(EXC.RETURN ~ BETA.MKT.RF + BETA.SMB + BETA.HML, 
+                      data=test.data.input.second, index=c('PERIOD.ID', 'ASSET.ID'))
+summary(fm.cs.reg)
+gammas <- t(fm.cs.reg$indcoef) # all coefficients
+gammas <- data.frame(periods, gammas)
+colnames(gammas) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
+gammas
+
+# (Check my Fama-MacBeth snippet vs. `plm` version)
+gammas == gamma.coefs
+```
+
