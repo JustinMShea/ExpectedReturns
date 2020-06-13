@@ -1,3 +1,4 @@
+
 ## Commodities for the Long Run: Index Level Data, Monthly ##
  # https://www.aqr.com/Insights/Datasets/Commodities-for-the-Long-Run-Index-Level-Data-Monthly
 
@@ -24,7 +25,4 @@ AQR_comm_index$State.Inflation <- as.factor(commodity_index_data$State.Inflation
 
  # Save
 save(AQR_comm_index, file = paste0("data/AQR_comm_index.RData"), compress = "xz", compression_level = 9)
-
-
-
 
