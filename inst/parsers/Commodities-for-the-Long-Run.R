@@ -6,8 +6,8 @@
 
 AQR_commodity_index_file <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Commodities-for-the-Long-Run-Index-Level-Data-Monthly.xlsx"
 
-  # If you want the .xlsx sheet::
-  # download.file(AQR_commodity_index_file, destfile = "data/AQR_commodity.xlsx")
+  # complete .xlsx sheet, containing data, and sources
+    download.file(AQR_commodity_index_file, destfile = "sandbox/AQR_commodity.xlsx")
 
 library(openxlsx)
 AQR_comm_index <- read.xlsx(AQR_commodity_index_file, sheet = 1, startRow = 10)
@@ -23,6 +23,6 @@ AQR_comm_index$Date <- as.Date(commodity_index_data$Date, format = "%m/%d/%Y")
 AQR_comm_index$State.forwardcurve <- as.factor(commodity_index_data$State.forwardcurve)
 AQR_comm_index$State.Inflation <- as.factor(commodity_index_data$State.Inflation)
 
- # Save
-save(AQR_comm_index, file = paste0("data/AQR_comm_index.RData"), compress = "xz", compression_level = 9)
+ # Save to sandbox if needed
+save(AQR_comm_index, file = paste0("sandbox/AQR_comm_index.RData"), compress = "xz", compression_level = 9)
 
