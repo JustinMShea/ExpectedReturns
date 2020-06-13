@@ -2,7 +2,7 @@
 % Please edit documentation in R/GetFactors.R
 \name{GetFactors}
 \alias{GetFactors}
-\title{Scraping Academic Financial Data Libraries
+\title{Scrape Academic Financial Data Libraries
 
 This is a convenience function to provide an easy way to download research
 financial data sets from several accredited sources.
@@ -14,10 +14,14 @@ time. On one hand, these resources - of admirable effort - lack important featur
 (financial) databases guarantee; most notably, this results in the impossibility
 to leverage APIs as in most cases there aren't any.
 On the other hand, these data sets satisfy important characteristics: they are
-open sourced, public and free to use, collected by world renewed Researchers
-of the field.
+open sourced, public and free to use, collected by world renowned Researchers
+of the field (Nobel Laureates in some instances, as is the case for
+Prof. *Eugene F. Fama* and Prof. *Robert J. Shiller*).
 
 TODO: provide a general overview of data made available
+In the case of the Fama-French's online library, generally stock data is obtained
+from the *Center for Research in Security Prices, LLC* (CRSP) and the risk-free
+rate is from *Ibbotson and Associates, Inc.* or *Bloomberg* databases.
 
 Please be considerate while using the function. In particular, do not send too
 frequent requests to the web source as the supported/tolerated request rate is
@@ -25,31 +29,43 @@ unknown. Usage remains at your own discretion and responsibility.
 TODO: deal with loops internally so to include some sleeping time?
 
 All the credits for collecting, maintaining and sharing data belong to the
-mentioned authors or copyright holders (see 'sources' below).}
+mentioned authors or copyright holders (see 'Source' below).}
 \source{
 [Kenneth F. French's data library](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html),
 [Robert Shiller's online data](http://www.econ.yale.edu/~shiller/data.htm),
 [AQR data sets](https://www.aqr.com/Insights/Datasets)
 }
 \usage{
-GetFactors(x, src = "FF", freq = "monthly", term = "ST", verbose = FALSE)
+GetFactors(x, src, freq, term, country = NULL)
 }
 \arguments{
 \item{x}{A character specifying the query specifying the data set to download. One of 'FF3', 'FF5', 'MOM' or 'REV'. See 'Details'.}
 
-\item{src}{A character, the source to download data from. Currently only "FF" (default) is available.}
+\item{src}{A character, the source to download data from. Currently only 'FF' (default) is available.}
 
-\item{freq}{A character, specifying . One of 'annual', 'monthly', 'weekly' or 'daily'. See 'Details'.}
+\item{freq}{A character, specifying . One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.}
 
-\item{term}{A character, to provide when `x='REV'`. Either 'ST' (short-term, default) or 'LT' (long term).}
+\item{term}{A character to be additionally provided when `x='REV'`. Either 'ST' (short-term, default) or 'LT' (long term).}
 
-\item{verbose}{A boolean, whether or not to retrieve additional info on data sets being downloaded.}
+\item{country}{A character indicating for which country Fama-French's factors are wanted. Default is U.S. factors. See 'Details' for other countries are available.
+# @param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
+
+TODO: `verbose`, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info}
 }
 \value{
-An `xts` object with columns being the requested factors.
+An `xts` object with columns being the requested factors over the whole period available.
+
+TODO: document the object columns and their name
+
+WARNING: We are not in a position to interact directly with the online library
+via an API and there could be possible inconsistencies in source files formatting.
+Given this shaking foundations and despite our efforts to guarantee an optimal
+result, it could happen that data obtained is not what expected.
+A sign that the data file downloaded may be incomplete is the lack of the header
+as specified above.
 }
 \description{
-Scraping Academic Financial Data Libraries
+Scrape Academic Financial Data Libraries
 
 This is a convenience function to provide an easy way to download research
 financial data sets from several accredited sources.
@@ -61,10 +77,14 @@ time. On one hand, these resources - of admirable effort - lack important featur
 (financial) databases guarantee; most notably, this results in the impossibility
 to leverage APIs as in most cases there aren't any.
 On the other hand, these data sets satisfy important characteristics: they are
-open sourced, public and free to use, collected by world renewed Researchers
-of the field.
+open sourced, public and free to use, collected by world renowned Researchers
+of the field (Nobel Laureates in some instances, as is the case for
+Prof. *Eugene F. Fama* and Prof. *Robert J. Shiller*).
 
 TODO: provide a general overview of data made available
+In the case of the Fama-French's online library, generally stock data is obtained
+from the *Center for Research in Security Prices, LLC* (CRSP) and the risk-free
+rate is from *Ibbotson and Associates, Inc.* or *Bloomberg* databases.
 
 Please be considerate while using the function. In particular, do not send too
 frequent requests to the web source as the supported/tolerated request rate is
@@ -72,25 +92,43 @@ unknown. Usage remains at your own discretion and responsibility.
 TODO: deal with loops internally so to include some sleeping time?
 
 All the credits for collecting, maintaining and sharing data belong to the
-mentioned authors or copyright holders (see 'sources' below).
+mentioned authors or copyright holders (see 'Source' below).
 }
 \details{
-With respect to the Fama-French's library, the parameter `x` specifies the
-factors required, which can be the Fama-French Three factor model (`'FF3'`),
-Fama-French Five factor model (`'FF5'`), The Momentum factor model (`'MOM'`) or
-The Reversal model (`'REV'`).
+The parameter `country` can specify one of those "country" (country or region)
+made available by Fama-French.
+Countries they make available are 'Asia Pacific ex Japan', 'Developed',
+'Developed ex US', 'Emerging', 'Europe', 'Japan', 'North America' and
+'United States' (the 'domestic'country with respect to which the standard
+Fama-French's factors are computed, with markets being NYSE, AMEX and NASDAQ).
 
-When `x` is used as "y/z" it provides additional specifications
-on the data set to be queried with the syntax "model/country" (position matters).
-Countries made available are 'Asia Pacific ex Japan', 'Developed', Developed ex US',
-'Emerging', 'Europe', 'Japan', 'North America' and 'United States'.
+The `RF` column refers the risk-free rate (e.g., 1-month TBill return for the
+U.S.).
 
-Also, note that not all the Fama-French's series are available with all the
-possible frequencies of `freq`.
+Fama-French often indicate missing data by -99.99 or -999.
+
+Also, note that not all the Fama-French's series are available with respect to
+all the possible frequencies specifiable with `freq`.
+In particular, with respect to factor data, weekly data frequency is available
+for the three-factor model only.
 }
 \examples{
 \dontrun{
+# Fama-French Three-factor model factors
 GetFactors('FF3', src='FF')
+
+# Fama-French Three-factor model
+GetFactors('FF3', 'FF')
+
+# Momentum factor
+GetFactors('MOM', 'FF', 'monthly')
+
+# Short-term reversal factor
+GetFactors('REV', 'FF', 'annual', term='ST')
+
+# Fama-French Five-factor model factors
+GetFactors('FF5', 'FF', 'weekly') # fails, as no data currently available
+
 } #end dontrun
 
 }
