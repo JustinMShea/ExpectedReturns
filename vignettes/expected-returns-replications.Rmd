@@ -44,7 +44,7 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 
 
 
-```{r, echo=FALSE, results='hide'}
+```{r data, echo=FALSE, results='hide'}
 # Following suggestions, I'm working on reproducing models with existing functionality first.
 # In particular, the 'FactorAnalytics' package has been suggest as useful. Which likely it is.
 # However, I'm encountering some small issues in first attempts.
@@ -80,7 +80,11 @@ test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
 # excess returns
 test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
 test.data$RF <- NULL
+```
 
+## Fama-French
+
+```{r plain Fama-French, echo=FALSE, results='hide'}
 # factor exposures
 exposure.vars <- c('MKT.RF', 'SMB', 'HML')
 
@@ -92,7 +96,7 @@ fit.test
 ```
 
 
-
+## Fama-MacBeth
 
 ```{r plain Fama-MacBeth, echo=FALSE, results='hide'}
 # 
@@ -107,10 +111,10 @@ fit.test
 # improved and extended to other models. 
 
 # Merge & match FF3 factors data and stocks data
-test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
+#test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
 
 ## Fama-MacBeth for FF Three-factor model, looping over lm()
-test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
+# test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
 periods <- unique(factorDataSetDjia5Yrs$DATE)
 tickers <- unique(factorDataSetDjia5Yrs$TICKER)
 factor.vars <- c('MKT.RF', 'SMB', 'HML')
@@ -143,6 +147,7 @@ avg.coefs <- colMeans(gamma.coefs[, 2:ncol(gamma.coefs)])
 avg.coefs
 ```
 
+## Fama-Macbeth plm 
 
 ```{r Fama-MacBeth method with plm, echo=FALSE, results='hide'}
 
@@ -153,7 +158,7 @@ avg.coefs
 library(plm)             # to estimate model
 
 # match and merge FF3 factors data and stocks data
-test.data.plm <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
+test.data.plm <- test.data
 
 # Indexes to determine panel structure
 # 'PERIOD.ID', each date gets same number id across
@@ -171,7 +176,7 @@ test.data.plm <- merge(test.data.plm, assets.id) # this messes up dates order wi
 test.data.plm <- test.data.plm[order(test.data.plm[, 'ASSET.ID'], test.data.plm[, 'PERIOD.ID']), ]
 row.names(test.data.plm) <- NULL
 
-test.data.plm$EXC.RETURN <- test.data.plm$RETURN - test.data.plm$RF # FF risk-free rate (1-month T-bill rate)
+#test.data.plm$EXC.RETURN <- test.data.plm$RETURN - test.data.plm$RF # FF risk-free rate (1-month T-bill rate)
 test.data.input <- test.data.plm[, c("ASSET.ID", "PERIOD.ID", "DATE", "EXC.RETURN", "MKT.RF", "SMB", "HML")]
 
 # Time-series regressions
