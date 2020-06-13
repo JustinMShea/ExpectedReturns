@@ -26,6 +26,8 @@ Depends:
 Imports:
   xts,
   XML
+Remotes:  
+    braverock/FactorAnalytics
 License: GPL-3
 VignetteBuilder: knitr
 Encoding: UTF-8
