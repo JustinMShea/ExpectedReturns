@@ -63,7 +63,7 @@ library(xts)
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
 ## Get and set data to pass to fitFfm()
-# data("factorDataSetDjia5Yrs") # don't run upon knitting
+data("factorDataSetDjia5Yrs") # don't run upon knitting
 # select some variables needed
 factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
 ff3.data.monthly <- GetFactors('FF3', 'FF', freq='monthly') # don't run upon knitting
