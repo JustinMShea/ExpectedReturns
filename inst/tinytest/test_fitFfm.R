@@ -19,7 +19,7 @@ fit.test.aa <- fitFfm(data=test.data.aa, asset.var="TICKER", ret.var="RETURN",
 
 expect_error(class(fit.test.aa), "object 'fit.test.aa' not found")
  # lm on a single equity AA works fine ####
-lm.test.aa <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data = test.data.aa)
+lm.test.aa <- lm(RETURN ~ MKTCAP + ENTVAL + SIZE, data = test.data.aa)
 
 expect_identical(class(lm.test.aa), "lm")
 
