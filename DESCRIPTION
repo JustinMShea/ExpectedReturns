@@ -1,7 +1,7 @@
 Package: ExpectedReturns
 Type: Package
 Title: Reproduction of Key Funtionality from Antti Ilmanen's Expected Returns
-Version: 0.1
+Version: 0.2-0
 Date: 2020-05-30
 Authors@R: c(
     person(given=c("Justin", "M."),family="Shea",role=c("cre","aut","cph"), email="justin.shea@gmail.com")   
@@ -21,7 +21,7 @@ Description: Collection of tools to replicate key functionality from Antti Ilman
   evaluate these models in current market conditions or in different markets than
   those utilized for the text.
 Depends:
-  R (>= 3.0.0),
+  R (>= 3.5),
   FactorAnalytics (>= 2.0.36)
 Imports:
   xts,
@@ -33,4 +33,4 @@ LazyData: true
 URL: https://github.com/justinmshea/ExpectedReturns
 Copyright: (c) 2020
 RoxygenNote: 7.1.0
-Suggests: knitr, rmarkdown, tinytest
+Suggests: knitr, plm, rmarkdown, tinytest
