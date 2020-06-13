@@ -1,4 +1,4 @@
-#' @title Fama-French 3 Factors
+#' Fama-French 3 Factors
 #'
 #' \code{FF3.monthly} Fama French Factors on US Stock Market 1926-2020.
 #'

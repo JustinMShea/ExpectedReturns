@@ -39,15 +39,15 @@ mentioned authors or copyright holders (see 'Source' below).}
 GetFactors(x, src, freq, term, country = NULL)
 }
 \arguments{
-\item{x}{A character specifying the query specifying the data set to download. One of 'FF3', 'FF5', 'MOM' or 'REV'. See 'Details'.}
+\item{x}{A character string specifying the query specifying the data set to download. One of 'FF3', 'FF5', 'MOM' or 'REV'. See 'Details'.}
 
-\item{src}{A character, the source to download data from. Currently only 'FF' (default) is available.}
+\item{src}{A character string, the source to download data from. Currently only 'FF' (default) is available.}
 
-\item{freq}{A character, specifying . One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.}
+\item{freq}{A character string, specifying `x` data frequency. One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.}
 
 \item{term}{A character to be additionally provided when `x='REV'`. Either 'ST' (short-term, default) or 'LT' (long term).}
 
-\item{country}{A character indicating for which country Fama-French's factors are wanted. Default is U.S. factors. See 'Details' for other countries are available.
+\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.
 # @param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
 
 TODO: `verbose`, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info}
@@ -99,7 +99,7 @@ The parameter `country` can specify one of those "country" (country or region)
 made available by Fama-French.
 Countries they make available are 'Asia Pacific ex Japan', 'Developed',
 'Developed ex US', 'Emerging', 'Europe', 'Japan', 'North America' and
-'United States' (the 'domestic'country with respect to which the standard
+'United States' (the 'domestic' country with respect to which the standard
 Fama-French's factors are computed, with markets being NYSE, AMEX and NASDAQ).
 
 The `RF` column refers the risk-free rate (e.g., 1-month TBill return for the
@@ -114,11 +114,8 @@ for the three-factor model only.
 }
 \examples{
 \dontrun{
-# Fama-French Three-factor model factors
+# Fama-French Three-factor model data
 GetFactors('FF3', src='FF')
-
-# Fama-French Three-factor model
-GetFactors('FF3', 'FF')
 
 # Momentum factor
 GetFactors('MOM', 'FF', 'monthly')
@@ -126,8 +123,8 @@ GetFactors('MOM', 'FF', 'monthly')
 # Short-term reversal factor
 GetFactors('REV', 'FF', 'annual', term='ST')
 
-# Fama-French Five-factor model factors
-GetFactors('FF5', 'FF', 'weekly') # fails, as no data currently available
+# Fama-French Five-factor model data
+GetFactors('FF5', 'FF', 'weekly') # fails, no data currently available
 
 } #end dontrun
 

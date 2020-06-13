@@ -3,7 +3,7 @@
 \docType{data}
 \name{FF3.monthly}
 \alias{FF3.monthly}
-\title{@title Fama-French 3 Factors}
+\title{Fama-French 3 Factors}
 \format{An \code{\link{xts}} object containing observations of Fama French Factors on US Stock Market 1926-2020.
  \itemize{
  \item\strong{Frequency:} {Monthly}
