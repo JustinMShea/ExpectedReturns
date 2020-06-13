@@ -66,7 +66,7 @@ library(xts)
 data("factorDataSetDjia5Yrs") # don't run upon knitting
 # select some variables needed
 factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
-ff3.data.monthly <- GetFactors('FF3', 'FF', freq='monthly') # don't run upon knitting
+ff3.data.monthly <- ExpectedReturns::GetFactors('FF3', 'FF', freq='monthly') # don't run upon knitting
 
 # make 'ff3.data.monthly' and 'factorDataSetDjia5Yrs' compatible for testing
 ff3.data.monthly.dates <- index(ff3.data.monthly)
@@ -105,23 +105,6 @@ fit.test
 # 
 # Also, it's rather naive in this form. However, it can be more or less easily 
 # improved and extended to other models. 
-# 
-
-library(FactorAnalytics) # for stock data
-
-# Import data
-
-# Get stocks data
-data("factorDataSetDjia5Yrs")
-factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'RETURN')]
-factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
-
-# Get FF3 factors data
-ff3.data.monthly <- GetFactors('FF3', freq='monthly')
-ff3.data.monthly.dates <- index(ff3.data.monthly)
-ff3.data.monthly <- as.data.frame(coredata(ff3.data.monthly))
-ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
-colnames(ff3.data.monthly)[1] <- 'DATE'
 
 # Merge & match FF3 factors data and stocks data
 test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
@@ -161,26 +144,13 @@ avg.coefs
 ```
 
 
-```{r Fama-MacBeth method with 'plm', echo=FALSE, results='hide'}
+```{r Fama-MacBeth method with plm, echo=FALSE, results='hide'}
 
 # NOTE: 
 # same limitations stated in previous TODOs still hold.
 # Only concerning with the core mechanics so far.
 
-library(FactorAnalytics) # to get stock data
 library(plm)             # to estimate model
-
-# Get stocks data
-data("factorDataSetDjia5Yrs")
-factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'RETURN')]
-factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
-
-# Get FF3 factors data
-ff3.data.monthly <- GetFactors('FF3', freq='monthly')
-ff3.data.monthly.dates <- zoo::index(ff3.data.monthly)
-ff3.data.monthly <- as.data.frame(zoo::coredata(ff3.data.monthly))
-ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
-colnames(ff3.data.monthly)[1] <- 'DATE'
 
 # match and merge FF3 factors data and stocks data
 test.data.plm <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
