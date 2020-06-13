@@ -57,20 +57,20 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 # 
 
 # install_github('FactorAnalytics')
-library(FactorAnalytics)
-library(xts)
+library(ExpectedReturns)
 
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
 ## Get and set data to pass to fitFfm()
-data("factorDataSetDjia5Yrs") # don't run upon knitting
+data("factorDataSetDjia5Yrs") 
+data("FF3.monthly")
+
 # select some variables needed
 factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
-ff3.data.monthly <- ExpectedReturns::GetFactors('FF3', 'FF', freq='monthly') # don't run upon knitting
 
 # make 'ff3.data.monthly' and 'factorDataSetDjia5Yrs' compatible for testing
-ff3.data.monthly.dates <- index(ff3.data.monthly)
-ff3.data.monthly <- as.data.frame(coredata(ff3.data.monthly))
+ff3.data.monthly.dates <- index(FF3.monthly)
+ff3.data.monthly <- as.data.frame(coredata(FF3.monthly))
 ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
 colnames(ff3.data.monthly)[1] <- 'DATE'
 factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
