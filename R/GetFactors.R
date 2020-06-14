@@ -90,6 +90,9 @@
 #'
 #' } #end dontrun
 #'
+#' @importFrom utils download.file read.csv unzip
+#' @importFrom xts as.xts
+#'
 #' @export
 #'
 GetFactors <- function(x
