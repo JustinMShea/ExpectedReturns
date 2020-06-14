@@ -2,38 +2,11 @@
 % Please edit documentation in R/GetFactors.R
 \name{GetFactors}
 \alias{GetFactors}
-\title{Scrape Academic Financial Data Libraries
-
-This is a convenience function to provide an easy way to download research
-financial data sets from several accredited sources.
-Specifically, it allows to import them in the `R` environment as `xts` objects.
-
-The scientific libraries here contemplated are from several researchers as,
-unfortunately, an open source systematic collection is not available at this
-time. On one hand, these resources - of admirable effort - lack important features
-(financial) databases guarantee; most notably, this results in the impossibility
-to leverage APIs as in most cases there aren't any.
-On the other hand, these data sets satisfy important characteristics: they are
-open sourced, public and free to use, collected by world renowned Researchers
-of the field (Nobel Laureates in some instances, as is the case for
-Prof. *Eugene F. Fama* and Prof. *Robert J. Shiller*).
-
-TODO: provide a general overview of data made available
-In the case of the Fama-French's online library, generally stock data is obtained
-from the *Center for Research in Security Prices, LLC* (CRSP) and the risk-free
-rate is from *Ibbotson and Associates, Inc.* or *Bloomberg* databases.
-
-Please be considerate while using the function. In particular, do not send too
-frequent requests to the web source as the supported/tolerated request rate is
-unknown. Usage remains at your own discretion and responsibility.
-TODO: deal with loops internally so to include some sleeping time?
-
-All the credits for collecting, maintaining and sharing data belong to the
-mentioned authors or copyright holders (see 'Source' below).}
+\title{Scrape Academic Financial Data Libraries}
 \source{
-[Kenneth F. French's data library](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html),
-[Robert Shiller's online data](http://www.econ.yale.edu/~shiller/data.htm),
-[AQR data sets](https://www.aqr.com/Insights/Datasets)
+\href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library},
+\href{http://www.econ.yale.edu/~shiller/data.htm}{Robert Shiller's online data},
+\href{https://www.aqr.com/Insights/Datasets}{AQR data sets}
 }
 \usage{
 GetFactors(x, src, freq, term, country = NULL)
@@ -43,17 +16,16 @@ GetFactors(x, src, freq, term, country = NULL)
 
 \item{src}{A character string, the source to download data from. Currently only 'FF' (default) is available.}
 
-\item{freq}{A character string, specifying `x` data frequency. One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.}
+\item{freq}{A character string, specifying \code{x} data frequency. One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.}
 
-\item{term}{A character to be additionally provided when `x='REV'`. Either 'ST' (short-term, default) or 'LT' (long term).}
+\item{term}{A character to be additionally provided when \code{x='REV'}. Either 'ST' (short-term, default) or 'LT' (long term).}
 
-\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.
-# @param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
+\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.@param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
 
-TODO: `verbose`, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info}
+TODO: \code{verbose}, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info}
 }
 \value{
-An `xts` object with columns being the requested factors over the whole period available.
+An \code{xts} object with columns being the requested factors over the whole period available.
 
 TODO: document the object columns and their name
 
@@ -65,12 +37,9 @@ A sign that the data file downloaded may be incomplete is the lack of the header
 as specified above.
 }
 \description{
-Scrape Academic Financial Data Libraries
-
 This is a convenience function to provide an easy way to download research
 financial data sets from several accredited sources.
-Specifically, it allows to import them in the `R` environment as `xts` objects.
-
+Specifically, it allows to import them in the \code{R} environment as \code{xts} objects.
 The scientific libraries here contemplated are from several researchers as,
 unfortunately, an open source systematic collection is not available at this
 time. On one hand, these resources - of admirable effort - lack important features
@@ -79,12 +48,12 @@ to leverage APIs as in most cases there aren't any.
 On the other hand, these data sets satisfy important characteristics: they are
 open sourced, public and free to use, collected by world renowned Researchers
 of the field (Nobel Laureates in some instances, as is the case for
-Prof. *Eugene F. Fama* and Prof. *Robert J. Shiller*).
+Prof. \emph{Eugene F. Fama} and Prof. \emph{Robert J. Shiller}).
 
 TODO: provide a general overview of data made available
 In the case of the Fama-French's online library, generally stock data is obtained
-from the *Center for Research in Security Prices, LLC* (CRSP) and the risk-free
-rate is from *Ibbotson and Associates, Inc.* or *Bloomberg* databases.
+from the \emph{Center for Research in Security Prices, LLC} (CRSP) and the risk-free
+rate is from \emph{Ibbotson and Associates, Inc.} or \emph{Bloomberg} databases.
 
 Please be considerate while using the function. In particular, do not send too
 frequent requests to the web source as the supported/tolerated request rate is
@@ -95,20 +64,20 @@ All the credits for collecting, maintaining and sharing data belong to the
 mentioned authors or copyright holders (see 'Source' below).
 }
 \details{
-The parameter `country` can specify one of those "country" (country or region)
+The parameter \code{country} can specify one of those "country" (country or region)
 made available by Fama-French.
 Countries they make available are 'Asia Pacific ex Japan', 'Developed',
 'Developed ex US', 'Emerging', 'Europe', 'Japan', 'North America' and
 'United States' (the 'domestic' country with respect to which the standard
 Fama-French's factors are computed, with markets being NYSE, AMEX and NASDAQ).
 
-The `RF` column refers the risk-free rate (e.g., 1-month TBill return for the
+The \code{RF} column refers the risk-free rate (e.g., 1-month TBill return for the
 U.S.).
 
 Fama-French often indicate missing data by -99.99 or -999.
 
 Also, note that not all the Fama-French's series are available with respect to
-all the possible frequencies specifiable with `freq`.
+all the possible frequencies specifiable with \code{freq}.
 In particular, with respect to factor data, weekly data frequency is available
 for the three-factor model only.
 }

@@ -35,4 +35,5 @@ LazyData: true
 URL: https://github.com/justinmshea/ExpectedReturns
 Copyright: (c) 2020
 RoxygenNote: 7.1.0
+Roxygen: list(markdown = TRUE)
 Suggests: knitr, plm, rmarkdown, tinytest
