@@ -16,44 +16,27 @@ r_build_args: "--no-build-vignettes"
 r_check_args: "--no-build-vignettes --ignore-vignettes --as-cran"
 
 # System dependencies
-#apt_packages:
-# - libcurl4-openssl-dev
-# - libxml2-dev
-
+apt_packages:
+ - libmpfr6
+ - libmpfr-dev
+ 
 # Binaries from Michael Rutter's ppa
-# r_binary_packages:
-#  - magrittr
-#  - ggplot2
-#  - plyr
-#  - Rcpp
-#  - RCurl
-#  - shiny
-#  - stringr
-#  - stringi
-#  - MASS
-#  - RColorBrewer
-#  - utf8
-#  - digest
-#  - colorspace
-#  - curl
-#  - openssl
-#  - git2r
-#  - foreach
-#  - iterators
-#  - RJSONIO
-#  - yaml
-#  - testthat
-#  - rgl
+r_binary_packages:
+ - rmpfr
+ - testthat
+ - zoo
+ - xts
+ - plm
 
 # Done via install.packages
 #r_packages:
 
 # Install the bleeding edge version of a package from github (eg to pick
 # up a not-yet-released bugfix)
-# r_github_packages:
-#  - joshuaulrich/xts
-#  - braverock/blotter
-#  - ramnathv/rCharts
+r_github_packages:  
+ - braverock/PerformanceAnalytics
+ - braverock/FactorAnalytics
+ 
 #  - r-lib/covr
 
 # after_success:
