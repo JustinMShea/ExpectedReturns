@@ -20,7 +20,7 @@ download.file(Shiller_CAPE_file, destfile = path)
 ## Load data from Sandbox
 library(xlsx)
 
-## Shiller CAPE data
+## Shiller Alternative TR CAPE data
 # 14 columns - 1. Date, 2. S&P Composite Price (P), 3. Dividend (D), 4. Earnings (E),
 # 5. Consumer Price Index (CPI), 6. Date Fraction, 7. Long Interest Rate (GS10),
 # 8. Real Price, 9. Real Dividend, 10. Real Total Return Price, 11. Real Earnings,
