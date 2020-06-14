@@ -16,28 +16,26 @@ r_build_args: "--no-build-vignettes"
 r_check_args: "--no-build-vignettes --ignore-vignettes --as-cran"
 
 # System dependencies
-#apt_packages:
-# - libmpfr6
-# - libmpfr-dev
+apt_packages:
+ - libmpfr-dev
  
 # Binaries from Michael Rutter's ppa
 r_binary_packages:
- - rmpfr
  - testthat
  - zoo
  - xts
- - plm
 
 # Done via install.packages
-#r_packages:
+r_packages:
+ - Rmpfr
+ - plm
 
 # Install the bleeding edge version of a package from github (eg to pick
 # up a not-yet-released bugfix)
 r_github_packages:  
  - braverock/PerformanceAnalytics
- - braverock/FactorAnalytics
- 
-#  - r-lib/covr
+ - braverock/FactorAnalytics 
+# - r-lib/covr
 
 # after_success:
 #   - travis_wait 30 Rscript -e 'covr::codecov()'
