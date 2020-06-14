@@ -1,9 +1,9 @@
 #' @title Scrape Academic Financial Data Libraries
 #'
+#' @description
 #' This is a convenience function to provide an easy way to download research
 #' financial data sets from several accredited sources.
 #' Specifically, it allows to import them in the `R` environment as `xts` objects.
-#'
 #' The scientific libraries here contemplated are from several researchers as,
 #' unfortunately, an open source systematic collection is not available at this
 #' time. On one hand, these resources - of admirable effort - lack important features

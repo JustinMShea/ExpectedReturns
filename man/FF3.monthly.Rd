@@ -4,18 +4,20 @@
 \name{FF3.monthly}
 \alias{FF3.monthly}
 \title{Fama-French 3 Factors}
-\format{An \code{\link{xts}} object containing observations of Fama French Factors on US Stock Market 1926-2020.
- \itemize{
- \item\strong{Frequency:} {Monthly}
- \item\strong{Date Range:} {1926-07 to 2020-04}
- \item\strong{Data updated:} {2020-06-13 12:55 PM CST}
- \item\strong{MKT.RF:} {add description}
- \item\strong{SMB:} {add description}
- \item\strong{HML:} {add description}
- \item\strong{RF:} {add description}
-}}
+\format{
+An \code{\link{xts}} object containing observations of Fama French Factors on US Stock Market 1926-2020.
+\itemize{
+\item\strong{Frequency:} {Monthly}
+\item\strong{Date Range:} {1926-07 to 2020-04}
+\item\strong{Data updated:} {2020-06-13 12:55 PM CST}
+\item\strong{MKT.RF:} {add description}
+\item\strong{SMB:} {add description}
+\item\strong{HML:} {add description}
+\item\strong{RF:} {add description}
+}
+}
 \source{
-[Kenneth F. French's data library](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html)
+\href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library}
 }
 \usage{
 data(FF3.monthly)
