@@ -3,3 +3,12 @@
 ^\.Rproj\.user$
 ^.placeholder
 sandbox
+\.travis\.yml
+^.*_cache$
+^.*_files$
+tiingoapi\.R
+^.*\.bak$
+^.*\.sav$
+^README\.Rmd$
+^\.vimrc
+^codecov\.yml$
