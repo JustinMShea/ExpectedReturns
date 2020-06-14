@@ -20,10 +20,10 @@ apt_packages:
  - libmpfr-dev
  
 # Binaries from Michael Rutter's ppa
-r_binary_packages:
- - testthat
- - zoo
- - xts
+#r_binary_packages:
+# - testthat
+# - zoo
+# - xts
 
 # Done via install.packages
 r_packages:
