@@ -12,7 +12,7 @@ download.file(AQR_HML_Devil_file, destfile = path)
 library(openxlsx)
 
  ## Excess returns of long/short High Minus Low Devil (HML Devil) factors
-HML_Devil.ExcessReturns <- read.xlsx(path, sheet = 1, startRow = 18, colNames = FALSE)
+HML_Devil.ExcessReturns <- openxlsx::read.xlsx(path, sheet = 1, startRow = 18, colNames = FALSE)
   # NOTE: Due to .xlsx formatting, can't read in with column names automatically
 variable.names <- read.xlsx(path, sheet = 1, startRow = 17)
 colnames(HML_Devil.ExcessReturns) <- variable.names[1,]
