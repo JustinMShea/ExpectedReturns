@@ -20,7 +20,8 @@ GetFactors(x, src, freq, term, country = NULL)
 
 \item{term}{A character to be additionally provided when \code{x='REV'}. Either 'ST' (short-term, default) or 'LT' (long term).}
 
-\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.@param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
+\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.
+TODO: param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
 
 TODO: \code{verbose}, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info}
 }

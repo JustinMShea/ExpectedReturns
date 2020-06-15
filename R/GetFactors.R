@@ -37,7 +37,7 @@
 #' @param freq A character string, specifying `x` data frequency. One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.
 #' @param term A character to be additionally provided when `x='REV'`. Either 'ST' (short-term, default) or 'LT' (long term).
 #' @param country A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.
-#' # @param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
+#' TODO: param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
 #'
 #' TODO: `verbose`, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info
 #'
