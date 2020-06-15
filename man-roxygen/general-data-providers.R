@@ -6,6 +6,6 @@
 #' where Prof. K. R. French explains which data changes from the database have
 #' affected the data series constructed and used in their research.
 #'
-#' There are many other providers involved, examples are Bloomberg, Ibbotson Associates
-#' Inc., Morgan Stanley Capital International, Moody's), which are mentioned at
+#' There are many other providers involved, examples are *Bloomberg*, *Ibbotson Associates Inc.*,
+#' *Morgan Stanley Capital International*, *Moody's*. They are mentioned at
 #' the occurence.

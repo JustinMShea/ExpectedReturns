@@ -1,4 +1,4 @@
-#' @section Book Equity:
+#' @section BE variable:
 #'
 #' *Book equity*, denoted \eqn{BE}, is a firms' financial variable that Fama-French
 #' construct from Compustat data or is collected from the *Moody's Industrial, Financial, and Utilities manuals*.

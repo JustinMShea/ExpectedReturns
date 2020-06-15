@@ -1,4 +1,4 @@
-#' @section Market Equity:
+#' @section Market Equity Variable:
 #'
 #' *Market equity*, also referred to as *size* and denoted \eqn{ME}, is a firms'
 #' financial variable calculated as the product of price times shares outstanding.

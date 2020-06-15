@@ -1,4 +1,4 @@
-#' @section HML Factor:
+#' @section HML factor:
 #'
 #' The `HML` (*High Minus Low*) factor return variable is the average return on
 #' the two value portfolios minus the average return on the two growth portfolios.

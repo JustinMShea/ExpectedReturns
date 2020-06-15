@@ -5,9 +5,19 @@
 \alias{FF3.monthly}
 \title{Fama-French 3 Factors Data Set}
 \format{
-An \code{xts} object containing observations of Fama-French Factors on US Stock
-Market 1926-2020. The object consists of 1126 rows and 4 columns.
-Refer to 'Details' for column variables definitions and their construction.
+An \code{xts} object containing observations of Fama-French Factors on U.S. Stock
+Market.
+\itemize{
+\item \strong{Frequency}: Monthly.
+\item \strong{Date Range}: 1926-07 to 2020-04.
+\item \strong{Data updated}: 2020-06-13 12:55 PM CST.
+\item \strong{MKT.RF}: A numeric. The market portfolio proxy return net of risk-free rate factor. See 'MKT.RF factor' section below.
+\item \strong{SMB}: A numeric. The "Small Minus Big" factor. See 'SMB factor' section below.
+\item \strong{HML}: A numeric. The "High Minus Low" factor. See 'HML factor' section below.
+\item \strong{RF}: A numeric. The risk-free rate on 1-month U.S. T-Bill. See 'RF variable' section below.
+}
+
+The object consists of 1126 rows and 4 columns.
 }
 \source{
 \href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/variable_definitions.html}{K. R. French's Variable Definitions}
@@ -17,19 +27,17 @@ Refer to 'Details' for column variables definitions and their construction.
 \href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library}
 }
 \usage{
-data(FF3.monthly)
+data("FF3.monthly")
 }
 \description{
-\code{FF3.monthly} is the Fama-French Factors monthly data series on U.S. stock market from 1926-07 to 2020-04.
+\code{FF3.monthly} is the Fama-French Three Factors monthly data series on U.S. stock
+market from 1926-07 to 2020-04. The data set also includes the risk-free rate
+on 1-month U.S. T-Bill during the same period.
 }
 \details{
-
+In addition to column definitions, this section contains a glimpse into factors
+construction and their underlying variables.
 }
-\section{Generated from GetFactors()}{
-
-See GetFactors.
-}
-
 \section{Fama-French Three Factors Construction}{
 
 
@@ -37,7 +45,7 @@ The Fama-French factors are constructed using the six value-weight portfolios
 formed on size and book-to-market.
 }
 
-\section{Market Equity}{
+\section{Market Equity Variable}{
 
 
 \emph{Market equity}, also referred to as \emph{size} and denoted \eqn{ME}, is a firms'
@@ -46,7 +54,7 @@ The \emph{stock price} is from CRSP, whereas \emph{shares outstanding} are from 
 (if available) or CRSP.
 }
 
-\section{Book Equity}{
+\section{BE variable}{
 
 
 \emph{Book equity}, denoted \eqn{BE}, is a firms' financial variable that Fama-French
@@ -61,7 +69,7 @@ the par value of preferred stock, or the book value of assets minus total
 liabilities (in that order).
 }
 
-\section{Book-to-market Ratio}{
+\section{BM ratio}{
 
 
 The \emph{book-to-market ratio} of a firm is defined as the ratio between its market
@@ -84,7 +92,7 @@ year end in \eqn{t-1} divided by \eqn{ME} for December of \eqn{t-1}.
 The \emph{BM breakpoints} are the 30th and 70th NYSE percentiles (see \href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/det_beme_breakpoints.html}{K. R. French's Detail for BM Breakpoints}).
 }
 
-\section{RF Variable}{
+\section{RF variable}{
 
 
 The \code{RF} variable refers to the \emph{risk-free rate}. It depends on the period been
@@ -94,7 +102,7 @@ The \code{RF} data series distributed by K. R. French with the Fama-French facto
 data are usually obtained from \emph{Ibbotson Associates Inc. (Morningstar)}.
 }
 
-\section{MKT.RF Factor}{
+\section{MKT.RF factor}{
 
 
 With \code{MKT.RF} we indicate the excess return on the market portfolio return proxy,
@@ -106,13 +114,13 @@ or, as it is also commonly denoted in the literature,
 
 \deqn{MKT.RF = R_{m} - R_{f}}
 
-\eqn{MKT}, is obtained by Fama-French as the value-weight return of all CRSP
+\eqn{MKT} is obtained by Fama-French as the value-weight return of all CRSP
 firms that are incorporated in the U.S. and listed on the NYSE, AMEX, or NASDAQ
 securities markets. These firms must have a CRSP share code of 10 or 11, good
 shares and price data, at the beginning of the period.
 }
 
-\section{SMB Factor}{
+\section{SMB factor}{
 
 
 The \code{SMB} (\emph{Small Minus Big}) factor return variable is the average return on
@@ -132,7 +140,7 @@ weighted average is taken. We thus obtain
 \deqn{SMB = \frac{1}{3}[SMB_{(B/M)} + SMB_{(OP)} + SMB_{(INV)}]}
 }
 
-\section{HML Factor}{
+\section{HML factor}{
 
 
 The \code{HML} (\emph{High Minus Low}) factor return variable is the average return on
@@ -161,8 +169,8 @@ and firms' fundamentals. In particular, see \href{http://mba.tuck.dartmouth.edu/
 where Prof. K. R. French explains which data changes from the database have
 affected the data series constructed and used in their research.
 
-There are many other providers involved, examples are Bloomberg, Ibbotson Associates
-Inc., Morgan Stanley Capital International, Moody's), which are mentioned at
+There are many other providers involved, examples are \emph{Bloomberg}, \emph{Ibbotson Associates Inc.},
+\emph{Morgan Stanley Capital International}, \emph{Moody's}. They are mentioned at
 the occurence.
 }
 
@@ -185,5 +193,8 @@ Fama, Eugene F and French, Kenneth R (1992). The cross-section of expected stock
 Fama, Eugene F and French, Kenneth R (1993). Common risk factors in the returns on stocks and bonds. Journal of Financial Economics.
 
 Davis, Fama, and French (2000). Characteristics, Covariances, and Average Returns: 1929-1997. Journal of Finance.
+}
+\seealso{
+The series was generated with \code{\link[=GetFactors]{GetFactors()}}.
 }
 \keyword{datasets}

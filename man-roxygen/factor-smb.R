@@ -1,4 +1,4 @@
-#' @section SMB Factor:
+#' @section SMB factor:
 #'
 #' The `SMB` (*Small Minus Big*) factor return variable is the average return on
 #' three (nine) small portfolios minus the average return on three (nine) big portfolios.

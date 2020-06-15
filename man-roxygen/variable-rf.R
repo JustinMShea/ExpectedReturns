@@ -1,4 +1,4 @@
-#' @section RF Variable:
+#' @section RF variable:
 #'
 #' The `RF` variable refers to the *risk-free rate*. It depends on the period been
 #' considered and on the country. For example, for U.S. monthly data series is the
