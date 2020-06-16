@@ -5,19 +5,19 @@
 #' prepare the data sets for analyses. These procedures may be simply aimed at
 #' carrying basic checks on data sets, or at applying preliminary analyses to
 #' "modify" the initial data set (among which *data cleaning* is perhaps the
-#' most known one).
+#' best known).
 #' This helper function aims to prepare factor model data for further analyses.
 #'
-#' ## Cross-sectional consistency (a.k.a "balanced panel")
+#' # Cross-sectional consistency (a.k.a "balanced panel")
 #' TODO: crucial checks on cross-section consistency
 #'
-#' ## Data cleaning procedures
+#' # Data cleaning procedures
 #' The function is implemented to carry several data cleaning procedures.
 #' These procedures are often needed in empirical analyses because financial data
 #' are tipically subject to outliers. Common statistical analyses tend to suffer
 #' the effects of these extreme data points, in the sense that their output may
 #' result unreliable.
-#' Several methods, mostly in the realm of *robust statistics* are designed to detect
+#' Several methods, mostly in the realm of *Robust Statistics*, are designed to detect
 #' and alleviate the undue effects of such biases on the phenomena being analyzed.
 #' Engle et al. (2016) illustrates commonly adopted techniques in empirical finance:
 #'
@@ -27,7 +27,7 @@
 #' These methods are summarized below to the extents of our implementation.
 #' Additional information is provided to give some background and further guidance.
 #'
-#' ### Winsorization
+#' ## Winsorization
 #' This technique consists in setting "the values of a given variable that are
 #' above or below a certain cutoff to that cutoff". The objective is clearly that
 #' of dealing with "moderate" variables, to the extents the phenomena under investigation
@@ -36,17 +36,17 @@
 #' noisy is the variable being analyzed, more noisy variables tends to be winsorized
 #' at a higher cutoff.
 #'
-#' ### Truncation
+#' ## Truncation
 #' Similar to Winsorization, except that the values of a given variable that are
 #' above or below a certain cutoff are removed altogether.
 #'
-#' ### Winsorization/Truncation levels
+#' ## Winsorization/Truncation levels
 #' Winsorization and Truncation are usually conducted symmetrically, meaning that
 #' both series ends levels are equal. However this needs not to be. It is possible
 #' to carry the cleaning procedures at arbitrarily asymmetric levels, depending
 #' on how noisy is financial data being analyzed. This a researchers' decision.
 #'
-#' ### Cross-sectional and time-indexed Winsorization/Truncation
+#' ## Cross-sectional and time-indexed Winsorization/Truncation
 #' There are two ways to perform either cleaning technique:
 #'
 #' * __Cross-sectionally__. Percentiles are based on all values of the given variables
@@ -62,7 +62,7 @@
 #' They also suggest that if any of these choices is assessed to be substantially
 #' influence analyses results, the methodology should be seen with suspicion.
 #'
-#' ### Winsorize or truncate?
+#' ## Winsorize or truncate?
 #' Whether to use either one is a difficult question to answer in general as some
 #' outliers are "legitimate" while others may be data errors.
 #' Most empirical asset pricing researchers choose to use Winsorization instead
@@ -72,11 +72,11 @@
 #' It remains, however, a researchers' decision.
 #'
 #' @param data A `data.frame` specifying data on which the selected procedures are to be carried.
-#' @param lrhs A character vector specifying the following columns of `data`: dates, all the independent variables, finally the independent variable (position matters).
+#' @param lrhs A character vector specifying the following `data` columns: time periods, all the independent variables, finally the dependent variable. Position matters.
 #' @param clean.method A character string. One of `winsor` (default) or `trunc`.
-#' @param clean.bounds A character vector indicating `clean.method` cutoffs.
-#' @param across.panel A boolean. Would you like to clean `data` cross-sectionally or in a time-indexed fashion?
-#' @param ... Additional pass through parameters.
+#' @param clean.bounds A character vector indicating `clean.method` cutoffs. Default bounds are 0.5% and 99.5%.
+#' @param across.panel A boolean. Would you like to clean `data` cross-sectionally (default) or in a time-indexed fashion?
+#' @param ... Any additional pass through parameter.
 #' TODO: param lagged A boolean.
 #'
 #' @return

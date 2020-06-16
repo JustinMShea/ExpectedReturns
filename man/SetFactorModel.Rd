@@ -9,15 +9,15 @@ SetFactorModel(data, lrhs, clean.method, clean.bounds, across.panel, ...)
 \arguments{
 \item{data}{A \code{data.frame} specifying data on which the selected procedures are to be carried.}
 
-\item{lrhs}{A character vector specifying the following columns of \code{data}: dates, all the independent variables, finally the independent variable (position matters).}
+\item{lrhs}{A character vector specifying the following \code{data} columns: time periods, all the independent variables, finally the dependent variable. Position matters.}
 
 \item{clean.method}{A character string. One of \code{winsor} (default) or \code{trunc}.}
 
-\item{clean.bounds}{A character vector indicating \code{clean.method} cutoffs.}
+\item{clean.bounds}{A character vector indicating \code{clean.method} cutoffs. Default bounds are 0.5\% and 99.5\%.}
 
-\item{across.panel}{A boolean. Would you like to clean \code{data} cross-sectionally or in a time-indexed fashion?}
+\item{across.panel}{A boolean. Would you like to clean \code{data} cross-sectionally (default) or in a time-indexed fashion?}
 
-\item{...}{Additional pass through parameters.
+\item{...}{Any additional pass through parameter.
 TODO: param lagged A boolean.}
 }
 \value{
@@ -28,21 +28,23 @@ In data analyses and data mining, there are procedures regularly carried to
 prepare the data sets for analyses. These procedures may be simply aimed at
 carrying basic checks on data sets, or at applying preliminary analyses to
 "modify" the initial data set (among which \emph{data cleaning} is perhaps the
-most known one).
+best known).
 This helper function aims to prepare factor model data for further analyses.
-\subsection{Cross-sectional consistency (a.k.a "balanced panel")}{
+}
+\details{
 
+}
+\section{Cross-sectional consistency (a.k.a "balanced panel")}{
 TODO: crucial checks on cross-section consistency
 }
 
-\subsection{Data cleaning procedures}{
-
+\section{Data cleaning procedures}{
 The function is implemented to carry several data cleaning procedures.
 These procedures are often needed in empirical analyses because financial data
 are tipically subject to outliers. Common statistical analyses tend to suffer
 the effects of these extreme data points, in the sense that their output may
 result unreliable.
-Several methods, mostly in the realm of \emph{robust statistics} are designed to detect
+Several methods, mostly in the realm of \emph{Robust Statistics}, are designed to detect
 and alleviate the undue effects of such biases on the phenomena being analyzed.
 Engle et al. (2016) illustrates commonly adopted techniques in empirical finance:
 \itemize{
@@ -108,12 +110,8 @@ analyses. In other words, Winsorization preserves the number of observations
 in the panel being analyzed and this is a good reason to prefer it.
 It remains, however, a researchers' decision.
 }
+}
 
-}
-}
-\details{
-
-}
 \examples{
 
 }
