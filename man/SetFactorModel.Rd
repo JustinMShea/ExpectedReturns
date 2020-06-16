@@ -4,15 +4,7 @@
 \alias{SetFactorModel}
 \title{Helper Function for Factor Model Data Preprocessing}
 \usage{
-SetFactorModel(
-  data,
-  lrhs,
-  clean.method,
-  clean.bounds,
-  across.panel,
-  lagged,
-  ...
-)
+SetFactorModel(data, lrhs, clean.method, clean.bounds, across.panel, ...)
 }
 \arguments{
 \item{data}{A \code{data.frame} specifying data on which the selected procedures are to be carried.}

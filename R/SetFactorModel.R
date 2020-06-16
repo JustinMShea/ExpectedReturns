@@ -98,7 +98,7 @@ SetFactorModel <- function(data
                            , clean.method
                            , clean.bounds
                            , across.panel
-                           , lagged
+                           # , lagged
                            , ...)
 {
   clean.methods.available <- c('winsor', 'trunc') # TODO: PerformanceAnalytics::clean.boudt()?
