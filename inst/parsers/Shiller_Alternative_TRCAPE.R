@@ -36,6 +36,17 @@ colnames(Shiller_TRCAPE) <- c("Date","P","D","E","CPI","Date_Fraction","Rate_GS1
 # Delete excess column data
 Shiller_TRCAPE <- Shiller_TRCAPE[,-(15:ncol(Shiller_TRCAPE))]
 
-# TODO: Clean up the Date column
-# TODO: Clean up the NAs after latest observation
+# Remove duplicate Date column number 6
+Shiller_TRCAPE <- Shiller_TRCAPE[,-6]
+
+# Clean up non-standard Date format. Example 2018.1, for January 2018. (Thanks Justin Shea, see https://github.com/JustinMShea/neverhpfilter/blob/master/data-raw/data-script.R)
+Shiller_TRCAPE$Date <- as.character(Shiller_TRCAPE$Date)
+Shiller_TRCAPE$Date <- gsub("\\.", "-", Shiller_TRCAPE$Date)
+Shiller_TRCAPE$Date <- gsub("-1$", "-10", Shiller_TRCAPE$Date)
+
+# Convert to xts
+ind <- apply(Shiller_TRCAPE, 1, function(x) all(is.na(x))) # first remove rows entirely NA
+Shiller_TRCAPE <- Shiller_TRCAPE[!ind,]
+Shiller_TRCAPE <- as.xts(Shiller_TRCAPE[-NROW(Shiller_TRCAPE),-1], order.by = as.yearmon(Shiller_TRCAPE$Date[-NROW(Shiller_TRCAPE)], "%Y-%m"))
+
 # TODO: Add tests for changes in the data schema, ie. start row, number of columns etc

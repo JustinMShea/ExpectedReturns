@@ -29,8 +29,21 @@ Shiller_CAPE <- xlsx::read.xlsx(path, sheetIndex = 4, startRow = 8)
 colnames(Shiller_CAPE) <- c("Date","P","D","E","CPI","Date_Fraction","Rate_GS10",
                             "Real_Price","Real_Dividend","Real_Total_Return_Price",
                             "Real_Earnings","Real_TR_Scaled_Earnings","CAPE","TR_CAPE")
+
 # Delete excess column data
 Shiller_CAPE <- Shiller_CAPE[,-(15:ncol(Shiller_CAPE))]
 
-# TODO: Clean up the Date column
-# TODO: Clean up the NAs after latest observation
+# Remove duplicate Date column number 6
+Shiller_CAPE <- Shiller_CAPE[,-6]
+
+# Clean up non-standard Date format. Example 2018.1, for January 2018. (Thanks Justin Shea, see https://github.com/JustinMShea/neverhpfilter/blob/master/data-raw/data-script.R)
+Shiller_CAPE$Date <- as.character(Shiller_CAPE$Date)
+Shiller_CAPE$Date <- gsub("\\.", "-", Shiller_CAPE$Date)
+Shiller_CAPE$Date <- gsub("-1$", "-10", Shiller_CAPE$Date)
+
+# Convert to xts
+ind <- apply(Shiller_CAPE, 1, function(x) all(is.na(x))) # first remove rows entirely NA
+Shiller_CAPE <- Shiller_CAPE[!ind,]
+Shiller_CAPE <- as.xts(Shiller_CAPE[-NROW(Shiller_CAPE),-1], order.by = as.yearmon(Shiller_CAPE$Date[-NROW(Shiller_CAPE)], "%Y-%m"))
+
+# TODO: Add tests for changes in the data schema, ie. start row, number of columns etc
