@@ -17,15 +17,6 @@ path <- "sandbox/data/AQR_HML_Devil.xlsx"
 
 ### 1. Long/short High Minus Low Devil (HML Devil) factors
 
-<<<<<<< HEAD
- ## Excess returns of long/short High Minus Low Devil (HML Devil) factors
-HML_Devil.ExcessReturns <- openxlsx::read.xlsx(path, sheet = 1, startRow = 18, colNames = FALSE)
-  # NOTE: Due to .xlsx formatting, can't read in with column names automatically
-variable.names <- read.xlsx(path, sheet = 1, startRow = 17)
-colnames(HML_Devil.ExcessReturns) <- variable.names[1,]
-rm(variable.names)
-HML_Devil.ExcessReturns$DATE <- as.Date(HML_Devil.ExcessReturns$DATE, format = "%m/%d/%Y")
-=======
 HML_Devil.ExcessReturns <- read.xlsx(path, sheet = 1, startRow = 18, colNames = FALSE)
     # NOTE: Due to .xlsx formatting, can't read in with column names automatically
     variable.names <- read.xlsx(path, sheet = 1, startRow = 17)
@@ -42,7 +33,6 @@ HML_Devil.Mkt <- read.xlsx(path, sheet = 5, startRow = 18, colNames = FALSE)
     variable.names <- read.xlsx(path, sheet = 5, startRow = 17)
     colnames(HML_Devil.Mkt) <- variable.names[1,]
     rm(variable.names)
->>>>>>> 635ed28dfb52c2c546118f4cdade3a9dd3ef7212
 
     HML_Devil.Mkt$DATE <- as.Date(HML_Devil.Mkt$DATE, format = "%m/%d/%Y")
 
