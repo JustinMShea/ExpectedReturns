@@ -72,4 +72,4 @@ HML_Devil.ME_1 <- read.xlsx(path, sheet = 9, startRow = 19, colNames = FALSE)
     HML_Devil.ME_1$DATE <- as.Date(HML_Devil.ME_1$DATE, format = "%m/%d/%Y")
 
 
-
+## Add script to merge factor data by country below ##

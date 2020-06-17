@@ -1,0 +1,59 @@
+---
+title: "Value-oriented equity selection"
+subtitle: (draft)
+author: "Vito Lestingi & Justin Shea"
+date: "`r Sys.Date()`"
+abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+output: 
+  rmarkdown::pdf_document:
+    citation_package: biblatex
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{\"Expected Returns\" Project Replication Examples}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE
+)
+```
+
+```{r, echo=FALSE}
+# Mentors, please feel free to add yourself to the authors' field if you wish. 
+```
+
+# Introduction
+ 
+Value intro
+
+# Data
+
+Get data from:
+https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/Devil-in-HML-Details.R
+
+# Models
+
+## Fama French HML Benchmark
+
+Use the data above to run the standard FF model with HML save the results
+
+## HML Devil in the Details
+
+Now run a new model, and use the Devil Factors 
+
+Compare the results
+
+## Additional value factors
+
+Inspried by this, we will have to get this data and will cross that bridge when we get there.
+
+https://www.aqr.com/Insights/Perspectives/Is-Systematic-Value-Investing-Dead
+
+
+# Presenting results
+
+Print resulting model estiamtes in a table, comparing estimates and fit. See Engle for inspiration.
