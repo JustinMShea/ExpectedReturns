@@ -71,5 +71,10 @@ HML_Devil.ME_1 <- read.xlsx(path, sheet = 9, startRow = 19, colNames = FALSE)
 
     HML_Devil.ME_1$DATE <- as.Date(HML_Devil.ME_1$DATE, format = "%m/%d/%Y")
 
+### 5. RF: U.S. Treasury bill rates
+    HML_Devil.RF <- read.xlsx(path, sheet = 10, startRow = 18, colNames = TRUE)
+
+    HML_Devil.RF$DATE <- as.Date(HML_Devil.RF$DATE, format = "%m/%d/%Y")
+
 
 ## Add script to merge factor data by country below ##
