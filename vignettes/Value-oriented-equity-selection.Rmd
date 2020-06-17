@@ -39,21 +39,23 @@ https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/Devil-in
 
 ## Fama French HML Benchmark
 
-Use the data above to run the standard FF model with HML save the results
+Use the data above to run the standard FF model and save the results
 
 ## HML Devil in the Details
 
-Now run a new model, and use the Devil Factors 
+Now run a new model, and use the Devil Factors and save the results.
 
 Compare the results
 
 ## Additional value factors
 
-Inspried by this, we will have to get this data and will cross that bridge when we get there.
+Inspired by the recent Cliff Assness discussion and AQR paper by the same title, 
+Let's model the value factors he lists. We have some of these factors already
+in FactorAnaltyics data sets.
 
 https://www.aqr.com/Insights/Perspectives/Is-Systematic-Value-Investing-Dead
 
 
 # Presenting results
 
-Print resulting model estiamtes in a table, comparing estimates and fit. See Engle for inspiration.
+Print resulting model estimates in a table, comparing estimates and fit. See Engle for inspiration.
