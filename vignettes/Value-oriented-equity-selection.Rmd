@@ -186,8 +186,8 @@ Thankfully it can be conveniently be obtained with GetFactors() from Prof. Frenc
 
 ### Which Book-to-market ratio Form Better Value Portfolios? 
 
-```{r Replication code for Exhibit 6 (p. 57)}
-
+```{r Get AF (2013) Factors Data}
+## Load libraries
 library(xts)
 library(plm)
 library(FactorAnalytics)
@@ -221,8 +221,9 @@ factors.data <- data.frame(
   STR=STR[1:TP],
   HML.DEV=HML.DEV[1:TP]
 )
+```
 
-## Get assets data
+```{r Get assets data}
 # NOTE: We only have stocks data for the US available. Also, is monthly data.
 #       So we can only attempt to replicate parts of the paper within these settings for now.
 # NOTE: Authors have both a large assets universe and long time-series.
@@ -233,21 +234,21 @@ data("stocksCRSPscoresSPGMIraw")
 vars.keep <- c('Date', 'Ticker', 'Size', 'MPrc', 'MRetx') # assuming "MRetx" is stock excess returns
 assets.data <- as.data.frame(stocksCRSPscoresSPGMIraw[, ..vars.keep])
 colnames(assets.data) <- toupper(vars.keep)
+```
 
-## Merge Factors and Assets data series available
+```{r Merge Factors and Assets data series available}
 # US sample observation dates in AF paper
 US.SAMPLE.DATE.PAPER <- seq.Date(as.Date('1950-02-01'), as.Date('2012-01-01'), by='month') - 1
 # Dates respecting all our constraints
 dates <- as.Date(Reduce(intersect, list(factors.data$DATE, assets.data$DATE, US.SAMPLE.DATE.PAPER)))
 # Merge
 data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
+```
 
-
-## Replicate Exhibit 6 (p. 57): run time-series regressions
-## TODO: which HML^{devil} is in the available data set, monthly & current? 
-##       I think it is, they call it "our very timely HML^{m,c}". 
-##       The others are the standard HML of FF (annual & lagged/current)
-## TODO: all 'MRETX' missing are for VLO during 1993--1997
+```{r Replicate Part of Exhibit 6 (p. 57) with 'FactorAnalytics'}
+# TODO: which HML^{devil} is in the available data set, monthly & current? 
+#       I think it is, they call it "our very timely HML^{m,c}". 
+#       The others are the standard HML of FF (annual & lagged/current)
 
 #############################################################
 ### Time-series regression with FactorAnalytics::fitFfm() ###
@@ -257,7 +258,9 @@ fit.test.fa <- fitFfm(data=data, asset.var="TICKER", ret.var="MRETX", date.var="
                       exposure.vars=exposure.vars, addIntercept=TRUE)
 # TODO: all 'MRETX' missing are for VLO during 1993--1997. Was it delisted?
 # data[which(is.na(data[, 'MRETX'])), ]
+```
 
+```{r Replicate Part of Exhibit 6 (p. 57) with 'plm'}
 ##############################################
 ### Time-series regression with plm::pmg() ###
 ##############################################
