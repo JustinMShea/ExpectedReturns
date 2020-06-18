@@ -44,7 +44,7 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 
 
 
-```{r data, echo=FALSE, results='hide'}
+```{r data}
 # Following suggestions, I'm working on reproducing models with existing functionality first.
 # In particular, the 'FactorAnalytics' package has been suggest as useful. Which likely it is.
 # However, I'm encountering some small issues in first attempts.
@@ -84,7 +84,7 @@ test.data$RF <- NULL
 
 ## Fama-French
 
-```{r plain Fama-French, echo=FALSE, results='hide'}
+```{r plain Fama-French}
 # factor exposures
 exposure.vars <- c('MKT.RF', 'SMB', 'HML')
 
@@ -98,7 +98,7 @@ fit.test
 
 ## Fama-MacBeth
 
-```{r plain Fama-MacBeth, echo=FALSE, results='hide'}
+```{r plain Fama-MacBeth}
 # 
 # TODO:
 # Again, there are aspects overlooked. Both in the pre-processing (winsorization,
@@ -149,7 +149,7 @@ avg.coefs
 
 ## Fama-Macbeth plm 
 
-```{r Fama-MacBeth method with plm, echo=FALSE, results='hide'}
+```{r Fama-MacBeth method with plm}
 
 # NOTE: 
 # same limitations stated in previous TODOs still hold.
