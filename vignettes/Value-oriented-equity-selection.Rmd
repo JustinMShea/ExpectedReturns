@@ -186,6 +186,105 @@ Thankfully it can be conveniently be obtained with GetFactors() from Prof. Frenc
 
 ### Which Book-to-market ratio Form Better Value Portfolios? 
 
+```{r Replication code for Exhibit 6 (p. 57)}
+
+library(xts)
+library(plm)
+library(FactorAnalytics)
+
+## Run Justin's parser for Asness-Frazzini (2013) replication data set
+https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/Devil-in-HML-Details.R
+
+## Get "The Devil in HML's Details" factors data from Justin's parser
+# NOTE: "International Sample" assets data is missing, consider US only for now 
+#       as we have some assets data available (see below)
+# NOTE: In the paper sample period is 1950-2011 for US, 1983-2011 for Intl.
+FACTORS.DATE <- HML_Devil.HML.DEV$DATE
+MKT.RF <- HML_Devil.MKT$USA # TODO: is it net of RF already?
+SMB <- HML_Devil.SMB$USA
+HML <- HML_Devil.HML_FF$USA
+HML.DEV <- HML_Devil.HML.DEV$USA
+UMD <- HML_Devil.UMD$USA
+REV.ST <- ExpectedReturns::GetFactors('REV', freq='monthly', term='ST') # they omit to provide it (see note 18)
+STR <- data.frame(DATE=index(REV.ST) - 1, STR=coredata(REV.ST))         # recheck "arbitrary" B-o-M 
+STR <- STR[which(STR$DATE %in% FACTORS.DATE), 'REV.ST']
+
+TP <- max(length(FACTORS.DATE), length(REV.ST))
+
+# TODO: STR decimal* or percentage?  
+factors.data <- data.frame(
+  DATE=FACTORS.DATE[1:TP],
+  MKT.RF=MKT.RF[1:TP],
+  SMB=SMB[1:TP],
+  HML=HML[1:TP],
+  UMD=UMD[1:TP],
+  STR=STR[1:TP],
+  HML.DEV=HML.DEV[1:TP]
+)
+
+## Get assets data
+# NOTE: We only have stocks data for the US available. Also, is monthly data.
+#       So we can only attempt to replicate parts of the paper within these settings for now.
+# NOTE: Authors have both a large assets universe and long time-series.
+#       I picked "stocksCRSPscoresSPGMIraw" because, although it has less stocks 
+#       than "Stock.df" (300 assets), it spans a longer period of time (1993-01-31 to 2015-12-31)
+#       within that of interest.
+data("stocksCRSPscoresSPGMIraw")
+vars.keep <- c('Date', 'Ticker', 'Size', 'MPrc', 'MRetx') # assuming "MRetx" is stock excess returns
+assets.data <- as.data.frame(stocksCRSPscoresSPGMIraw[, ..vars.keep])
+colnames(assets.data) <- toupper(vars.keep)
+
+## Merge Factors and Assets data series available
+# US sample observation dates in AF paper
+US.SAMPLE.DATE.PAPER <- seq.Date(as.Date('1950-02-01'), as.Date('2012-01-01'), by='month') - 1
+# Dates respecting all our constraints
+dates <- as.Date(Reduce(intersect, list(factors.data$DATE, assets.data$DATE, US.SAMPLE.DATE.PAPER)))
+# Merge
+data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
+
+
+## Replicate Exhibit 6 (p. 57): run time-series regressions
+## TODO: which HML^{devil} is in the available data set, monthly & current? 
+##       I think it is, they call it "our very timely HML^{m,c}". 
+##       The others are the standard HML of FF (annual & lagged/current)
+## TODO: all 'MRETX' missing are for VLO during 1993--1997
+
+#############################################################
+### Time-series regression with FactorAnalytics::fitFfm() ###
+#############################################################
+exposure.vars <- c('MKT.RF', 'SMB', 'HML', 'UMD', 'STR', 'HML.DEV')
+fit.test.fa <- fitFfm(data=data, asset.var="TICKER", ret.var="MRETX", date.var="DATE", 
+                      exposure.vars=exposure.vars, addIntercept=TRUE)
+# TODO: all 'MRETX' missing are for VLO during 1993--1997. Was it delisted?
+# data[which(is.na(data[, 'MRETX'])), ]
+
+##############################################
+### Time-series regression with plm::pmg() ###
+##############################################
+#
+# Prepare indexes to determine panel structure
+# 'PERIOD.ID', each date gets same number id across
+periods <- unique(data$DATE)
+periods.id <- 1:length(periods)
+periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
+data <- merge(data, periods.id, by='DATE')
+# 'ASSET.ID', each asset gets same number id across
+tickers <- unique(data$TICKER)
+assets.id <- 1:length(tickers)
+assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
+data <- merge(data, assets.id)
+data <- data[order(data[, 'ASSET.ID'], data[, 'PERIOD.ID']), ] # sort data set
+row.names(data) <- NULL
+# Time-series regressions
+fit.test.plm <- plm::pmg(MRETX ~ MKT.RF + SMB + HML + UMD + STR + HML.DEV, 
+                         data=data, index=c('ASSET.ID', 'PERIOD.ID'))
+summary(fit.test.plm)            # average coefficients
+betas <- t(fit.test.plm$indcoef) # all coefficients
+rownames(betas) <- tickers
+colnames(betas) <- paste('BETA', colnames(betas), sep='.')
+betas
+```
+
 
 ### Value and momentum interaction
 <!--
