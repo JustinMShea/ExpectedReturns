@@ -57,9 +57,9 @@ Compare the results.
 - Justin
 -->
 
-In the following we briefly review \textcite{asness-frazzini-2013} and reproduce 
-this work thanks to replication data sets publicly available. Data are updated 
-and maintained by AQR (www.aqr.com).
+In the following we briefly review \textcite{asness-frazzini-2013} (AF hereafter) 
+and reproduce this work thanks to replication data sets publicly available. Data 
+are updated and maintained by AQR (www.aqr.com).
 As will be clear from further discussions, for their analysis authors use data until
 2010 or 2011, depending on the specific value measures being constructed, compared,
 and analyzed.
@@ -70,12 +70,12 @@ reported on July, 31, 1926.
 
 ### Value measures
 Introducing the value measures contemplated in this work, the first value measure 
-studied is the standard practice pioneered by fama-french-1992. It is the most 
-widely used measure in the literature and as such it is also referred to as the 
-"standard method". 
+studied is the standard practice pioneered by \textcite{fama-french-1992}. It is 
+the most widely used measure in the literature and as such it is also referred to 
+as the "standard method". 
 The Fama-French value measure is defined
 $$
-bp_{t}^{a,l} = \ln(B/P_t)
+bp_{t}^{a,l} = \ln(B/P_{fye})
 $$
 where $B$ is the book value per share (or market equity value) and $P_{fye}$ indicates
 the price variable at the end of the fiscal year (rather than in June), both quantities
@@ -157,7 +157,7 @@ $$
 - Asness-Frazzini (2013, p. 49)
 
 > "Does the fallen price make this more likely, less likely, or have no effect on whether this should be considered a value stock?
-The answer depends on how much variation in B/P ratios is due to expected returns and how much is due to changes in future book values. Our findings show that true value stocks often show such price drops, and a mea- sure that takes this fall into consideration, as our proposed method does, is superior to one that ignores it, as the standard method does."
+The answer depends on how much variation in B/P ratios is due to expected returns and how much is due to changes in future book values. Our findings show that true value stocks often show such price drops, and a measure that takes this fall into consideration, as our proposed method does, is superior to one that ignores it, as the standard method does."
 - Asness-Frazzini (2013, pp. 49-50)
 
 <!-- (DATA: where is book equity?)
@@ -195,7 +195,7 @@ The same or very similar arguments, plus some of Ilmanen's "broader themes" (suc
 -->
 The paper also highlights important aspects on the dynamics between value and 
 momentum strategies. In section 3 authors add that:
-> "...in the presence of momentum, and for logical reasons having to do with the overlap of our value measure and the    period used to form momentum, our more timely value measure also outperforms the more standard lagged measure."
+> "...in the presence of momentum, and for logical reasons having to do with the overlap of our value measure and the period used to form momentum, our more timely value measure also outperforms the more standard lagged measure."
 - Asness-Frazzini (2013, p. 56)
 
 ## Additional value factors
