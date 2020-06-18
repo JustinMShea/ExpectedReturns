@@ -40,8 +40,8 @@ r_github_packages:
 notifications:
   slack:
     rooms:
-	    - gsoc20expecte-caf7264:cBk4HV5RtGS9S0AYiiQ4I3a8#general
-	  on_success: change # default: always
+      - gsoc20expecte-caf7264:cBk4HV5RtGS9S0AYiiQ4I3a8#general
+    on_success: change # default: always
     on_failure: always # default: always
 
 # after_success:
