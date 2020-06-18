@@ -44,6 +44,8 @@ Shiller_CAPE$Date <- gsub("-1$", "-10", Shiller_CAPE$Date)
 # Convert to xts
 ind <- apply(Shiller_CAPE, 1, function(x) all(is.na(x))) # first remove rows entirely NA
 Shiller_CAPE <- Shiller_CAPE[!ind,]
-Shiller_CAPE <- as.xts(Shiller_CAPE[-NROW(Shiller_CAPE),-1], order.by = as.yearmon(Shiller_CAPE$Date[-NROW(Shiller_CAPE)], "%Y-%m"))
+
+library(xts)
+Shiller_CAPE <- xts::as.xts(Shiller_CAPE[-NROW(Shiller_CAPE),-1], order.by = as.yearmon(Shiller_CAPE$Date[-NROW(Shiller_CAPE)], "%Y-%m"))
 
 # TODO: Add tests for changes in the data schema, ie. start row, number of columns etc
