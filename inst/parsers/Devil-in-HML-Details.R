@@ -17,24 +17,29 @@ path <- "sandbox/data/AQR_HML_Devil.xlsx"
 
 ### 1. Long/short High Minus Low Devil (HML Devil) factors
 
-HML_Devil.ExcessReturns <- read.xlsx(path, sheet = 1, startRow = 18, colNames = FALSE)
+# NOTE (Vito): Switched 'HML_Devil.ExcessReturns' to 'HML_Devil.HML.DEV' as other factors.
+#              If you already have your own code in place run:
+#              HML_Devil.ExcessReturns <- HML_Devil.HML.DEV
+HML_Devil.HML.DEV <- read.xlsx(path, sheet = 1, startRow = 18, colNames = FALSE)
     # NOTE: Due to .xlsx formatting, can't read in with column names automatically
     variable.names <- read.xlsx(path, sheet = 1, startRow = 17)
-    colnames(HML_Devil.ExcessReturns) <- variable.names[1,]
+    colnames(HML_Devil.HML.DEV) <- variable.names[1,]
     rm(variable.names)
 
-    HML_Devil.ExcessReturns$DATE <- as.Date(HML_Devil.ExcessReturns$DATE, format = "%m/%d/%Y")
+    HML_Devil.HML.DEV$DATE <- as.Date(HML_Devil.HML.DEV$DATE, format = "%m/%d/%Y")
 
 
 ### 2. Fama-French Factors
-
-HML_Devil.Mkt <- read.xlsx(path, sheet = 5, startRow = 18, colNames = FALSE)
+# NOTE (Vito): Switched 'HML_Devil.Mkt' to 'HML_Devil.MKT' for consistency with previous code.
+#              If you already have your own code in place run:
+#              HML_Devil.Mkt <- HML_Devil.MKT
+HML_Devil.MKT <- read.xlsx(path, sheet = 5, startRow = 18, colNames = FALSE)
     # NOTE: Due to .xlsx formatting, can't read in with column names automatically
     variable.names <- read.xlsx(path, sheet = 5, startRow = 17)
-    colnames(HML_Devil.Mkt) <- variable.names[1,]
+    colnames(HML_Devil.MKT) <- variable.names[1,]
     rm(variable.names)
 
-    HML_Devil.Mkt$DATE <- as.Date(HML_Devil.Mkt$DATE, format = "%m/%d/%Y")
+    HML_Devil.MKT$DATE <- as.Date(HML_Devil.MKT$DATE, format = "%m/%d/%Y")
 
 HML_Devil.SMB <- read.xlsx(path, sheet = 6, startRow = 18, colNames = FALSE)
     # NOTE: Due to .xlsx formatting, can't read in with column names automatically
