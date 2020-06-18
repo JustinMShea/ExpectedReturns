@@ -253,9 +253,9 @@ data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 #############################################################
 ### Time-series regression with FactorAnalytics::fitFfm() ###
 #############################################################
-exposure.vars <- c('MKT.RF', 'SMB', 'HML', 'UMD', 'STR', 'HML.DEV')
-fit.test.fa <- fitFfm(data=data, asset.var="TICKER", ret.var="MRETX", date.var="DATE", 
-                      exposure.vars=exposure.vars, addIntercept=TRUE)
+# exposure.vars <- c('MKT.RF', 'SMB', 'HML', 'UMD', 'STR', 'HML.DEV')
+# fit.test.fa <- fitFfm(data=data, asset.var="TICKER", ret.var="MRETX", date.var="DATE", 
+#                       exposure.vars=exposure.vars, addIntercept=TRUE)
 # TODO: all 'MRETX' missing are for VLO during 1993--1997. Was it delisted?
 # data[which(is.na(data[, 'MRETX'])), ]
 ```
