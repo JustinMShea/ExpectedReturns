@@ -1,0 +1,212 @@
+---
+title: "Value-oriented equity selection"
+subtitle: (draft)
+author: "Vito Lestingi & Justin Shea"
+date: "`r Sys.Date()`"
+abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+output: 
+  rmarkdown::pdf_document:
+    citation_package: biblatex
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{Value-oriented equity selection}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE
+)
+```
+
+```{r, echo=FALSE}
+# Mentors, please feel free to add yourself to the authors' field if you wish. 
+```
+
+# Introduction
+ 
+Value intro
+
+# Data
+
+Get data from:
+https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/Devil-in-HML-Details.R
+
+# Models
+
+## Fama French HML Benchmark
+
+Use the data above to run the standard FF model and save the results
+
+<!--
+Have already re-elaborated and shared more or less all about Fama-French Three-factor 
+variables definitions and portfolio construction from their website. We can just retrieve those here. 
+This is one reason why that work was done and time invested in doing so extensively.
+Time that now pays off.
+- Vito
+-->
+
+
+## HML Devil in the Details
+<!-- 
+Now run a new model, and use the Devil Factors and save the results.
+Compare the results. 
+- Justin
+-->
+
+In the following we briefly review \textcite{asness-frazzini-2013} and reproduce 
+this work thanks to replication data sets publicly available. Data are updated 
+and maintained by AQR (www.aqr.com).
+As will be clear from further discussions, for their analysis authors use data until
+2010 or 2011, depending on the specific value measures being constructed, compared,
+and analyzed.
+Updated data sets go beyond the time frame originally covered in the paper, the 
+most recent data are until May, 31, 2020. First observations dates vary by country,
+the United States have the longer data series in the sample with the first observation 
+reported on July, 31, 1926.
+
+### Value measures
+Introducing the value measures contemplated in this work, the first value measure 
+studied is the standard practice pioneered by fama-french-1992. It is the most 
+widely used measure in the literature and as such it is also referred to as the 
+"standard method". 
+The Fama-French value measure is defined
+$$
+bp_{t}^{a,l} = \ln(B/P_t)
+$$
+where $B$ is the book value per share (or market equity value) and $P_{fye}$ indicates
+the price variable at the end of the fiscal year (rather than in June), both quantities
+are expressed in local currency. Note that superscripts $a$ and $l$ indicate respectively
+that this measure is annual (it is updated once a year) and lagged (prices are six 
+to 18 months prior to date, not current prices). The $B/P$ ratio, at times denoted 
+$BM$ is commonly known as the book-to-market ratio.
+
+The second and third values measures, original of this work, are slight modifications 
+of the standard method. As we will outline in further sections, these measures indeed 
+resemble most of the authors research focus: should analysts or investors use lagged 
+price in constructing valuation ratios?
+The measures, expressed in local currency, are
+$$
+bp_{t}^{a,c} = \ln(B^*/P_t)
+$$
+and
+$$
+bp_{t}^{m,c} = \ln(B^*/P_t)
+$$
+The superscripts have the following meaning, the former is updated annually and 
+computed using current prices ($c$ superscript), whereas the latter is update monthly 
+($m$ superscript) and computed using most recent prices as per the June 30 rebalance 
+date ($c$, for current, superscript).
+In both the two above measures $B^*$ stands for the firms' book value per share 
+(or market equity value) that has been adjusted for splits, dividends, and other 
+corporate actions between fiscal year-end and portfolio formation dates. In other 
+words, we can express this financial variable by means of an adjustment ratio:
+$$
+B^* = B\frac{Adj_t}{Adj_{fye}}
+$$
+with $Adj$ the cumulative adjustment factor, which adjusts between the fiscal 
+year-end and the current date $t$.
+
+All the three measures above are related to one another by the following relations,
+$$
+bp_{t}^{a,c} = bp_{t}^{a,l} - r_{fye,t}
+$$
+$$
+bp_{t}^{m,c} = bp_{t}^{a,c} - r_{t,t+k}
+$$
+where 
+$$
+r_{t,s} = \ln(1 + R_{t,s})
+$$
+is the total log return between date $t$ and $t < s$. 
+
+### Portfolio construction
+<!--
+I have already re-elaborated and shared more or less all about Fama-French Three-factor 
+definitions and construction from their website. 
+We can:
+- simply retrieve those definitions here as well;
+- discuss them only in the usual Fama-French model in its own section above (preferred).
+Anyways, this is precisely why that method was used and time invested in doing so.
+NOTE: This holds for U.S. calculation based factors, *not* for the International sample.
+For the latter I'll add details and will be straightforward as well thereafter.
+(see here meanwhile: http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html#International)
+
+- Vito
+-->
+All portfolio returns are in USD, excess returns are returns above the U.S. Treasury bill rate.
+
+The $HML^{devil}$ factor introduced by the authors is constructed from value-weighted portfolios with size/book-to-market breakpoints updated every calendar month. Portfolios are rebalanced every calendar month to maintain weights. The factor is defined as the average return on the two values portfolios minus the average return on the two growth portfolios, 
+$$
+HML^{devil} = \frac{1}{2}[(\textrm{Small Value} + \textrm{Big Value}) - (\textrm{Small Growth} + \textrm{Big Growth})]
+$$
+
+
+### What Proxies Best for the True Unobservable Book-to-market ratio?
+
+The authors propose a less lagged version of the standard $BP_{t-1}^{a,l}$, which 
+they define
+$$
+BP_{t-1}^{a,c} = \frac{B_{t-1}}{P_{t,(June)}}
+$$
+
+> "We show that using a more-current price is superior to the standard method of using prices at fiscal year-end as a proxy for the true B/P ratio, and superior in five-factor model regressions."
+- Asness-Frazzini (2013, p. 49)
+
+> "Does the fallen price make this more likely, less likely, or have no effect on whether this should be considered a value stock?
+The answer depends on how much variation in B/P ratios is due to expected returns and how much is due to changes in future book values. Our findings show that true value stocks often show such price drops, and a mea- sure that takes this fall into consideration, as our proposed method does, is superior to one that ignores it, as the standard method does."
+- Asness-Frazzini (2013, pp. 49-50)
+
+<!-- (DATA: where is book equity?)
+To reproduce these results I need more data than currently available. 
+Authors provide ME in the data sets you parsed, but BE is needed as well to get BMs.
+
+Now, it seems to me that FactorsAnalytics' 'factorDataSetDjia5Yrs' data contains
+P2B for DJIA companies so we may in principle recover data from there. 
+But I don't think it's enough, it's not the same assets universe.
+From the authors ("DATA, METHODOLOGY, AND TERMINOLOGY", p. 50):
+"Our U.S. equity data includes all available common stocks on the merged CRSP/XpressFeed 
+data between July 1950 and March 2011."
+
+Doing some research I found that the great Prof. French shares BE data for the US.
+(http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html#Breakpoints).
+Couldn't find anything close to the "International sample".
+
+- Vito
+-->
+
+<!-- (DATA: where is the short-term reversal factor?)
+I can't find it from your parsed data set. Is it in the original data set?
+Thankfully it can be conveniently be obtained with GetFactors() from Prof. French...
+- Vito
+-->
+
+### Which Book-to-market ratio Form Better Value Portfolios? 
+
+
+### Value and momentum interaction
+<!--
+This is the reason last Saturday we were discussing to start from "Value and Momentum Everywhere". 
+The same or very similar arguments, plus some of Ilmanen's "broader themes" (such as the liquidity factor), are discussed and analyzed in more depth. This fact is indicated by authors themselves, see p. 936 of "Value and Momentum Everywhere".
+- Vito
+-->
+The paper also highlights important aspects on the dynamics between value and 
+momentum strategies. In section 3 authors add that:
+> "...in the presence of momentum, and for logical reasons having to do with the overlap of our value measure and the    period used to form momentum, our more timely value measure also outperforms the more standard lagged measure."
+- Asness-Frazzini (2013, p. 56)
+
+## Additional value factors
+
+Inspired by the recent Cliff Assness discussion and AQR paper by the same title, 
+Let's model the value factors he lists. We have some of these factors already
+in FactorAnaltyics data sets.
+
+https://www.aqr.com/Insights/Perspectives/Is-Systematic-Value-Investing-Dead
+
+
+# Presenting results
+
+Print resulting model estimates in a table, comparing estimates and fit. See Engle for inspiration.
