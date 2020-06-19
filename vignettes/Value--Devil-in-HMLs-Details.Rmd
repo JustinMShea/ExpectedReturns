@@ -1,5 +1,5 @@
 ---
-title: "Value-oriented equity selection"
+title: "Value-oriented equity selection: The Devil in HML's Details"
 subtitle: (draft)
 author: "Vito Lestingi & Justin Shea"
 date: "`r Sys.Date()`"
