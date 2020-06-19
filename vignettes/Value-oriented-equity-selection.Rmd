@@ -77,7 +77,7 @@ The Fama-French value measure is defined
 $$
 bp_{t}^{a,l} = \ln(B/P_{fye})
 $$
-where $B$ is the book value per share (or market equity value) and $P_{fye}$ indicates
+where $B$ is the book value per share and $P_{fye}$ indicates
 the price variable at the end of the fiscal year (rather than in June), both quantities
 are expressed in local currency. Note that superscripts $a$ and $l$ indicate respectively
 that this measure is annual (it is updated once a year) and lagged (prices are six 
