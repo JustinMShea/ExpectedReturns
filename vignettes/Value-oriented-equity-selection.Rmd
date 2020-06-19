@@ -245,7 +245,7 @@ dates <- as.Date(Reduce(intersect, list(factors.data$DATE, assets.data$DATE, US.
 data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 ```
 
-```{r Replicate Part of Exhibit 6 (p. 57) with 'FactorAnalytics'}
+```{r Replicate Part of Exhibit 6 (p. 57) with FactorAnalytics}
 # TODO: which HML^{devil} is in the available data set, monthly & current? 
 #       I think it is, they call it "our very timely HML^{m,c}". 
 #       The others are the standard HML of FF (annual & lagged/current)
@@ -260,7 +260,7 @@ data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 # data[which(is.na(data[, 'MRETX'])), ]
 ```
 
-```{r Replicate Part of Exhibit 6 (p. 57) with 'plm'}
+```{r Replicate Part of Exhibit 6 (p. 57) with plm}
 ##############################################
 ### Time-series regression with plm::pmg() ###
 ##############################################
