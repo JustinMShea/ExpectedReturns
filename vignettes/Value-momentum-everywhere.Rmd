@@ -28,3 +28,12 @@ knitr::opts_chunk$set(
 
 # Introduction
 In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP thereafter).
+
+
+## Comovement and Asset Pricing Tests
+```{r Get VME data}
+# Until we establish a way to source in data, get data from here:
+# - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Factors.R
+# - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Portfolios.R
+```
+
