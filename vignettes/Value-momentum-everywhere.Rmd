@@ -20,6 +20,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   echo = TRUE
 )
+
+library(xts)
+
 ```
 
 ```{r, echo=FALSE}
@@ -31,9 +34,30 @@ In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP there
 
 
 ## Comovement and Asset Pricing Tests
-```{r Get VME data}
+```{r Get factors and portfolios data}
+## VME data
 # Until we establish a way to source in data, get data from here:
 # - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Factors.R
 # - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Portfolios.R
+
+# Value and Momentum Everywhere Factors
+VAL.EVR <- VME.Factors$VAL.EVR
+MOM.EVR <- VME.Factors$MOM.EVR
+
+# AMP Portfolios 
+VME.DATE <- VME.Portfolios$DATE
+VME.Portfolios$DATE <- NULL
+VME.PORTF.RET <- as.xts(apply(VME.Portfolios, 2, as.numeric), order.by=VME.DATE)
+
+## Get Fama-French Four Factors (MKT.RF, SMB, HML, MOM)
+FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
+MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
+
+## Merge FF4 and VME.PORTF.RET
+min.tp <- max(first(index(VME.PORTF.RET)), first(index(FF3)), first(index(MOM)))
+max.tp <- min(last(index(VME.PORTF.RET)), last(index(FF3)), last(index(MOM)))
+tp <- paste(min.tp, max.tp, sep='/')
+data <- merge(VME.PORTF.RET[tp, ], FF3[tp, ], MOM[tp, ])
+data <- data.frame(DATE=index(data), coredata(data))
 ```
 
