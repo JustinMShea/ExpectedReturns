@@ -193,7 +193,7 @@ library(plm)
 library(FactorAnalytics)
 
 ## Run Justin's parser for Asness-Frazzini (2013) replication data set
-https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/Devil-in-HML-Details.R
+# https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/Devil-in-HML-Details.R
 
 ## Get "The Devil in HML's Details" factors data from Justin's parser
 # NOTE: "International Sample" assets data is missing, consider US only for now 
