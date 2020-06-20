@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 )
 
 library(xts)
+library(plm)
 
 ```
 
@@ -30,8 +31,40 @@ library(xts)
 ```
 
 # Introduction
-In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP thereafter).
+In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP hereafter).
+The authors aim at providing a *global*, across both markets/asset classes and across countries, asset pricing approach. This is what "everywhere" in "Value and Momentum *Everywhere*" stands for.
 
+## Data and Portfolio Construction
+Factors and portfolios are constructed from January 1972 through July 2011. All data series have a monthly frequency. They construct zero-cost long/short VME factors and long-only value and momentum portfolios, sorted into tertiles, for both value and momentum in eight markets/asset classes.
+
+### Asset classes and countries
+<!--
+If I'll have time after coding, I'd make a detailed table here.
+- Vito
+-->
+The markets/asset classes contemplated include four individual equity markets (stock selection) and four broad asset classes (asset allocation). The four stock selection markets are: U.S. equities (US), U.K. equities (UK), Continental Europe equities (EU), Japanese equities (JP). The four asset allocation classes are: global equity indices (EQ), currencies (FX), fixed income (FI), and commodity futures (CM).
+
+They are global individual stocks, global equity indices, currencies, global government bonds, commodity futures (27 types by different underlying),  
+
+While the countries are...
+
+### Value and momentum measures
+* **Value measure(s).** Differ by asset class as not every of them has a book value measure as stocks do, thus the book-to-market ratio cannot be derived in most classes.
+* **Momentum measure.** It is same for all asset classes, i.e. the common measure of the past 12-month cumulative raw return on the asset skipping the most recent month's return.
+
+## Relation to Macroeconomic and Liquidity Risk
+This section of \textcite{asness-frazzini-pedersen-2013} blends very well with \textcite{ilmanen-2011}'s "Broader Themes", especially with what are commonly referred to as "macroeconomic factors" or simply "macros" in the financial industry jargon. Indeed, at a first sight it appears a more quantitative-oriented look at many ideas the former author already discussed.
+In particular, the authors study the underlying economic sources driving value and momentum returns: 
+* Long run consumption growth
+* MSCI world index ("market")
+* Recession dummy
+* GDP growth
+* Liquidity
+
+The *Liquidity Risk Exposure* is particularly interesting to study and deserves particular attention. In this context, it is so especially from the point of view of market-level traded liquidity, given the ubiquitous influence of the factor for the entire economic system. 
+It really has been in Economists' thoughts since far longer than the modern standard literature reminds us. Recently
+it has been linked with financial crises (see what happened in 1987), flash crashes (2010), and vice versa is very often in policy makers' decisions. See, for example, monetary policies actions Central Banks adopt worldwide in this regard.
+\textcite{asness-moskowitz-pedersen-2013} pay particular attention to global events and link them with liquidity shocks. Then, they investigate the relation between value and momentum returns and liquidity risk.
 
 ## Comovement and Asset Pricing Tests
 ```{r Get factors and portfolios data}
@@ -60,4 +93,19 @@ tp <- paste(min.tp, max.tp, sep='/')
 data <- merge(VME.PORTF.RET[tp, ], FF3[tp, ], MOM[tp, ])
 data <- data.frame(DATE=index(data), coredata(data))
 ```
+
+### Explaining Value/Momentum in One Market with Value/Momentum in Other Markets
+$$
+R_{i,t}^{p} - r_{f,t} = \alpha_{i}^{p} + \beta_{i}^{p}MKT_{t} + v_{i}^{p}\sum_{j \neq i}w_{j}VAL_{t}^{\textrm{everywhere}} + m_{i}^{p}\sum_{j \neq i}w_{j}MOM_{t}^{\textrm{everywhere}} + \epsilon_{i,t}^{p}
+$$
+where $w_{j}$ is the equal volatility weight for each asset class.
+
+### Global Three-Factor Model
+
+$$
+R_{i,t}^{p} - r_{f,t} = \alpha_{i}^{p} + \beta_{i}^{p}MKT_{t} + v_{i}^{p}VAL_{t}^{\textrm{everywhere}} + m_{i}^{p}MOM_{t}^{\textrm{everywhere}} + \epsilon_{i,t}^{p}
+$$
+$R_{i,t}^{p}$ is the time $t$ return to portfolio $p$ among the six high, middle, and low value and momentum portfolios in one of the eight asset markets $i$, for a total of 48 test assets. 
+Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are equal-volatility-weighted across asset-class value and momentum factors.
+
 
