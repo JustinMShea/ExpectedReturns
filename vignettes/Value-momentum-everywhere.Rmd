@@ -74,24 +74,43 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 # - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Portfolios.R
 
 # Value and Momentum Everywhere Factors
-VAL.EVR <- VME.Factors$VAL.EVR
-MOM.EVR <- VME.Factors$MOM.EVR
+VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
 
-# AMP Portfolios 
-VME.DATE <- VME.Portfolios$DATE
+# AMP Portfolios Panel
+VME.PORTF.DATE <- VME.Portfolios$DATE
 VME.Portfolios$DATE <- NULL
-VME.PORTF.RET <- as.xts(apply(VME.Portfolios, 2, as.numeric), order.by=VME.DATE)
+portf.names <- colnames(VME.Portfolios)
+t <- nrow(VME.Portfolios)
+p <- ncol(VME.Portfolios)
+VME.PORTF.RET <- apply(VME.Portfolios, 2, as.numeric)
+portf.names <- as.data.frame(matrix(portf.names, nrow=t, ncol=p, byrow=TRUE))
+VME.PORTF.RET <- asplit(VME.PORTF.RET, 2)
+portf.names <- asplit(portf.names, 2)
+VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
+VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
+VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
+VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
+VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
+VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 
 ## Get Fama-French Four Factors (MKT.RF, SMB, HML, MOM)
 FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
-
-## Merge FF4 and VME.PORTF.RET
-min.tp <- max(first(index(VME.PORTF.RET)), first(index(FF3)), first(index(MOM)))
-max.tp <- min(last(index(VME.PORTF.RET)), last(index(FF3)), last(index(MOM)))
+min.tp <- max(first(index(FF3)), first(index(MOM)))
+max.tp <- min(last(index(FF3)), last(index(MOM)))
 tp <- paste(min.tp, max.tp, sep='/')
-data <- merge(VME.PORTF.RET[tp, ], FF3[tp, ], MOM[tp, ])
-data <- data.frame(DATE=index(data), coredata(data))
+FF4 <- data.frame(
+  DATE=seq.Date(min.tp, max.tp, by='month') - 1, # re-check B-o-M
+  coredata(FF3[tp, ]),
+  coredata(MOM[tp, ])
+)
+
+## Merge FF4, VME Factors and VME.PORTF.RET
+data <- merge(VME.PORTF.RET, FF4, by='DATE')
+data <- merge(data, VME.FACTORS, by='DATE')
+
+## Compute excess returns and merge
+data$EXC.RET <- data$RET - data$RF
 ```
 
 ### Explaining Value/Momentum in One Market with Value/Momentum in Other Markets
@@ -108,4 +127,35 @@ $$
 $R_{i,t}^{p}$ is the time $t$ return to portfolio $p$ among the six high, middle, and low value and momentum portfolios in one of the eight asset markets $i$, for a total of 48 test assets. 
 Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are equal-volatility-weighted across asset-class value and momentum factors.
 
+```{r Global Three-Factor Model}
+# Time-series regression with plm
+# 
+# Prepare indexes to determine panel structure
+# 'DATE.ID', each date gets same number id across
+dates <- unique(data$DATE)
+dates.id <- 1:length(dates)
+dates.id <- data.frame('DATE'=dates, 'DATE.ID'=dates.id)
+data <- merge(data, dates.id, by='DATE')
+# 'PORTF.ID', each asset gets same number id across
+portf <- unique(data$PORTF)
+portf.id <- 1:length(portf)
+portf.id <- data.frame('PORTF'=portf, 'PORTF.ID'=portf.id)
+data <- merge(data, portf.id)
+data <- data[order(data[, 'PORTF.ID'], data[, 'DATE.ID']), ]
+row.names(data) <- NULL
+
+# Time-series regressions
+ts.reg <- plm::pmg(
+  EXC.RET ~ MKT.RF + VAL.EVR + MOM.EVR, # TODO: only model for which we have data
+  data=data, index=c('PORTF.ID', 'DATE.ID')
+)
+summary(ts.reg)            # average coefficients
+betas <- t(ts.reg$indcoef) # all coefficients
+rownames(betas) <- portf
+colnames(betas) <- paste('BETA', colnames(betas), sep='.')
+betas
+
+# Cross-sectional regression
+# TODO: straightforward, we only need 'betas'
+```
 
