@@ -75,8 +75,10 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 
 # Value and Momentum Everywhere Factors
 VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
+VME.FACTORS$VAL.EVR <- as.numeric(VME.FACTORS$VAL.EVR)
+VME.FACTORS$MOM.EVR <- as.numeric(VME.FACTORS$MOM.EVR)
 
-# AMP Portfolios Panel
+# Get AMP Portfolios Returns and make them a panel
 VME.PORTF.DATE <- VME.Portfolios$DATE
 VME.Portfolios$DATE <- NULL
 portf.names <- colnames(VME.Portfolios)
@@ -93,7 +95,7 @@ VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
 VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
 VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 
-## Get Fama-French Four Factors (MKT.RF, SMB, HML, MOM)
+## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
 FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
 min.tp <- max(first(index(FF3)), first(index(MOM)))
@@ -105,11 +107,11 @@ FF4 <- data.frame(
   coredata(MOM[tp, ])
 )
 
-## Merge FF4, VME Factors and VME.PORTF.RET
+## Merge FF4, VME Factors and VME Portfolios Returns
 data <- merge(VME.PORTF.RET, FF4, by='DATE')
 data <- merge(data, VME.FACTORS, by='DATE')
 
-## Compute excess returns and merge
+## Calculate excess returns and merge
 data$EXC.RET <- data$RET - data$RF
 ```
 
@@ -128,9 +130,7 @@ $R_{i,t}^{p}$ is the time $t$ return to portfolio $p$ among the six high, middle
 Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are equal-volatility-weighted across asset-class value and momentum factors.
 
 ```{r Global Three-Factor Model}
-# Time-series regression with plm
-# 
-# Prepare indexes to determine panel structure
+## Prepare indexes to determine panel structure
 # 'DATE.ID', each date gets same number id across
 dates <- unique(data$DATE)
 dates.id <- 1:length(dates)
@@ -149,13 +149,25 @@ ts.reg <- plm::pmg(
   EXC.RET ~ MKT.RF + VAL.EVR + MOM.EVR, # TODO: only model for which we have data
   data=data, index=c('PORTF.ID', 'DATE.ID')
 )
-summary(ts.reg)            # average coefficients
+summary(ts.reg) # average coefficients
 betas <- t(ts.reg$indcoef) # all coefficients
 rownames(betas) <- portf
 colnames(betas) <- paste('BETA', colnames(betas), sep='.')
-betas
 
 # Cross-sectional regression
-# TODO: straightforward, we only need 'betas'
+cs.data <- data[order(data[, 'DATE']), ]
+cs.data <- data.frame(
+  data[, c('DATE', 'EXC.RET', 'DATE.ID', 'PORTF.ID')], 
+  betas[, 2:ncol(betas)]
+)
+cs.reg <- plm::pmg(
+  EXC.RET ~ BETA.MKT.RF + BETA.VAL.EVR + BETA.MOM.EVR, 
+  data=cs.data, index=c('DATE.ID', 'PORTF.ID')
+)
+summary(cs.reg) # average coefficients
+gammas <- cs.reg$indcoef # all coefficients
+gammas <- t(gammas)
+gammas <- data.frame(dates, gammas, row.names=NULL)
+colnames(gammas) <- c('DATE', '(Intercept)', colnames(betas)[-1])
 ```
 
