@@ -171,8 +171,9 @@ gammas <- data.frame(dates, gammas, row.names=NULL)
 colnames(gammas) <- c('DATE', '(Intercept)', colnames(betas)[-1])
 ```
 
-```{r AMP Table 6}
+```{r VME Table 6}
 ### TABLE 6, Panel A,  U.S. Asset Pricing Factors ###
+# NOTE: Here the FF US MKT.RF factor is properly used
 factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM')
 fv.seqs <- 1:length(factors.vars)
 # Time-series regression by model
