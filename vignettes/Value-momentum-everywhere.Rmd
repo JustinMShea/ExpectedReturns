@@ -193,3 +193,24 @@ ts.reg.us <- lapply(fv.seqs, function(x) {
 lapply(ts.reg.us, summary)
 ```
 
+```{r VME Figure 6 plots}
+### AMP Model Plot ###
+VME.Portfolios <- apply(VME.Portfolios, 2, as.numeric)
+amp.factors <- data[1:length(dates), c('MKT.RF', 'VAL.EVR', 'MOM.EVR')]
+amp.factors.avg <- colMeans(amp.factors, na.rm=TRUE)
+# Actual Average Returns 
+# TODO: Full series lengths differ. Should use only obs in regressions
+y <- colMeans(VME.Portfolios, na.rm=TRUE)
+y <- y[sort(names(y))]
+# Expected Returns
+x <- betas %*% c(1, amp.factors.avg)
+x <- x[sort(row.names(x)), ]
+# Plot
+plot(x=x, y=y, main='AMP Global Three-factor Model', 
+     xlab='Portfolio Expected Returns', ylab='Portfolio Realized Average Returns', 
+     pch=20, cex.lab=0.85)
+lines(par()$usr[1:2], par()$usr[3:4], col='gray75')
+text(x=x, y=y, names(x), cex=0.5, pos=4)
+grid()
+```
+
