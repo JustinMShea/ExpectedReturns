@@ -171,3 +171,25 @@ gammas <- data.frame(dates, gammas, row.names=NULL)
 colnames(gammas) <- c('DATE', '(Intercept)', colnames(betas)[-1])
 ```
 
+```{r AMP Table 6}
+### TABLE 6, Panel A,  U.S. Asset Pricing Factors ###
+factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM')
+fv.seqs <- 1:length(factors.vars)
+# Time-series regression by model
+ts.reg.us <- lapply(fv.seqs, function(x) {
+  # Models specifications
+  model.formula <- formula(
+    paste0(
+      'EXC.RET ~ ',
+      paste(factors.vars[1:x], collapse='+')
+    )
+  )
+  plm::pmg(
+    model.formula, data=data, 
+    index=c('PORTF.ID', 'DATE.ID')
+  )
+})
+# Models results
+lapply(ts.reg.us, summary)
+```
+
