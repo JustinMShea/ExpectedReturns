@@ -203,16 +203,17 @@ REV.ST <- ExpectedReturns::GetFactors('REV', freq='monthly', term='ST') # they o
 STR <- data.frame(DATE=index(REV.ST) - 1, STR=coredata(REV.ST))         # recheck "arbitrary" B-o-M 
 STR <- STR[which(STR$DATE %in% FACTORS.DATE), 'REV.ST']
 
+
 TP <- max(length(FACTORS.DATE), length(REV.ST))
 
-# TODO: STR decimal* or percentage?  
+# TODO: STR decimal or percentage?  
 factors.data <- data.frame(
   DATE=FACTORS.DATE[1:TP],
   MKT.RF=MKT.RF[1:TP],
   SMB=SMB[1:TP],
   HML=HML[1:TP],
   UMD=UMD[1:TP],
-  STR=STR[1:TP],
+  STR=STR[1:TP]/100,
   HML.DEV=HML.DEV[1:TP]
 )
 ```
@@ -224,19 +225,19 @@ factors.data <- data.frame(
 #       I picked "stocksCRSPscoresSPGMIraw" because, although it has less stocks 
 #       than "Stock.df" (300 assets), it spans a longer period of time (1993-01-31 to 2015-12-31)
 #       within that of interest.
-data("stocksCRSPscoresSPGMIraw")
-vars.keep <- c('Date', 'Ticker', 'Size', 'MPrc', 'MRetx') # assuming "MRetx" is stock excess returns
-assets.data <- as.data.frame(stocksCRSPscoresSPGMIraw[, ..vars.keep])
-colnames(assets.data) <- toupper(vars.keep)
+# data("stocksCRSPscoresSPGMIraw")
+# vars.keep <- c('Date', 'Ticker', 'Size', 'MPrc', 'MRetx') # assuming "MRetx" is stock excess returns
+# assets.data <- as.data.frame(stocksCRSPscoresSPGMIraw[, ..vars.keep])
+# colnames(assets.data) <- toupper(vars.keep)
 ```
 
 ```{r Merge Factors and Assets data series available}
 # US sample observation dates in AF paper
 US.SAMPLE.DATE.PAPER <- seq.Date(as.Date('1950-02-01'), as.Date('2012-01-01'), by='month') - 1
-# Dates respecting all our constraints
-dates <- as.Date(Reduce(intersect, list(factors.data$DATE, assets.data$DATE, US.SAMPLE.DATE.PAPER)))
+# Dates respecting time constraints
+dates.us <- as.Date(Reduce(intersect, list(factors.data$DATE, US.SAMPLE.DATE.PAPER))) # assets.data$DATE
 # Merge
-data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
+# data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 ```
 
 ```{r Replicate Part of Exhibit 6 (p. 57) with FactorAnalytics}
@@ -247,28 +248,45 @@ data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 # data[which(is.na(data[, 'MRETX'])), ]
 ```
 
-```{r Replicate Part of Exhibit 6 (p. 57) with plm}
-# Prepare indexes to determine panel structure
+```{r HML Devil Exhibit 6}
+# Indexes to determine panel structure
 # 'PERIOD.ID', each date gets same number id across
-periods <- unique(data$DATE)
-periods.id <- 1:length(periods)
-periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
-data <- merge(data, periods.id, by='DATE')
+# periods <- unique(data$DATE)
+# periods.id <- 1:length(periods)
+# periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
+# data <- merge(data, periods.id, by='DATE')
 # 'ASSET.ID', each asset gets same number id across
-tickers <- unique(data$TICKER)
-assets.id <- 1:length(tickers)
-assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
-data <- merge(data, assets.id)
-data <- data[order(data[, 'ASSET.ID'], data[, 'PERIOD.ID']), ] # sort data set
-row.names(data) <- NULL
-# Time-series regressions
-fit.test.plm <- plm::pmg(MRETX ~ MKT.RF + SMB + HML + UMD + STR + HML.DEV, 
-                         data=data, index=c('ASSET.ID', 'PERIOD.ID'))
-summary(fit.test.plm)            # average coefficients
-betas <- t(fit.test.plm$indcoef) # all coefficients
-rownames(betas) <- tickers
-colnames(betas) <- paste('BETA', colnames(betas), sep='.')
-betas
+# tickers <- unique(data$TICKER)
+# assets.id <- 1:length(tickers)
+# assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
+# data <- merge(data, assets.id)
+# data <- data[order(data[, 'ASSET.ID'], data[, 'PERIOD.ID']), ] # sort data set
+# row.names(data) <- NULL
+
+## Time-series regressions US
+# HML annual & lagged
+ts.reg.us.al <- lm(
+  HML ~ MKT.RF + SMB + UMD + STR + HML.DEV, 
+  data=factors.data[which(factors.data$DATE %in% dates.us), ]
+)
+summary(ts.reg.us.al)
+betas.us.al <- coef(ts.reg.us.al)
+names(betas.us.al) <- paste(
+  'BETA', c('(Intercept)', attr(ts.reg.us.al$terms, 'term.labels')), sep='.'
+)
+betas.us.al
+
+# HML monthly & current (HML devil)
+ts.reg.us.mc <- lm(
+  HML.DEV ~ MKT.RF + SMB + UMD + STR + HML, 
+  data=factors.data[which(factors.data$DATE %in% dates.us), ]
+)
+summary(ts.reg.us.mc)
+betas.us.mc <- coef(ts.reg.us.mc)
+names(betas.us.mc) <- paste(
+  'BETA', c('(Intercept)', attr(ts.reg.us.mc$terms, 'term.labels')), sep='.'
+)
+betas.us.mc
 ```
 
 
