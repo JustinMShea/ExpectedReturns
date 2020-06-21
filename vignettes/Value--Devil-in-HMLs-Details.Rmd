@@ -178,12 +178,6 @@ Couldn't find anything close to the "International sample".
 - Vito
 -->
 
-<!-- (DATA: where is the short-term reversal factor?)
-I can't find it from your parsed data set. Is it in the original data set?
-Thankfully it can be conveniently be obtained with GetFactors() from Prof. French...
-- Vito
--->
-
 ### Which Book-to-market ratio Form Better Value Portfolios? 
 
 ```{r Get AF (2013) Factors Data}
@@ -246,13 +240,6 @@ data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 ```
 
 ```{r Replicate Part of Exhibit 6 (p. 57) with FactorAnalytics}
-# TODO: which HML^{devil} is in the available data set, monthly & current? 
-#       I think it is, they call it "our very timely HML^{m,c}". 
-#       The others are the standard HML of FF (annual & lagged/current)
-
-#############################################################
-### Time-series regression with FactorAnalytics::fitFfm() ###
-#############################################################
 # exposure.vars <- c('MKT.RF', 'SMB', 'HML', 'UMD', 'STR', 'HML.DEV')
 # fit.test.fa <- fitFfm(data=data, asset.var="TICKER", ret.var="MRETX", date.var="DATE", 
 #                       exposure.vars=exposure.vars, addIntercept=TRUE)
@@ -261,10 +248,6 @@ data <- merge(assets.data[which(assets.data$DATE %in% dates), ], factors.data)
 ```
 
 ```{r Replicate Part of Exhibit 6 (p. 57) with plm}
-##############################################
-### Time-series regression with plm::pmg() ###
-##############################################
-#
 # Prepare indexes to determine panel structure
 # 'PERIOD.ID', each date gets same number id across
 periods <- unique(data$DATE)
