@@ -226,6 +226,9 @@ Lustig–Verdelhan (2010). See Kaya–Lee–Pornrojnangkool (2010) and Ang–Bek
 - [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
 - [Soumya Kalra, Senior Quantitative Risk Specialist](https://www.linkedin.com/in/soumyakalra/)
 
+## Student-developer
+
+[Vito Lestingi](https://github.com/vi-to), MSc Finance and Insurance - Quantitative Finance track, Sapienza University of Rome.
 
 ## References
 
