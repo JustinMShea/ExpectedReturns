@@ -1,0 +1,30 @@
+---
+title: '"Time Series Momentum"'
+subtitle: "(draft)"
+author: "Vito Lestingi"
+date: "`r Sys.Date()`"
+abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+output:
+  rmarkdown::pdf_document:
+    citation_package: biblatex
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{"Time Series Momentum"}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE
+)
+```
+
+```{r, echo=FALSE}
+# Mentors, please feel free to add yourself to the authors' field if you wish.
+```
+
+# Introduction
+In these notes we replicate \textcite{moskowitz-ooi-pedersen-2012} (MOP hereafter).
