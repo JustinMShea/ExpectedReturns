@@ -17,10 +17,12 @@ data.begin.row <- header.row + 1
 TSM <- TSM.raw[data.begin.row:nrow(TSM.raw), ]
 rownames(TSM) <- NULL
 variable.names <- as.character(TSM.raw[header.row, ])
-variable.names <- variable.names <- gsub('\\^', '.', variable.names)
+variable.names <- gsub('\\^', '.', variable.names)
 colnames(TSM) <- toupper(variable.names)
 
-# Convert dates to "Date"
+# Convert variables to "numeric" and dates to "Date"
+TSM.vars <- colnames(TSM) != 'DATE'
+TSM[, TSM.vars] <- apply(TSM[, TSM.vars], 2, as.numeric)
 TSM$DATE <- as.Date.character(TSM$DATE, '%m/%d/%Y')
 
 # Remove empty cells
