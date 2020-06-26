@@ -170,8 +170,6 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 
 # Value and Momentum Everywhere Factors
 VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
-VME.FACTORS$VAL.EVR <- as.numeric(VME.FACTORS$VAL.EVR)
-VME.FACTORS$MOM.EVR <- as.numeric(VME.FACTORS$MOM.EVR)
 
 # Get AMP Portfolios Returns and make them a panel
 VME.PORTF.DATE <- VME.Portfolios$DATE
