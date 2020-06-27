@@ -23,7 +23,6 @@ knitr::opts_chunk$set(
 
 library(xts)
 library(plm)
-
 ```
 
 ```{r, echo=FALSE}
@@ -185,7 +184,7 @@ VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
 VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
 VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
 VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
-VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
+# VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
 VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 
 ## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
@@ -224,22 +223,28 @@ Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are
 
 ```{r Global Three-Factor Model}
 ## Prepare indexes to determine panel structure
-# 'DATE.ID', each date gets same number id across
+# 'DATE.ID', each date gets unique numeric id
 dates <- unique(data$DATE)
 dates.id <- 1:length(dates)
 dates.id <- data.frame('DATE'=dates, 'DATE.ID'=dates.id)
 data <- merge(data, dates.id, by='DATE')
-# 'PORTF.ID', each asset gets same number id across
+# 'PORTF.ID', each portfolio gets unique numeric id
 portf <- unique(data$PORTF)
 portf.id <- 1:length(portf)
 portf.id <- data.frame('PORTF'=portf, 'PORTF.ID'=portf.id)
-data <- merge(data, portf.id)
+data <- merge(data, portf.id, by='PORTF')
 data <- data[order(data[, 'PORTF.ID'], data[, 'DATE.ID']), ]
 row.names(data) <- NULL
 
+
+# TODO: Only model for which data is readily available at the moment.
+# NOTE: Also, the 'MKT.RF' factor used here is Ken's one (US only). As argued, this 
+# is inappropriate for the AMP global model, for which an international proxy have 
+# to be used. Authors use MSCI WI.
+
 # Time-series regressions
 ts.reg <- plm::pmg(
-  EXC.RET ~ MKT.RF + VAL.EVR + MOM.EVR, # TODO: only model for which we have data
+  EXC.RET ~ MKT.RF + VAL.EVR + MOM.EVR,
   data=data, index=c('PORTF.ID', 'DATE.ID')
 )
 summary(ts.reg) # average coefficients
@@ -247,7 +252,7 @@ betas <- t(ts.reg$indcoef) # all coefficients
 rownames(betas) <- portf
 colnames(betas) <- paste('BETA', colnames(betas), sep='.')
 
-# Cross-sectional regression
+# Cross-sectional regressions
 cs.data <- data[order(data[, 'DATE']), ]
 cs.data <- data.frame(
   data[, c('DATE', 'EXC.RET', 'DATE.ID', 'PORTF.ID')], 
