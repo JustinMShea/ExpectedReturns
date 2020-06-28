@@ -32,9 +32,9 @@ Our main reference is \textcite{ilmanen-2011} in that we want to reproduce selec
 # Fundamental factor models
 
 ## Three-factor model
-This model was introduced by \textcite{fama-french-1993}, expanding the work begun in \textcite{fama-french-1992}. In their cross-sectional analysis, the authors use the method of \textcite{black-jensen-scholes-1972}. However, the illustration \textcite{engle-16} do of the model applies the usual \textcite{fama-macbeth-1973} regression analysis. I suspect this difference is due to the fact that, whereas the former work is aimed at inferring and comparing common premia between both stocks and bonds, the latter is focused on providing an analysis on stock returns.
+This model was introduced by \textcite{fama-french-1993}, expanding the work begun in \textcite{fama-french-1992}. In their cross-sectional analysis, the authors use the method of \textcite{black-jensen-scholes-1972}. However, the illustration \textcite{engle-2016} do of the model applies the usual \textcite{fama-macbeth-1973} regression analysis. I suspect this difference is due to the fact that, whereas the former work is aimed at inferring and comparing common premia between both stocks and bonds, the latter is focused on providing an analysis on stock returns.
 
-Following \textcite{engle-16}, we express the so called Fama-French *three-factor model* as
+Following \textcite{engle-2016}, we express the so called Fama-French *three-factor model* as
 $$
     r_{p,t} = \beta_{0} + \beta_{1, p}MKT_{t} + \beta_{2, p}SMB_{t} + \beta_{3, p}HML_{t} + \epsilon_{t}
 $$
