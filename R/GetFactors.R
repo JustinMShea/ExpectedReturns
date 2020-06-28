@@ -208,12 +208,15 @@ GetFactors <- function(x
               } else {# (freq == 'weekly' || freq == 'daily') & ...
                 # TODO
               }
+              ifelse(
+                ncol(out) == 1,
+                ifelse(x == 'MOM', colnames(out) <- x, colnames(out) <- paste(x, term, sep='.')),
+                colnames(out) <- toupper(colnames(out))
+              )
+              storage.mode(out) <- 'numeric'
+              out <- out/100 # to decimal
             }
     )
   }
-  ifelse(ncol(out) == 1,
-         ifelse(x == 'MOM', colnames(out) <- x, colnames(out) <- paste(x, term, sep='.')),
-         colnames(out) <- toupper(colnames(out)))
-  storage.mode(out) <- 'numeric'
   return(out)
 }
