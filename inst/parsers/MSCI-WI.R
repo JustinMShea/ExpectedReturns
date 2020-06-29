@@ -5,7 +5,7 @@
 # Markets (DM) countries. With 1,637 constituents, the index covers approximately
 # 85% of the free float-adjusted market capitalization in each country."
 #
-# Period: 1961-12-31 to 2020-05-29
+# Period: 1969-12-31 to 2020-05-29
 #
 # Currency: USD
 #
