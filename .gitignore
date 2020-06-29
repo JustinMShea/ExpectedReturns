@@ -1,5 +1,7 @@
 # Retrieved 2017-Oct-12 from https://github.com/github/gitignore/blob/master/R.gitignore
 # Licensed under CC0-1.0 https://github.com/github/gitignore/blob/master/LICENSE
+# Platform specific files
+*.DS_Store
 # History files
 .Rhistory
 .Rapp.history
