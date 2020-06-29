@@ -14,14 +14,19 @@
 #
 # Copyright holder: (c) MSCI Inc.
 
-# NOTE: Download the file from 'Source'
 # WARNING: rio::import(), as other direct download methods, failed
+#
+# Parser relies on the following steps on your side:
+# 1. Manually download the file from 'Source' link
+# 2. Name the file 'MSCI_ACWI' and put it in your sandbox/data
+#
+# NOTE: DO NOT push the data file to the repository. We are already gitignoring the whole folder.
 
-path <- "your.path.here"
-MSCI.ACWI.raw <- xlsx::read.xlsx(path, sheetIndex=1, startRow=7, endRow=397, header=TRUE)
-colnames(MSCI.ACWI.raw) <- c('DATE', 'PRICE')
+path.file <- file.path('sandbox', 'data', 'MSCI_ACWI.xls')
+MSCI.ACWI.raw <- xlsx::read.xlsx(path.file, sheetIndex=1, startRow=7, endRow=397, header=TRUE)
 # NOTE: returns in decimal unit
-MSCI.ACWI.raw$RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI.raw$PRICE, 'discrete')
-MSCI.ACWI.raw$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI.raw$PRICE, 'log')
-MSCI.ACWI <- as.xts(MSCI.ACWI.raw[, 2:4], order.by=MSCI.ACWI.raw$DATE)
+MSCI.ACWI <- as.xts(MSCI.ACWI.raw[, 2], order.by=MSCI.ACWI.raw[, 1])
+colnames(MSCI.ACWI) <- c('PRICE')
+MSCI.ACWI$RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'discrete')
+MSCI.ACWI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'log')
 

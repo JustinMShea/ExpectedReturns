@@ -13,13 +13,20 @@
 #
 # Copyright holder: (c) MSCI Inc.
 
-# NOTE: Download the file from 'Source'
 # WARNING: rio::import(), as other direct download methods, failed
+#
+# Parser relies on the following steps on your side:
+# 1. Manually download the file from 'Source' link
+# 2. Name the file 'MSCI_WI' and put it in your sandbox/data
+#
+# NOTE: DO NOT push the data file to the repository. We are already gitignoring the whole folder.
 
-path <- "your.path.here"
-MSCI.WI.raw <- xlsx::read.xlsx(path, sheetIndex=1, startRow=7, endRow=613, header=TRUE)
-colnames(MSCI.WI.raw) <- c('DATE', 'PRICE')
+path.file <- file.path('sandbox', 'data', 'MSCI_WI.xls')
+MSCI.WI.raw <- xlsx::read.xlsx(path.file, sheetIndex=1, startRow=7, endRow=613, header=TRUE)
 # NOTE: returns in decimal unit
-MSCI.WI.raw$RET <- PerformanceAnalytics::Return.calculate(MSCI.WI.raw$PRICE, 'discrete')
-MSCI.WI.raw$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.WI.raw$PRICE, 'log')
-MSCI.WI <- as.xts(MSCI.WI.raw[, 2:4], order.by=MSCI.WI.raw$DATE)
+MSCI.WI <- as.xts(MSCI.WI.raw[, 2], order.by=MSCI.WI.raw[, 1])
+colnames(MSCI.WI) <- c('PRICE')
+MSCI.WI$RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'discrete')
+MSCI.WI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'log')
+
+

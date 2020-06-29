@@ -20,6 +20,9 @@ knitr::opts_chunk$set(
   comment = "#>",
   echo = TRUE
 )
+knitr::opts_knit$set(
+  root.dir = normalizePath('..')
+)
 
 library(xts)
 library(plm)
@@ -41,7 +44,7 @@ Because of the *global* nature of their pricing approach, authors use as their $
 ```{r AQR Global Aggregate Equity Portfolios vs MSCI Barra Indexes}
 # Source AQR's Global Aggregate Equity Portfolio ("AQR GAP")
 # NOTE: returns in decimal unit
-source("Value--Devil-in-HMLs-Details.R")
+source("vignettes/Value--Devil-in-HMLs-Details.R")
 
 # Subset AQR GAP data points 
 from <- first(which(!is.na(HML_Devil.MKT$Global)))
@@ -54,8 +57,9 @@ cor.methods <- c('pearson', 'spearman')
 ```
 
 ```{r AQR GAP vs MSCI WI}
-# NOTE: Get 'MSCI.WI' from ExpectedReturns/inst/parsers/MSCI-WI.R
 # NOTE: returns in decimal unit
+path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
+source(path.parser)
 
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
@@ -93,8 +97,9 @@ Because the , containes more securities then the MSCI WI, here we also provide a
 and 26 Emerging Markets countries and, according to MSCI Inc., it "covers approximately 85% of the global investable equity opportunity set."
 
 ```{r AQR GAP vs vs MSCI ACWI}
-# NOTE: Get 'MSCI.ACWI' from ExpectedReturns/inst/parsers/MSCI-ACWI.R
 # NOTE: returns in decimal unit
+path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
+source(path.parser)
 
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
@@ -163,9 +168,10 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 ## Comovement and Asset Pricing Tests
 ```{r Get factors and portfolios data}
 ## VME data
-# Until we establish a way to source in data, get data from here:
-# - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Factors.R
-# - https://github.com/JustinMShea/ExpectedReturns/blob/master/inst/parsers/VME-Portfolios.R
+path.parser <- file.path('inst', 'parsers', 'VME-Factors.R')
+source(path.parser)
+path.parser <- file.path('inst', 'parsers', 'VME-Portfolios.R')
+source(path.parser)
 
 # Value and Momentum Everywhere Factors
 VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
