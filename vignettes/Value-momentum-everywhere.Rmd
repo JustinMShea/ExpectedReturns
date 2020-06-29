@@ -10,8 +10,10 @@ output:
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{"Value and Momentum Everywhere"}
-  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+editor_options: 
+  chunk_output_type: console
 ---
 
 ```{r setup, include = FALSE}
@@ -80,17 +82,23 @@ gap.wi.cor
 # Plot comparison
 # global.proxies.cont <- na.locf(global.proxies)
 global.proxies.cont <- na.fill(global.proxies, c(NA, 'extend', 'extend'))
-plot.xts(global.proxies.cont, main='AQR\'s Global MKT vs MSCI World Index',
-         screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95))
-addLegend(
-  'bottomleft', 
-  legend.names = c(
-    'Global MKT', 'MSCI WI', 
-    expression(paste(rho[Pearson], ' = 0.9834098')),
-    expression(paste(rho[Spearman], ' = 0.9790861'))
-  ), 
-  cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
-)
+plot.global.proxies.cont <- function(x=global.proxies.cont) {
+  plot.xts(
+    x, 
+    main='AQR\'s Global MKT vs MSCI World Index',
+    screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95)
+  )
+  addLegend(
+    'bottomleft', 
+    legend.names = c(
+      'Global MKT', 'MSCI WI', 
+      expression(paste(rho[Pearson], ' = 0.9834098')),
+      expression(paste(rho[Spearman], ' = 0.9790861'))
+    ), 
+    cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
+  )
+}
+plot.global.proxies.cont()
 ```
 
 Because the , containes more securities then the MSCI WI, here we also provide a comparison with the MSCI *All Countries World Index* (MSCI ACWI). The latter synthesizes 3,040 large and mid cap constituents across 23 Developed Markets
@@ -120,17 +128,23 @@ gap.acwi.cor
 # Plot comparison
 # global.proxies.cont <- na.locf(global.proxies)
 global.proxies.cont <- na.fill(global.proxies, c(NA, 'extend', 'extend'))
-plot.xts(global.proxies.cont, main='AQR\'s Global MKT vs MSCI ACWI',
-         screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95))
-addLegend(
-  'bottomleft', 
-  legend.names = c(
-    'Global MKT', 'MSCI ACWI', 
-    expression(paste(rho[Pearson], ' = 0.9887671')),
-    expression(paste(rho[Spearman], ' = 0.9840154'))
-  ), 
-  cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
-)
+plot.global.proxies.cont <- function(x=global.proxies.cont) {
+  plot.xts(
+    x, 
+    main='AQR\'s Global MKT vs MSCI ACWI',
+    screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95)
+  )
+  addLegend(
+    'bottomleft', 
+    legend.names = c(
+      'Global MKT', 'MSCI ACWI', 
+      expression(paste(rho[Pearson], ' = 0.9887671')),
+      expression(paste(rho[Spearman], ' = 0.9840154'))
+    ), 
+    cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
+  )
+}
+plot.global.proxies.cont()
 ```
 
 As shown by the high correlations among these global equity portfolios, in principle each one of them may serve as the market portfolio return proxy.
