@@ -20,6 +20,11 @@ knitr::opts_chunk$set(
   comment = "#>",
   echo = TRUE
 )
+
+# Load libraries
+library(xts)
+library(plm)
+# library(FactorAnalytics)
 ```
 
 ```{r, echo=FALSE}
@@ -183,11 +188,6 @@ Couldn't find anything close to the "International sample".
 Country portfolios are aggregated into international and global portfolios using the country's total market capitalization as of the prior month. Further details are provided by \textcite{asness-frazzini-2013} in *Exhibit A1*.
 In the construction of the original "International sample" (or "Global ex US"), \textcite{asness-frazzini-2013} included the following countries: Austria, Australia, Belgium, Canada, Switzerland, Germany, Denmark, Spain, Finland, France, Italy, Japan, Netherlands, Norway, New Zeland, Singapore, Sweden, United Kingdom, and United States of America. Latest data provided by AQR, extends this list of countries including also Ireland, Israel, and Portugal. We study the full panel of countries in the newest International sample, but restricting attention to the original sample would certainly be possible.
 ```{r Get Factors Data}
-## Load libraries
-library(xts)
-library(plm)
-# library(FactorAnalytics)
-
 ## Run Justin's parser for Asness-Frazzini (2013) replication data set
 source("Value--Devil-in-HMLs-Details.R")
 
