@@ -101,8 +101,7 @@ plot.global.proxies.cont <- function(x=global.proxies.cont) {
 plot.global.proxies.cont()
 ```
 
-Because the , containes more securities then the MSCI WI, here we also provide a comparison with the MSCI *All Countries World Index* (MSCI ACWI). The latter synthesizes 3,040 large and mid cap constituents across 23 Developed Markets
-and 26 Emerging Markets countries and, according to MSCI Inc., it "covers approximately 85% of the global investable equity opportunity set."
+Because AQR's "Global Aggregate Equity Portfolio" contains more securities then the MSCI WI, we also provide a comparison with the MSCI *All Countries World Index* (MSCI ACWI). The latter synthesizes 3,040 large and mid cap constituents across 23 Developed Markets and 26 Emerging Markets countries and, according to MSCI Inc., it "covers approximately 85% of the global investable equity opportunity set".
 
 ```{r AQR GAP vs vs MSCI ACWI}
 # NOTE: returns in decimal unit
@@ -221,11 +220,24 @@ FF4 <- data.frame(
   coredata(MOM[ff.dates, ])
 )
 
-## Merge FF4, VME Factors and VME Portfolios Returns
-data <- merge(VME.PORTF.RET, FF4, by='DATE')
+## Merge FF4 and MSCI
+FF4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
+data <- merge(MSCI.WI, FF4)
+# Linear interpolation of interior MSCI discrete returns,
+# accounting for publication dates mismatches
+data$MSCI.RET <- na.fill(data$RET, c(NA, 'extend', 'extend'))
+data$MSCI.RF <- data$MSCI.RET - data$RF
+data <- data.frame(
+  DATE=ff.dates,
+  data[ff.dates, c('MSCI.RF', colnames(FF4))],
+  row.names=NULL
+)
+
+## Merge VME Factors and VME Portfolios Returns
+data <- merge(data, VME.PORTF.RET, by='DATE')
 data <- merge(data, VME.FACTORS, by='DATE')
 
-## Calculate excess returns and merge
+## Calculate Portfolios excess returns
 data$EXC.RET <- data$RET - data$RF
 ```
 
@@ -266,43 +278,48 @@ row.names(data) <- NULL
 
 # Time-series regressions
 ts.reg <- plm::pmg(
-  EXC.RET ~ MKT.RF + VAL.EVR + MOM.EVR,
+  EXC.RET ~ MSCI.RF + VAL.EVR + MOM.EVR,
   data=data, index=c('PORTF.ID', 'DATE.ID')
 )
+## Estimates
 summary(ts.reg) # average coefficients
 betas <- t(ts.reg$indcoef) # all coefficients
 rownames(betas) <- portf
 colnames(betas) <- paste('BETA', colnames(betas), sep='.')
+betas
 
 # Cross-sectional regressions
 cs.data <- data[order(data[, 'DATE']), ]
 cs.data <- data.frame(
   data[, c('DATE', 'EXC.RET', 'DATE.ID', 'PORTF.ID')], 
-  betas[, 2:ncol(betas)]
+  betas[, 2:ncol(betas)],
+  row.names=NULL
 )
 cs.reg <- plm::pmg(
-  EXC.RET ~ BETA.MKT.RF + BETA.VAL.EVR + BETA.MOM.EVR, 
+  EXC.RET ~ BETA.MSCI.RF + BETA.VAL.EVR + BETA.MOM.EVR, 
   data=cs.data, index=c('DATE.ID', 'PORTF.ID')
 )
+## Estimates
 summary(cs.reg) # average coefficients
 gammas <- cs.reg$indcoef # all coefficients
 gammas <- t(gammas)
 gammas <- data.frame(dates, gammas, row.names=NULL)
 colnames(gammas) <- c('DATE', '(Intercept)', colnames(betas)[-1])
+gammas
 ```
 
 ```{r VME Table 6}
-### TABLE 6, Panel A,  U.S. Asset Pricing Factors ###
-# NOTE: Here the FF US MKT.RF factor is properly used
-factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM')
-fv.seqs <- 1:length(factors.vars)
+## TABLE 6, Panel A
+## US
+us.factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM') 
+fv.seqs <- 1:length(us.factors.vars)
 # Time-series regression by model
 ts.reg.us <- lapply(fv.seqs, function(x) {
   # Models specifications
   model.formula <- formula(
     paste0(
       'EXC.RET ~ ',
-      paste(factors.vars[1:x], collapse='+')
+      paste(us.factors.vars[1:x], collapse='+')
     )
   )
   plm::pmg(
@@ -310,8 +327,39 @@ ts.reg.us <- lapply(fv.seqs, function(x) {
     index=c('PORTF.ID', 'DATE.ID')
   )
 })
-# Models results
+# Estimates
 lapply(ts.reg.us, summary)
+
+## Global
+global.factors.vars <- c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
+nfv <- length(global.factors.vars)
+kk <- 2^nfv - 1
+fv.seq <- 1:nfv
+global.factors.combns <- matrix( NA, nfv, kk)
+comb.idxs <- cumsum(choose(nfv, 0:nfv))
+comb.idxs <- comb.idxs[-length(comb.idxs)]
+comb.idxs <- rev(comb.idxs)
+comb.idxs <- c(comb.idxs, 0)
+for (j in rev(fv.seq)) {
+  k <- setdiff(1:comb.idxs[j], 1:comb.idxs[j+1])
+  global.factors.combns[1:rev(j), k] <- combn(global.factors.vars, j)
+}
+
+ts.reg.global <- lapply(1:kk, function(x) {
+  model.formula <- formula(
+    paste0(
+      'EXC.RET ~ ',
+      paste(na.omit(global.factors.combns[, x]), collapse='+')
+    )
+  )
+  plm::pmg(
+    model.formula, data=data, 
+    index=c('PORTF.ID', 'DATE.ID')
+  )
+})
+# Estimates
+models.summaries <- lapply(ts.reg.global, summary)
+lapply(1:kk, function(x) models.summaries[[x]]$r.squared)
 ```
 
 ```{r VME Figure 6 plots}
