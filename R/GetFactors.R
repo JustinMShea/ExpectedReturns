@@ -202,7 +202,19 @@ GetFactors <- function(x
                 out <- ff.data.annual.xts
               } else if (freq == 'monthly' & any(annual.data.check)) {
                 ff.data.monthly <- ff.data[1:(split.idx-1), ]
-                monthly.dates <- as.Date.character(paste(substr(ff.data.monthly[, 1], 1, 4), substr(ff.data.monthly[, 1], 5, 7), '01', sep='-'), '%Y-%m-%d') # arbitrary beginning of month
+                # Returns and variables are as of end of month
+                yrs <- as.numeric(substr(ff.data.monthly[, 1], 1, 4))
+                mos <- as.numeric(substr(ff.data.monthly[, 1], 5, 7))
+                monthly.dates <- as.Date.character(
+                  paste(yrs, mos + 1, '01', sep='-'),
+                  '%Y-%m-%d'
+                )
+                monthly.dates <- monthly.dates - 1
+                artificial.thirteenth.idxs <- which(is.na(monthly.dates))
+                monthly.dates[artificial.thirteenth.idxs] <- as.Date.character(
+                  paste(yrs[yrs != last(yrs)], '12', '31', sep='-'),
+                  '%Y-%m-%d'
+                )[artificial.thirteenth.idxs]
                 ff.data.monthly.xts <- as.xts(as.matrix(ff.data.monthly[, -1]), order.by=monthly.dates)
                 out <- ff.data.monthly.xts
               } else {# (freq == 'weekly' || freq == 'daily') & ...

@@ -212,11 +212,13 @@ FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
 min.tp <- max(first(index(FF3)), first(index(MOM)))
 max.tp <- min(last(index(FF3)), last(index(MOM)))
-tp <- paste(min.tp, max.tp, sep='/')
+# tp <- paste(min.tp, max.tp, sep='/')
+days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 FF4 <- data.frame(
-  DATE=seq.Date(min.tp, max.tp, by='month') - 1, # re-check B-o-M
-  coredata(FF3[tp, ]),
-  coredata(MOM[tp, ])
+  DATE=ff.dates,
+  coredata(FF3[ff.dates, ]),
+  coredata(MOM[ff.dates, ])
 )
 
 ## Merge FF4, VME Factors and VME Portfolios Returns
