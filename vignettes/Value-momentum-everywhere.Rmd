@@ -180,12 +180,19 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 
 ## Comovement and Asset Pricing Tests
 ```{r Get factors and portfolios data}
-## VME data
+## Import data
+# VME data
 path.parser <- file.path('inst', 'parsers', 'VME-Factors.R')
 source(path.parser)
 path.parser <- file.path('inst', 'parsers', 'VME-Portfolios.R')
 source(path.parser)
+# Bonds data
+path.parser <- file.path('inst', 'parsers', 'CRP.R')
+source(path.parser)
+CRP <- CRP[, colnames(CRP) != 'SP500.XS']
+CRP <- as.xts(coredata(CRP[, -1]), order.by=CRP[, 1])
 
+## Construct the data set
 # Value and Momentum Everywhere Factors
 VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
 
@@ -214,30 +221,32 @@ max.tp <- min(last(index(FF3)), last(index(MOM)))
 # tp <- paste(min.tp, max.tp, sep='/')
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
-FFC4 <- data.frame(
-  DATE=ff.dates,
-  coredata(FF3[ff.dates, ]),
-  coredata(MOM[ff.dates, ])
-)
 
-## Merge FFC4 and MSCI
+## Merge Factors and Portfolios Data
+# Factors data
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 data <- merge(MSCI.WI, FFC4)
-# Linear interpolation of interior MSCI discrete returns,
-# accounting for publication dates mismatches
+# MSCI interior discrete returns are linearly interpolated to account for 
+# publication dates mismatches with respect to FF data dates (and AQR's data)
 data$MSCI.RET <- na.fill(data$RET, c(NA, 'extend', 'extend'))
 data$MSCI.RF <- data$MSCI.RET - data$RF
+# Likewise bonds factors data
+data <- merge(CRP, data)
+data$GOVT.XS <- na.fill(data$GOVT.XS, c(NA, 'extend', NA))
+data$CORP.XS <- na.fill(data$CORP.XS, c(NA, 'extend', NA))
+# Merge factors data
 data <- data.frame(
   DATE=ff.dates,
-  data[ff.dates, c('MSCI.RF', colnames(FFC4))],
+  data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
   row.names=NULL
 )
+tp <- 1:max(which(!is.na(data$CORP.XS)))
+data <- data[tp, ]
 
-## Merge VME Factors and VME Portfolios Returns
+# Merge VME Factors and VME Portfolios Returns
 data <- merge(data, VME.PORTF.RET, by='DATE')
 data <- merge(data, VME.FACTORS, by='DATE')
-
-## Calculate Portfolios excess returns
+# Calculate Portfolios excess returns
 data$EXC.RET <- data$RET - data$RF
 ```
 
@@ -308,7 +317,7 @@ gammas
 ```{r VME Table 6}
 ## TABLE 6, Panel A
 ## US
-us.factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM') 
+us.factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM', 'GOVT.XS', 'CORP.XS') 
 n.us.fv <- length(us.factors.vars)
 fv.seq <- 1:n.us.fv
 # US Models Time-series Regressions
@@ -376,7 +385,7 @@ ExtractModelStats <- function(mods, res) {
 }
 # Calls on models
 # US Models Results
-us.mods.names <- c('CAPM', 'MKT.RF_SMB', 'FF3', 'FFC4')
+us.mods.names <- c('CAPM', 'MKT.RF_SMB', 'FF3', 'FFC4', 'FF5', 'FF6')
 n.us.mods <- length(us.mods.names)
 us.mods.res <- matrix(NA, n.us.mods, n.stats, dimnames=list(us.mods.names, stats))
 us.mods.res <- ExtractModelStats(us.mods.summaries, us.mods.res)
