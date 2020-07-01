@@ -337,7 +337,7 @@ us.mods.summaries <- lapply(ts.reg.us, summary)
 us.mods.summaries
 
 ## Global
-global.factors.vars <- c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
+global.factors.vars <- c('MSCI.RF', 'VAL.EVR', 'MOM.EVR', 'GOVT.XS', 'CORP.XS')
 nfv <- length(global.factors.vars)
 kk <- 2^nfv - 1
 fv.seq <- 1:nfv
