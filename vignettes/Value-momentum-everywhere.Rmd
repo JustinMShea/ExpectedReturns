@@ -272,9 +272,6 @@ row.names(data) <- NULL
 
 
 # TODO: Only model for which data is readily available at the moment.
-# NOTE: Also, the 'MKT.RF' factor used here is Ken's one (US only). As argued, this 
-# is inappropriate for the AMP global model, for which an international proxy have 
-# to be used. Authors use MSCI WI.
 
 # Time-series regressions
 ts.reg <- plm::pmg(
