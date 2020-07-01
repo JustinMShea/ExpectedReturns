@@ -214,22 +214,22 @@ max.tp <- min(last(index(FF3)), last(index(MOM)))
 # tp <- paste(min.tp, max.tp, sep='/')
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
-FF4 <- data.frame(
+FFC4 <- data.frame(
   DATE=ff.dates,
   coredata(FF3[ff.dates, ]),
   coredata(MOM[ff.dates, ])
 )
 
-## Merge FF4 and MSCI
-FF4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
-data <- merge(MSCI.WI, FF4)
+## Merge FFC4 and MSCI
+FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
+data <- merge(MSCI.WI, FFC4)
 # Linear interpolation of interior MSCI discrete returns,
 # accounting for publication dates mismatches
 data$MSCI.RET <- na.fill(data$RET, c(NA, 'extend', 'extend'))
 data$MSCI.RF <- data$MSCI.RET - data$RF
 data <- data.frame(
   DATE=ff.dates,
-  data[ff.dates, c('MSCI.RF', colnames(FF4))],
+  data[ff.dates, c('MSCI.RF', colnames(FFC4))],
   row.names=NULL
 )
 
@@ -312,10 +312,10 @@ gammas
 ## TABLE 6, Panel A
 ## US
 us.factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM') 
-fv.seqs <- 1:length(us.factors.vars)
-# Time-series regression by model
-ts.reg.us <- lapply(fv.seqs, function(x) {
-  # Models specifications
+n.us.fv <- length(us.factors.vars)
+fv.seq <- 1:n.us.fv
+# US Models Time-series Regressions
+ts.reg.us <- lapply(fv.seq, function(x) {
   model.formula <- formula(
     paste0(
       'EXC.RET ~ ',
@@ -327,24 +327,24 @@ ts.reg.us <- lapply(fv.seqs, function(x) {
     index=c('PORTF.ID', 'DATE.ID')
   )
 })
-# Estimates
-lapply(ts.reg.us, summary)
+us.mods.summaries <- lapply(ts.reg.us, summary)
+us.mods.summaries
 
 ## Global
 global.factors.vars <- c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
 nfv <- length(global.factors.vars)
 kk <- 2^nfv - 1
 fv.seq <- 1:nfv
-global.factors.combns <- matrix( NA, nfv, kk)
+global.factors.combns <- matrix(NA, nfv, kk)
 comb.idxs <- cumsum(choose(nfv, 0:nfv))
 comb.idxs <- comb.idxs[-length(comb.idxs)]
 comb.idxs <- rev(comb.idxs)
 comb.idxs <- c(comb.idxs, 0)
 for (j in rev(fv.seq)) {
-  k <- setdiff(1:comb.idxs[j], 1:comb.idxs[j+1])
+  k <- setdiff(1:comb.idxs[j], 0:comb.idxs[j+1])
   global.factors.combns[1:rev(j), k] <- combn(global.factors.vars, j)
 }
-
+# Global Models Time-series Regressions
 ts.reg.global <- lapply(1:kk, function(x) {
   model.formula <- formula(
     paste0(
@@ -357,9 +357,41 @@ ts.reg.global <- lapply(1:kk, function(x) {
     index=c('PORTF.ID', 'DATE.ID')
   )
 })
-# Estimates
-models.summaries <- lapply(ts.reg.global, summary)
-lapply(1:kk, function(x) models.summaries[[x]]$r.squared)
+global.mods.summaries <- lapply(ts.reg.global, summary)
+global.mods.summaries
+
+## Models Stats
+stats <- c('Abs.Alpha', 'SE', 'p.value', 'R2')
+n.stats <- length(stats)
+ExtractModelStats <- function(mods, res) {
+  # @param mods Summaries from fitting
+  # @param res A matrix, object to write results to
+  mm <- length(mods)
+  for(m in 1:mm) {
+    mod <- mods[[m]]
+    mod.coefs <- mod$CoefTable
+    res[m, 1] <- abs(mod.coefs[1, 'Estimate'])
+    res[m, 2] <- mod.coefs[1, 'Std. Error']
+    res[m, 3] <- mod.coefs[1, 'Pr(>|z|)']
+    res[m, 4] <- mod$r.squared
+  }
+  return(res)
+}
+# Calls on models
+# US Models Results
+us.mods.names <- c('CAPM', 'MKT.RF_SMB', 'FF3', 'FFC4')
+n.us.mods <- length(us.mods.names)
+us.mods.res <- matrix(NA, n.us.mods, n.stats, dimnames=list(us.mods.names, stats))
+us.mods.res <- ExtractModelStats(us.mods.summaries, us.mods.res)
+us.mods.res
+# Global Models Results
+gmods.names <- apply(global.factors.combns, 2, function(x) paste(na.omit(x), collapse='_'))
+n.gmods <- length(gmods.names)
+global.mods.res <- matrix(NA, n.gmods, n.stats, dimnames=list(gmods.names, stats))
+global.mods.res <- ExtractModelStats(global.mods.summaries, global.mods.res)
+global.mods.res
+# All together
+rbind(global.mods.res, us.mods.res)
 ```
 
 ```{r VME Figure 6 plots}
