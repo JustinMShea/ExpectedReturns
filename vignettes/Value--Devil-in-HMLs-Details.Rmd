@@ -365,7 +365,7 @@ colnames(betas.hml) <- c(
   'Alpha', paste('BETA', factors.vars[factors.vars!="HML"], sep='.')
 )
 row.names(betas.hml) <- regrds[, 1]
-t(betas.hml)
+knitr::kable(t(betas.hml))
 
 # Run HML^{Devil}, i.e. HML^{m,c}, time-series regressions
 ts.regs.hml.dev <- lapply(1:n.hml.d, function(i) {
@@ -388,7 +388,7 @@ colnames(betas.hml.dev) <- c(
   'Alpha', paste('BETA', factors.vars[factors.vars!="HML.DEV"], sep='.')
 )
 row.names(betas.hml.dev) <- regrds[, 2]
-t(betas.hml.dev)
+knitr::kable(t(betas.hml.dev))
 ```
 
 
