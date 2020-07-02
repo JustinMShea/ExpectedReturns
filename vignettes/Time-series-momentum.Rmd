@@ -86,6 +86,58 @@ days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 ```
 
+```{r Prepare data set}
+# FFC4 factors
+FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
+# MSCI World Index
+data <- merge(MSCI.WI, FFC4)
+# MSCI interior discrete returns are linearly interpolated to account for
+# publication dates mismatches with respect to FF data dates and AQR's data sets
+data$MSCI.RET <- na.fill(data$RET, c(NA, 'extend', 'extend'))
+data$MSCI.RF <- data$MSCI.RET - data$RF
+# Likewise bonds factors data
+data <- merge(CRP, data)
+data$GOVT.XS <- na.fill(data$GOVT.XS, c(NA, 'extend', NA))
+data$CORP.XS <- na.fill(data$CORP.XS, c(NA, 'extend', NA))
+# Convert data set
+data <- data.frame(
+  DATE=ff.dates,
+  data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
+  row.names=NULL
+)
+tp <- 1:max(which(!is.na(data$CORP.XS)))
+data <- data[tp, ]
+# VME factors
+data <- merge(data, VME.FACTORS, by='DATE')
+# TSMOM(12, 1) strategy returns
+data <- merge(data, TSM, by='DATE')
+```
+
+```{r TSM Table 2 Time-series Regressions}
+# Indexes
+date.id <- matrix(1:nrow(data), dimnames=list(NULL, 'DATE.ID'))
+data <- cbind(data, date.id)
+# Regressions variables
+y <- colnames(TSM[, -1])
+# TODO: 'CORP.XS' inappropriate substitute of 'BOND'
+X <- c('MSCI.RF', 'CORP.XS', 'SMB', 'HML', 'RF', 'MOM')
+# Time-series regressions
+tsmom.ts.reg <- lapply(1:length(y), function(x) {
+  model.formula <- formula(
+    paste(
+      y[x], 
+      paste(X, collapse='+'), 
+      sep='~'
+    )
+  )
+  plm::plm(
+    model.formula, data=data,
+    model='pooling', index='DATE.ID'
+  )
+})
+lapply(tsmom.ts.reg, summary)
+```
+
 # Time series momentum factor
 Let us consider the TSMOM(12, 1) strategy, aggregating returns across all asset classes holds a portfolio called *diversified TSMOM factor* and expressed as
 $$
