@@ -59,6 +59,33 @@ r_t^{\textrm{TSMOM}(k,h)} = \alpha + \beta_{1}MSCI_{t} + \beta_{2}GSCI_{t} + \be
 $$
 where $MSCI$ is the MSCI World Index, $GSCI$ the S&P Goldman Sachs Commodity Index, $BOND$ is Barclay's Aggregate Bond Index ([Bloomberg Barclays Global Aggregate Index](https://data.bloomberglp.com/indices/sites/2/2016/08/Factsheet-Global-Aggregate.pdf) at the time of writing) and $SMB$, $HML$, $UMD$ are the usual Fama-French-Carhart factors. In what follows, given data series availability from authors, we study the TSMOM strategy with a 12 months lookback period and holding period of a month, that is $r_t^{\textrm{TSMOM}(12,1)}$, for each asset class and in the all assets aggregate.
 
+```{r Load Factors and Portfolios Returns Data}
+# TSM portfolios
+parser.path <- file.path('inst', 'parsers', 'TSM.R')
+source(parser.path)
+# MSCI
+parser.path <- file.path('inst', 'parsers', 'MSCI-WI.R')
+source(parser.path)
+# TODO: 'GSCI' is currently missing
+# Bonds
+# TODO: 'CORP.XS' inappropriate substitute of 'BOND'
+parser.path <- file.path('inst', 'parsers', 'CRP.R')
+source(parser.path)
+CRP <- CRP[, colnames(CRP) != 'SP500.XS']
+CRP <- as.xts(coredata(CRP[, -1]), order.by=CRP[, 1])
+# VME
+parser.path <- file.path('inst', 'parsers', 'VME-Factors.R')
+source(parser.path)
+VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
+# FFC factors
+FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
+MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
+min.tp <- max(first(index(FF3)), first(index(MOM)))
+max.tp <- min(last(index(FF3)), last(index(MOM)))
+days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+```
+
 # Time series momentum factor
 Let us consider the TSMOM(12, 1) strategy, aggregating returns across all asset classes holds a portfolio called *diversified TSMOM factor* and expressed as
 $$
