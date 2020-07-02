@@ -15,11 +15,21 @@ vignette: >
 ---
 
 ```{r setup, include = FALSE}
+knitr::opts_knit$set(
+  root.dir = normalizePath('..')
+)
+
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  echo = TRUE
+  echo = TRUE,
+  warning = FALSE,
+  error = FALSE
 )
+
+# Load libraries
+library(xts)
+library(plm)
 ```
 
 ```{r, echo=FALSE}
@@ -27,4 +37,34 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-In these notes we replicate \textcite{moskowitz-ooi-pedersen-2012} (MOP hereafter).
+\textcite{moskowitz-ooi-pedersen-2012} (MOP hereafter) study an asset pricing anomaly they name *time series momentum*, which is related but different from the *momentum* effect in that the latter has a cross-sectional relative nature with respect to assets clusters while the former is directly linked with single assets returns. They find the anomaly consistent both across different asset classes and markets. Also, they confirm this effect to be robust among more illiquid instruments.
+
+# The cross-section of time series momentum
+The excess returns 
+$$
+\frac{r_t^s}{\sigma_{t-1}^s} = \alpha + \beta_h\frac{r_{t-h}^s}{\sigma_{t-h-1}^s} + \epsilon_t^s
+$$
+
+where assets returns are scaled by their ex-ante volatility $\sigma_{t-1}^s$, with annualized variance being
+$$
+\sigma_t^2 = 261\sum_{i=0}^{\infty}(1 - \delta)\delta^i(r_{t-i-1} - \bar{r}_t)^2
+$$
+$\bar{r}_t$ returns exponentially weighted moving average (EWMA) and weight $\delta$ so that $\delta/(1 - \delta) = 60$ days.
+Returns of TSMOM trading strategies on the instrument $s$ at month $t$ are systematically obtained considering the excess returns sign of $s$ over the past $k$ months and then acquiring or selling the instrument during the subsequent $h$ months. These two parameters determine a family of TSMOM strategies and are called *lookback period* and *holding period*, respectively.  
+It follows that the strategy return at time $t$, defined $r_t^{\textrm{TSMOM}(k,h)}$, represents the average return across all instrument portfolios at that time, i.e. the return on the portfolio that was constructed in all observable past months. These returns are then average across all instruments include or within each asset class.
+
+To explain these returns and assess whether they held abnormal performance, \textcite{moskowitz-ooi-pedersen-2012} study the regression specification
+$$
+r_t^{\textrm{TSMOM}(k,h)} = \alpha + \beta_{1}MSCI_{t} + \beta_{2}GSCI_{t} + \beta_{3}BOND_{t} + \beta_{4}SMB_{t} + \beta_{5}HML_{t} + \beta_{6}UMD_{t} + \epsilon_{t}
+$$
+where $MSCI$ is the MSCI World Index, $GSCI$ the S&P Goldman Sachs Commodity Index, $BOND$ is Barclay's Aggregate Bond Index ([Bloomberg Barclays Global Aggregate Index](https://data.bloomberglp.com/indices/sites/2/2016/08/Factsheet-Global-Aggregate.pdf) at the time of writing) and $SMB$, $HML$, $UMD$ are the usual Fama-French-Carhart factors. In what follows, given data series availability from authors, we study the TSMOM strategy with a 12 months lookback period and holding period of a month, that is $r_t^{\textrm{TSMOM}(12,1)}$, for each asset class and in the all assets aggregate.
+
+# Time series momentum factor
+Let us consider the TSMOM(12, 1) strategy, aggregating returns across all asset classes holds a portfolio called *diversified TSMOM factor* and expressed as
+$$
+r_{t,t+1}^{\textrm{TSMOM}} = \frac{1}{S_t}\sum_{s=1}^{S_t}\textrm{sign}(r_{t-12,t}^{s})\frac{40\%}{\sigma_t^s}r_{t,t+1}^{s}
+$$
+with $S_t$ securities investable at time $t$ and a 40% constant annual volatility chosen by authors because "it is similar to the risk of an average individual stock" and to "make it easier to intuitively compare our portfolios to other in the literature" as once averaged over securities is consistent with other factors' volatility.
+
+# Time series momentum vs. cross-sectional momentum
+Analyses comparing time series momentum and the cross-sectional momentum of \textcite{asness-moskowitz-pedersen-2013}.
