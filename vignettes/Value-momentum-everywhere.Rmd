@@ -39,7 +39,7 @@ In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP herea
 The authors aim at providing a *global*, across both markets/asset classes and across countries, asset pricing approach. This is what "everywhere" in "Value and Momentum *Everywhere*" stands for.
 
 ## Data and Portfolio Construction
-Factors and portfolios are constructed from January 1972 through July 2011. All data series have a monthly frequency. They construct zero-cost long/short VME factors and long-only value and momentum portfolios, sorted into tertiles, for both value and momentum in eight markets/asset classes.
+Factors and portfolios are constructed from January 1972 through July 2011. All data series have a monthly frequency. AMP construct zero-cost long/short VME factors and long-only value and momentum portfolios, sorted into tertiles, for both value and momentum in eight markets/asset classes.
 
 Because of the *global* nature of their pricing approach, authors use as their $MKT$ factor an international portfolio proxy, represented by the MSCI *World Index*. The index has 1,637 large and mid cap constituents across 23 Developed Markets countries and, according to MSCI Inc., it "covers approximately 85% of the free float-adjusted market capitalization in each of them." We provide a comparison with the international global equity portfolio constructed by \textcite{asness-frazzini-2013}.
 
@@ -146,8 +146,11 @@ plot.global.proxies.cont <- function(x=global.proxies.cont) {
 plot.global.proxies.cont()
 ```
 
-As shown by the high correlations among these global equity portfolios, in principle each one of them may serve as the market portfolio return proxy.
+As shown by the high correlations among these global equity portfolios, in principle each one of them may serve as the market portfolio return proxy. However, in order to avoid any potentially undue discrepancy with AMP's methodology, in what follows we adopt the MSCI WI.
 
+As per the bonds factors, AMP report to use \textcite{fama-french-1992}'s bond factors, namely the $TERM$ and $DEF$ factors. In their seminal work, \textcite{fama-french-1992} introduced these factors to capture common risks between equities and fixed-income securities. They defined $TERM$ to proxy unexpected changes in interest rates and constructed it via two composite portfolios of government bonds covering maturities of 1 to 5 and 6 to 10 years in excess of T-Bill monthly rates. Whereas $DEF$ is a proxy of default risk and is obtained as the excess returns on a portfolio of long-term corporate bonds made of Moody's Aaa, Aa, A, Baa, and below (LG, low-grade bonds below Baa) with respect to corresponding T-Bonds. Furthermore, both of them were originally considered limiting attention to the US markets, which in principle does not naturally fit  many of the international \textcite{asness-moskowitz-pedersen-2013}'s analyses and hence may seem an undue questionable adoption at a first glance. Truth is, authors are aware of this limitation and unequivocally state "... since we do not have data to construct TERM and DEF internationally, we use the U.S. versions" (p. 956). In our experience we can confirm, lack of worldwide long series available is generally the case for corporate bonds for which there could be even unrecorded decades depending on the countries considered. Even widespread industry benchmarks such as the [FTSE WGBI](https://www.yieldbook.com/x/ixFactSheet/factsheet_monthly_wgbi.pdf) (formerly by Salomon Brothers, later by Citi, then LSEG), and the [S&P International Corporate Bond Index](https://us.spindices.com/indices/fixed-income/sp-international-corporate-bond-index#data), respectively, are the result of different methodologies in a number of relevant characteristics: underlying maturities, whether there has been currency hedging or inflation adjustment, and importantly securities' credit ratings and selection criteria. Also, sometimes underlings are not precisely the same securities, but broader forms of debt.
+
+In the face of these limitations, we temporarily use bonds factors US versions as authors themselves do. However, it is debatable whether we are using exactly the same series. We are adopting part of those constructed by \textcite{asvanunt-richardson-2017}, who follow a different method in some regards. As a matter of fact, slight nuances may potentially influence our numerical estimates, but are not expected to give rise to statistically significant differences.
 
 ### Asset classes and countries
 <!--
@@ -370,7 +373,7 @@ global.mods.summaries
 stats <- c('Abs.Alpha', 'SE', 'p.value', 'R2')
 n.stats <- length(stats)
 ExtractModelStats <- function(mods, res) {
-  # @param mods Summaries from fitting
+  # @param mods Models fitting summaries
   # @param res A matrix, object to write results to
   mm <- length(mods)
   for(m in 1:mm) {
