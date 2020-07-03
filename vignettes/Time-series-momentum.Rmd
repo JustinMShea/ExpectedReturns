@@ -125,8 +125,7 @@ X <- c('MSCI.RF', 'CORP.XS', 'SMB', 'HML', 'RF', 'MOM')
 tsmom.ts.reg <- lapply(1:length(y), function(x) {
   model.formula <- formula(
     paste(
-      y[x], 
-      paste(X, collapse='+'), 
+      y[x], paste(X, collapse='+'), 
       sep='~'
     )
   )
@@ -138,12 +137,34 @@ tsmom.ts.reg <- lapply(1:length(y), function(x) {
 lapply(tsmom.ts.reg, summary)
 ```
 
+```{r TSM Table 3 Time-series Regressions}
+y <- 'TSMOM' # diversified TSMOM(12,1)
+X <- list(
+  ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'MOM'),
+  amp3=c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
+)
+tsmom.div.ts.reg <- lapply(X, function(x) {
+  model.formula <- formula(
+    paste(
+      y, paste(x, collapse='+'), 
+      sep='~'
+    )
+  )
+  plm::plm(
+    model.formula, data=data,
+    model='pooling', index='DATE.ID'
+  )
+})
+lapply(tsmom.div.ts.reg, summary)
+```
+
+
 # Time series momentum factor
 Let us consider the TSMOM(12, 1) strategy, aggregating returns across all asset classes holds a portfolio called *diversified TSMOM factor* and expressed as
 $$
 r_{t,t+1}^{\textrm{TSMOM}} = \frac{1}{S_t}\sum_{s=1}^{S_t}\textrm{sign}(r_{t-12,t}^{s})\frac{40\%}{\sigma_t^s}r_{t,t+1}^{s}
 $$
-with $S_t$ securities investable at time $t$ and a 40% constant annual volatility chosen by authors because "it is similar to the risk of an average individual stock" and to "make it easier to intuitively compare our portfolios to other in the literature" as once averaged over securities is consistent with other factors' volatility.
+with $S_t$ securities investable at time $t$ and a 40% constant annual volatility is chosen by authors because "it is similar to the risk of an average individual stock" and to "make it easier to intuitively compare our portfolios to other in the literature" as, it is consistent with other factors' volatility once averaged over securities.
 
 # Time series momentum vs. cross-sectional momentum
 Analyses comparing time series momentum and the cross-sectional momentum of \textcite{asness-moskowitz-pedersen-2013}.
