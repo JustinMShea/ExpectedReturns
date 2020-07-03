@@ -39,6 +39,9 @@ library(plm)
 # Introduction
 \textcite{moskowitz-ooi-pedersen-2012} (MOP hereafter) study an asset pricing anomaly they name *time series momentum*, which is related but different from the *momentum* effect in that the latter has a cross-sectional relative nature with respect to assets clusters while the former is directly linked with single assets returns. They find the anomaly consistent both across different asset classes and markets. Also, they confirm this effect to be robust among more illiquid instruments.
 
+# Data and methodology
+TODO: Present data series we used, compare with analogies and differences with respect to data authors used.
+
 # The cross-section of time series momentum
 The excess returns 
 $$
@@ -119,6 +122,7 @@ date.id <- matrix(1:nrow(data), dimnames=list(NULL, 'DATE.ID'))
 data <- cbind(data, date.id)
 # Regressions variables
 y <- colnames(TSM[, -1])
+# TODO: S&P GSCI series missing without any substitute
 # TODO: 'CORP.XS' inappropriate substitute of 'BOND'
 X <- c('MSCI.RF', 'CORP.XS', 'SMB', 'HML', 'RF', 'MOM')
 # Time-series regressions
