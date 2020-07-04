@@ -29,7 +29,7 @@ Imports:
 Remotes:  
     braverock/FactorAnalytics
 License: GPL-3
-VignetteBuilder: knitr
+VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/justinmshea/ExpectedReturns

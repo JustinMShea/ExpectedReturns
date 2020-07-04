@@ -11,7 +11,7 @@ bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{"Value and Momentum Everywhere"}
   %\VignetteEncoding{UTF-8}
-  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEngine{rmarkdown::render}
 editor_options: 
   chunk_output_type: console
 ---
@@ -46,7 +46,9 @@ Because of the *global* nature of their pricing approach, authors use as their $
 ```{r AQR Global Aggregate Equity Portfolios vs MSCI Barra Indexes}
 # Source AQR's Global Aggregate Equity Portfolio ("AQR GAP")
 # NOTE: returns in decimal unit
-source("vignettes/Value--Devil-in-HMLs-Details.R")
+# source("vignettes/Value--Devil-in-HMLs-Details.R")
+parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HML-Details.R')
+source(parser.path)
 
 # Subset AQR GAP data points 
 from <- first(which(!is.na(HML_Devil.MKT$Global)))
@@ -168,7 +170,7 @@ While the countries are...
 * **Momentum measure.** It is same for all asset classes, i.e. the common measure of the past 12-month cumulative raw return on the asset skipping the most recent month's return.
 
 ## Relation to Macroeconomic and Liquidity Risk
-This section of \textcite{asness-frazzini-pedersen-2013} blends very well with \textcite{ilmanen-2011}'s "Broader Themes", especially with what are commonly referred to as "macroeconomic factors" or simply "macros" in the financial industry jargon. Indeed, at a first sight it appears a more quantitative-oriented look at many ideas the former author already discussed.
+This section of \textcite{asness-moskowitz-pedersen-2013} blends very well with \textcite{ilmanen-2011}'s "Broader Themes", especially with what are commonly referred to as "macroeconomic factors" or simply "macros" in the financial industry jargon. Indeed, at a first sight it appears a more quantitative-oriented look at many ideas the former author already discussed.
 In particular, the authors study the underlying economic sources driving value and momentum returns: 
 * Long run consumption growth
 * MSCI world index ("market")
