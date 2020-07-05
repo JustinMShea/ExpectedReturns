@@ -108,7 +108,7 @@ colnames(TED.SPREAD) <- 'TED'
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 # MSCI World Index
 data <- merge(MSCI.WI$RET, FFC4)
-data$MSCI.RET <- zoo::na.fill(data$RET, c(NA, 'extend', 'extend'))
+data$MSCI.RET <- zoo::na.locf(data$RET)
 data$MSCI.RF <- data$MSCI.RET - data$RF
 data$RET <- NULL
 
@@ -140,13 +140,11 @@ data <- merge(data, TSM)
 
 # NOTE:
 # All series are considered relative to FF dates, which are at month-end.
-# Usually dates mismatch of one day day exists around the month-end.
-# For a wide range of reasons, among which publication dates 
-# discrepancies or later corrections. 
-# When this happens we linearly interpolate values so to be able to uniquely 
-# refer to the month-end (at which most series are normally disclosed). 
-data <- apply(data, 2, zoo::na.fill, fill=c(NA, 'extend', NA))
-data <- xts::xts(data, order.by=as.Date.character(rownames(data)))
+# Usually a dates mismatch of one day can exist around the month-end, for reasons 
+# among which publication date discrepancies or subsequent corrections. 
+# When this happens we simply consider last available values with respect to the 
+# month-end, as those are dates most series we work with refer to.
+data <- zoo::na.locf(data)
 data <- data.frame(
   DATE=ff.dates,
   data[ff.dates, ],

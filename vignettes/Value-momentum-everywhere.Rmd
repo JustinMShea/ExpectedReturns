@@ -198,6 +198,13 @@ CRP <- CRP[, colnames(CRP) != 'SP500.XS']
 CRP <- as.xts(coredata(CRP[, -1]), order.by=CRP[, 1])
 
 ## Construct the data set
+# NOTE:
+# All series are considered relative to FF dates, which are month-end.
+# Usually a dates mismatch of one day can exist around the month-end, for reasons 
+# among which publication date discrepancies or later corrections. 
+# When this happens we simply consider last available values with respect to the 
+# month-end, as those are dates most series we work with refer to.
+
 # Value and Momentum Everywhere Factors
 VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
 
@@ -231,15 +238,13 @@ ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 # Factors data
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 data <- merge(MSCI.WI, FFC4)
-# MSCI interior discrete returns are linearly interpolated to account for 
-# publication dates mismatches with respect to FF data dates (and AQR's data)
-data$MSCI.RET <- na.fill(data$RET, c(NA, 'extend', 'extend'))
+# MSCI 
+data$MSCI.RET <- zoo::na.locf(data$RET)
 data$MSCI.RF <- data$MSCI.RET - data$RF
-# Likewise bonds factors data
+# Bonds factors data
 data <- merge(CRP, data)
-data$GOVT.XS <- na.fill(data$GOVT.XS, c(NA, 'extend', NA))
-data$CORP.XS <- na.fill(data$CORP.XS, c(NA, 'extend', NA))
 # Merge factors data
+data <- zoo::na.locf(data)
 data <- data.frame(
   DATE=ff.dates,
   data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
