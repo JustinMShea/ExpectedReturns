@@ -47,7 +47,7 @@ Because of the *global* nature of their pricing approach, authors use as their $
 # Source AQR's Global Aggregate Equity Portfolio ("AQR GAP")
 # NOTE: returns in decimal unit
 # source("vignettes/Value--Devil-in-HMLs-Details.R")
-parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HML-Details.R')
+parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 source(parser.path)
 
 # Subset AQR GAP data points 
