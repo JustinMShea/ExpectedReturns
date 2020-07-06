@@ -9,7 +9,7 @@ output:
     citation_package: biblatex
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{Value-oriented equity selection}
+  %\VignetteIndexEntry{Value-oriented equity selection: The Devil in HML's Details}
   %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
