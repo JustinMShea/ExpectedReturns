@@ -9,10 +9,9 @@
 #
 # Source: https://fred.stlouisfed.org/series/TEDRATE
 
-## Import FRED data
+## Import TED Spread from FRED
 TED.SPREAD.daily <- quantmod::getSymbols.FRED('TEDRATE', env=globalenv(), auto.assign=FALSE)
-
-## TED Spread monthly
+TED.SPREAD.daily <- zoo::na.fill(TED.SPREAD.daily, fill=c(NA, 'extend', 'extend'))
 ted.monthly.idxs <- xts::endpoints(TED.SPREAD.daily)
 TED.SPREAD.monthly <- TED.SPREAD.daily[ted.monthly.idxs, ]
 

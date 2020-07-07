@@ -15,6 +15,7 @@
 
 ## VIX Monthly Close via quantmod (from FRED)
 VIX.cls.daily <- quantmod::getSymbols.FRED('VIXCLS', env=globalenv(), auto.assign=FALSE)
+VIX.cls.daily <- zoo::na.fill(VIX.cls.daily, fill=c(NA, 'extend', 'extend'))
 vix.monthly.idxs <- xts::endpoints(VIX.cls.daily)
 VIX.cls.monthly <- VIX.cls.daily[vix.monthly.idxs, ]
 # NOTE: returns in decimal unit
