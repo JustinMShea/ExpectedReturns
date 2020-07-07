@@ -12,7 +12,9 @@ AQR.VME.Factors.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Da
 # path <- "sandbox/data/AQR.VME.Factors.xlsx"
 # download.file(AQR.VME.Factors.url, path)
 # VME.Factors <- openxlsx::read.xlsx(path, sheet=1, startRow=23, colNames=FALSE)
-VME.Factors.raw <- rio::import(AQR.VME.Factors.url, format='xlsx')
+VME.Factors.raw <- suppressMessages(
+  rio::import(AQR.VME.Factors.url, format='xlsx')
+)
 
 ## Clean up
 header.row <- 21
@@ -25,7 +27,6 @@ variable.names <- gsub('_', '.', variable.names)
 variable.names <- sub("^VAL$", replacement="VAL.EVR", variable.names)
 variable.names <- sub("^MOM$", replacement="MOM.EVR", variable.names)
 colnames(VME.Factors) <- variable.names
-rm(variable.names)
 
 # Convert variables to "numeric" and dates to "Date"
 VME.Factors.vars <- colnames(VME.Factors) != 'DATE'
@@ -36,3 +37,13 @@ VME.Factors$DATE <- as.Date.character(VME.Factors$DATE, '%m/%d/%Y')
 row.names(VME.Factors) <- NULL
 data.end.row <- max(which(!is.na(VME.Factors$DATE)))
 VME.Factors <- VME.Factors[1:data.end.row, ]
+
+## Remove unused variables
+rm(
+  AQR.VME.Factors.url
+  , VME.Factors.raw
+  , header.row
+  , variable.names
+  , VME.Factors.vars
+  , data.end.row
+)

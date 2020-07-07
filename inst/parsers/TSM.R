@@ -9,7 +9,9 @@
 
 ## Import data in R
 AQR.TSM.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Time-Series-Momentum-Factors-Monthly.xlsx"
-TSM.raw <- rio::import(AQR.TSM.url, format='xlsx')
+TSM.raw <- suppressMessages(
+  rio::import(AQR.TSM.url, format='xlsx')
+)
 
 ## Clean up
 header.row <- 17
@@ -28,3 +30,14 @@ TSM$DATE <- as.Date.character(TSM$DATE, '%m/%d/%Y')
 # Remove empty cells
 data.end.row <- max(which(!is.na(TSM$DATE)))
 TSM <- TSM[1:data.end.row, ]
+
+## Remove unused variables
+rm(
+  AQR.TSM.url
+  , TSM.raw
+  , header.row
+  , data.begin.row
+  , variable.names
+  , TSM.vars
+  , data.end.row
+)

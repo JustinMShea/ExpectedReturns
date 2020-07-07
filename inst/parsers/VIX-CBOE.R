@@ -10,7 +10,9 @@
 # Source: http://www.cboe.com/products/vix-index-volatility/vix-options-and-futures/vix-index/vix-historical-data
 
 ## VIX 1990-01-02 to 2003-12-31 (old methodology)
-VIX1.raw <- rio::import('http://www.cboe.com/publish/scheduledtask/mktdata/datahouse/vixarchive.xls')
+VIX1.raw <- suppressMessages(
+  rio::import('http://www.cboe.com/publish/scheduledtask/mktdata/datahouse/vixarchive.xls')
+)
 # Clean up data
 header.row <- 1
 data.begin.row <- header.row + 1
@@ -28,7 +30,9 @@ VIX1[, -1] <- suppressWarnings(
 VIX1 <- xts::xts(VIX1[, -1], order.by=vix.dates)
 
 ## VIX 2004-01-02 to date
-VIX2.raw <- rio::import('http://www.cboe.com/publish/scheduledtask/mktdata/datahouse/vixcurrent.csv')
+VIX2.raw <- suppressMessages(
+  rio::import('http://www.cboe.com/publish/scheduledtask/mktdata/datahouse/vixcurrent.csv')
+)
 # Clean up
 header.row <- 2
 data.begin.row <- header.row + 1

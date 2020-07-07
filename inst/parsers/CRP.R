@@ -9,7 +9,9 @@
 
 ## Download data in R environment
 AQR.CRP.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Credit-Risk-Premium-Preliminary-Paper-Data.xlsx"
-CRP.raw <- rio::import(AQR.CRP.url, format='xlsx')
+CRP.raw <- suppressMessages(
+  rio::import(AQR.CRP.url, format='xlsx')
+)
 
 ## Clean up
 header.row <- 10
@@ -26,6 +28,16 @@ CRP <- apply(CRP, 2, as.numeric)
 dates.rel.days <- diff(CRP[, 'DATE'])
 first.date <- as.Date('1926-01-29')
 dates <- c(first.date, first.date + cumsum(dates.rel.days))
-
 CRP.vars <- colnames(CRP) != 'DATE'
 CRP <- data.frame(DATE=dates, CRP[, CRP.vars])
+
+## Remove unused variables
+rm(
+  AQR.CRP.url
+  , CRP.raw
+  , header.row
+  , data.begin.row
+  , dates.rel.days
+  , first.date
+  , dates
+)

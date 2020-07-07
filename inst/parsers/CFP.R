@@ -9,7 +9,9 @@
 
 ## Download in R environment
 AQR.CFP.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Century-of-Factor-Premia-Monthly.xlsx"
-AQR.CFP.raw <- rio::import(AQR.CFP.url, format='xlsx')
+AQR.CFP.raw <- suppressMessages(
+  rio::import(AQR.CFP.url, format='xlsx')
+)
 
 ## Clean up
 header.row <- 18
@@ -57,11 +59,13 @@ colnames(CFP) <- variable.names
 
 ## Remove unused variables
 rm(
-  AQR.CFP.url,
-  AQR.CFP.raw,
-  header.row,
-  data.begin.row,
-  data.end.row,
-  tmp,
-  variable.names
+  AQR.CFP.url
+  , AQR.CFP.raw
+  , header.row
+  , data.begin.row
+  , data.end.row
+  , tmp
+  , variable.names
+  , variables.split
+  , variables.swapped
 )
