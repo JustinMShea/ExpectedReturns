@@ -93,14 +93,22 @@ ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 parser.path <- file.path('inst', 'parsers', 'VIX-FRED.R')
 source(parser.path)
 VIX.RET <- VIX.cls.monthly$VIX.RET
-# TODO: VIX top 20%
-# VIX20
+# VIX Index top ~20% extremes
+vix20idxs <- order(
+  abs(VIX.RET$VIX.RET), decreasing=TRUE
+)[1:round(nrow(VIX.RET) * 0.2)]
+VIX20 <- VIX.RET[vix20idxs, ]
+colnames(VIX20) <- 'VIX.TOP.20'
 # TED Spread
 parser.path <- file.path('inst', 'parsers', 'TED-Spread.R')
 source(parser.path)
 colnames(TED.SPREAD) <- 'TED'
-# TODO: TED top 20%
-# TED20 
+# TED Spread top ~20% extremes
+ted20idxs <- order(
+  abs(TED.SPREAD$TED), decreasing=TRUE
+)[1:round(nrow(TED.SPREAD) * 0.2)]
+TED20 <- TED.SPREAD[ted20idxs, ]
+colnames(TED20) <- 'TED.TOP.20'
 ```
 
 ```{r Prepare data set}
@@ -145,6 +153,10 @@ data <- merge(data, TSM)
 # When this happens we simply consider last available values with respect to the 
 # month-end, as those are dates most series we work with refer to.
 data <- zoo::na.locf(data)
+# NOTE:
+# TED-Spread and VIX top ~20% series are used as they are constructed
+data <- merge(data, TED20, VIX20)
+
 data <- data.frame(
   DATE=ff.dates,
   data[ff.dates, ],
@@ -184,8 +196,10 @@ X <- list(
   ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'MOM')
   , amp3=c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
   , msci=c('MSCI.RF', 'I(MSCI.RF^2)')
-  , ted=c('TED') # TODO: add 'TED20'
-  , vix=c('VIX.RET') # TODO: add 'VIX20'
+  , ted=c('TED')
+  , ted20=c('TED.TOP.20')
+  , vix=c('VIX.RET')
+  , vix20=c('VIX.TOP.20')
 )
 tsmom.div.ts.reg <- lapply(X, function(x) {
   model.formula <- formula(
