@@ -91,7 +91,7 @@
 #' } #end dontrun
 #'
 #' @importFrom utils download.file read.csv unzip
-#' @importFrom xts as.xts
+#' @importFrom xts as.xts last
 #'
 #' @export
 #'

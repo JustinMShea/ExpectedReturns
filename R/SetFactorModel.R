@@ -91,6 +91,8 @@
 #'
 #' @examples
 #'
+#' @importFrom stats quantile
+#'
 #' @export
 #'
 SetFactorModel <- function(data
@@ -162,10 +164,10 @@ SetFactorModel <- function(data
       clean.method, clean.methods.available)
     )
   }
-  if(missing(lagged)) lagged <- FALSE
-  if (!lagged) {
-    # TODO
-  }
+  # if(missing(lagged)) lagged <- FALSE
+  # if (!lagged) {
+  #   # TODO
+  # }
   data <- cbind(X, y, R)
   colnames(data) <- data.names
   data <- data[, data.names]

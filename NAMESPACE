@@ -2,7 +2,9 @@
 
 export(GetFactors)
 export(SetFactorModel)
+importFrom(stats,quantile)
 importFrom(utils,download.file)
 importFrom(utils,read.csv)
 importFrom(utils,unzip)
 importFrom(xts,as.xts)
+importFrom(xts,last)
