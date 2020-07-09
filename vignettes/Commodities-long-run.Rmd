@@ -59,6 +59,51 @@ $$
 # Commodity portfolios returns and economic states
 \textcite{levine-al-2018} construct two commodity futures portfolios, an *equal-weighted* portfolio to capture the average return across commodities securities and a *long-short* backwardation-based mimicking portfolio.
 
+Let us begin with an exploratory analysis of these commodities portfolios returns.
+
+```{r}
+parser.path <- file.path('inst', 'parsers', 'COMLR.R')
+source(parser.path)
+```
+
+```{r Table 2}
+CalcReturnMeasures <- function(R, periods, const=100) {
+  # @param R An `xts` object with portfolios returns series
+  # @param periods A character vector specifying subperiod(s) to subset `R` by 
+  # @param const A numeric, multiplication constant. Default to 100 used to express percent values
+  out <- vector('list', 4)
+  res <- matrix(NA, 4, ncol(R), 
+    dimnames=list(
+      c(
+        'Arith.Avg.Ret'
+        , 'Geom.Avg.Ret'
+        , 'Volatility'
+        , 'Skewness'
+      ),
+      colnames(R)
+    )
+  )
+  for (p in 1:length(periods)) {
+    COMLR.sub <- R[periods[p], ]
+    # Annualized returns
+    for (g in c(FALSE, TRUE)) {
+      i <- as.integer(g)
+      res[i + 1, ] <- PerformanceAnalytics::Return.annualized(
+        COMLR.sub, scale=12, geometric=g
+      ) * const
+    }
+    # Volatility
+    res[3, ] <- apply(COMLR.sub, 2, function(x) sd(x, na.rm=TRUE) * sqrt(12) * const)
+    # Skewness
+    res[4, ] <- as.numeric(PerformanceAnalytics::skewness(COMLR.sub, na.rm=TRUE))
+    out[[p]] <- res
+  }
+  names(out) <- periods
+  return(out)
+}
+CalcReturnMeasures(COMLR[, 1:8], periods=c('', '1877/2015', '1877/1945', '1946/2015'))
+```
+
 ## Commodity portfolios and macro performance 
 In particular, below the three state variables adopted in \textcite{levine-al-2018} are discussed. 
 
