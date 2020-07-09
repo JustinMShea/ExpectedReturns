@@ -28,4 +28,52 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-These notes aim at reproducing \textcite{levine-al-2018}.
+This vignette aims at reproducing \textcite{levine-al-2018}.
+
+Authors find that returns of commodity futures indexes is positive over the long run. Return premiums are associated with both carry and spot returns, in different economic states vary mostly as a result of moves in the underlying spot price.
+
+*Economic states*, namely economic system expansion or recession, are examined as important drivers of commodity returns, even after conditioning on whether commodity markets are in backwardation or contango.
+
+By the cost of carry model, commodity futures prices are
+$$
+F_{t,T} = S_t e^{(r - \psi)(T - t)}
+$$
+where authors assume the risk-free interest rate $r$ and convenience yield net of storage costs $\psi$ to be constant for simplicity. *Carry* is the opposite of $(r - \psi)$.
+
+Commodity futures continuously compounded returns are then 
+$$
+r_{t,t+1}^{F_T} = \ln(S_{t+1}/S_t) + (\psi - r)
+$$
+with the first term being the *spot return* and the second the *carry* component. Or, rearranging terms, 
+$$
+r_{t,t+1}^{F_T} = [\ln(S_{t+1}/S_t) - r] + \psi
+$$
+where the first term is the *excess of cash spot returns*, defined $r_{t,t+1}^{\textrm{ES}}$, while the latter is interpreted as the *interest rate-adjusted carry*.
+The equivalent of last equation in simple discrete returns, for a given commodity, is written by authors as
+$$
+R_{t,t+1}^{F_T} = (1 + \psi_{t,t+1})R_{t,t+1}^{\textrm{ES}} + \psi_{t,t+1}
+\\
+R_{t,t+1}^{\textrm{ES}} = [(1 + R_{t,t+1}^{\textrm{S}})(1 + R_{t,t+1})] - 1
+$$
+
+# Commodity portfolios returns and economic states
+\textcite{levine-al-2018} construct two commodity futures portfolios, an *equal-weighted* portfolio to capture the average return across commodities securities and a *long-short* backwardation-based mimicking portfolio.
+
+## Commodity portfolios and macro performance 
+In particular, below the three state variables adopted in \textcite{levine-al-2018} are discussed. 
+
+1. **Commodity futures market backwardation or contango dummy**  
+This ex-ante measure is whether the commodity futures market is in a state of backwardation or contango. Authors determine the state based on the so called *aggregate backwardation* (contango) as average level of backwardation (contango) reflecting the inventories and hedging demand level across commodities, that is
+$$
+\frac{1}{N}\sum_{i=1}^{N}\frac{F_{i,t,T_{1}} - F_{i,t,T_{2}}}{(T_{2} - T_{1})F_{i,t,T_{1}}} > 0
+$$
+With $F_{i,t,T_{k}}$ the price of the $i$-th future derivative contract with maturity $T_{k}$, in period $t$.  
+
+2. **Economic expansion or recession dummy**  
+This variable is regularly estimated and published by The National Bureau of Economic Research from macroeconomic business cycle data. More explicitly, the economy is considered to be expanding when the business cycle moves trough to peak, vice versa an economic recession is registered. We use data series disseminated by the Federal Reserve Bank of St. Louis via FRED.
+
+3. **Unexpected inflation**  
+Measured by the one-year change in one-year inflation, expresses whether the inflation rate lies above or below its full sample mean. It is calculated from the US Consumer Price Index published by the US Bureau of Labor Statistics since 1913, whereas series before 1913 are provided by Prof. Robert Shiller.
+
+
+## Asset allocation and drawdown analysis
