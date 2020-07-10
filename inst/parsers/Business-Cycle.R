@@ -1,9 +1,14 @@
-## Business Cycle indicator
 
-library(xts)
+# NBER based Recession Indicators for the United States from the Period following the Peak through the Trough
+#
+# Units: +1 (recession) or 0 (expansion), Not Seasonally Adjusted
+#
+# Frequency: monthly
+#
+# Source: https://fred.stlouisfed.org/series/USREC
 
-# US Recessions
-Recession_Indicators <- "https://fred.stlouisfed.org/data/USREC.txt"
-USREC <- as.xts(read.zoo(Recession_Indicators , sep = "", skip = 69, index.column = 1,
-                         header = TRUE, format = "%Y-%m-%d", FUN = as.yearmon))
-colnames(USREC) <- "USREC"
+library(zoo)
+USREC <- quantmod::getSymbols.FRED('USREC', env=globalenv(), auto.assign=FALSE)
+USREC <- xts::xts(
+  zoo::coredata(USREC), order.by=zoo::as.Date(zoo::as.yearmon(zoo::index(USREC)), frac=1)
+)
