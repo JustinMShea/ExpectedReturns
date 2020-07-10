@@ -64,6 +64,8 @@ Let us begin with an exploratory analysis of these commodities portfolios return
 ```{r}
 parser.path <- file.path('inst', 'parsers', 'COMLR.R')
 source(parser.path)
+parser.path <- file.path('inst', 'parsers', 'Business-Cycle.R')
+source(parser.path)
 ```
 
 ```{r Table 2}
@@ -135,5 +137,24 @@ This variable is regularly estimated and published by The National Bureau of Eco
 3. **Unexpected inflation**  
 Measured by the one-year change in one-year inflation, expresses whether the inflation rate lies above or below its full sample mean. It is calculated from the US Consumer Price Index published by the US Bureau of Labor Statistics since 1913, whereas series before 1913 are provided by Prof. Robert Shiller.
 
+```{r Table 6 NBER paper}
+# Prepare data set
+data.macros <- merge(
+  COMLR['1877/2015', c('XRET.EW', 'XRET.LS', 'PFC.STATE', 'INFL.STATE')]
+  , USREC
+)
+data.macros[, -ncol(data.macros)] <- zoo::na.locf(data.macros[, -ncol(data.macros)])
+data.macros <- data.macros[complete.cases(data.macros), ]
+
+# Regressions
+y <- c('XRET.EW', 'XRET.LS')
+macro.regs <- lapply(1:length(y), function(x) {
+  lm(
+    formula(paste(y[x], '~ USREC + PFC.STATE + INFL.STATE')),
+    data=data.macros
+  )
+})
+lapply(macro.regs, summary)
+```
 
 ## Asset allocation and drawdown analysis
