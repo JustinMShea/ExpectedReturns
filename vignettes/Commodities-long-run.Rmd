@@ -104,20 +104,18 @@ CalcReturnMeasures <- function(R, periods, const=100) {
 CalcReturnMeasures(COMLR[, 1:8], periods=c('', '1877/2015', '1877/1945', '1946/2015'))
 ```
 
-```{r Figure 2}
-# Panel A
+```{r Figure 2, fig.cap="Equal-weighted Commodity Index Decomposition"}
 plot(
   cbind(cumsum(COMLR$XRET.EW), cumsum(COMLR$SXRET.EW), cumsum(COMLR$CARRY.ADJ.EW)) * 100,
-  main='Excess Spot Return/Interest Rate–Adjusted Carry Return Decomposition \n(cumulative returns %)',
+  main='Excess Spot Return/Interest Rate-Adjusted Carry Return \n(cumulative returns %)',
   screens=factor(1, 1, 1), col=c('black', 'blue', 'red'),
-  legend.loc='topleft', lty=c(1, 2, 2), lwd=rep(0.95, 3)
+  legend.loc='topleft', lty=c(1, 2, 2), lwd=rep(0.97, 3)
 )
-# Panel B
 plot(
   cbind(cumsum(COMLR$XRET.EW), cumsum(COMLR$SRET.EW), cumsum(COMLR$CARRY.EW)) * 100,
-  main='Spot/Carry Return Decomposition \n(cumulative returns %)',
+  main='Spot/Carry Return (cumulative returns %)',
   screens=factor(1, 1, 1), col=c('black', 'blue', 'red'),
-  legend.loc='topleft', lty=c(1, 2, 2), lwd=rep(0.95, 3)
+  legend.loc='topleft', lty=c(1, 2, 2), lwd=rep(0.97, 3)
 )
 ```
 
