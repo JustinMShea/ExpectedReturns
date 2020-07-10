@@ -6,15 +6,15 @@
 # Source: https://www.aqr.com/Insights/Datasets/Commodities-for-the-Long-Run-Index-Level-Data-Monthly
 
 ## Import data
-AQR.COMRL.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Commodities-for-the-Long-Run-Index-Level-Data-Monthly.xlsx"
-COMRL.raw <- suppressMessages(
-  rio::import(AQR.COMRL.url, format='xlsx')
+AQR.COMLR.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Commodities-for-the-Long-Run-Index-Level-Data-Monthly.xlsx"
+COMLR.raw <- suppressMessages(
+  rio::import(AQR.COMLR.url, format='xlsx')
 )
 
 ## Clean up
 header.row <- 10
 data.begin.row <- header.row + 1
-COMLR <- COMRL.raw[data.begin.row:nrow(COMRL.raw), ]
+COMLR <- COMLR.raw[data.begin.row:nrow(COMLR.raw), ]
 row.names(COMLR) <- NULL
 colnames(COMLR) <- c(
   # XRET = excess return
@@ -40,8 +40,8 @@ COMLR <- xts::xts(COMLR[, -1], order.by=COMLR$DATE)
 
 ## Remove unused variables
 rm(
-  AQR.COMRL.url
-  , COMRL.raw
+  AQR.COMLR.url
+  , COMLR.raw
   , header.row
   , data.begin.row
 )
