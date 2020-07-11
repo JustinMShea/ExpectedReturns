@@ -157,4 +157,51 @@ macro.regs <- lapply(1:length(y), function(x) {
 lapply(macro.regs, summary)
 ```
 
+```{r Table 7 NBER paper}
+# Value
+# measured as the negative 48-month return 12-months ago (i.e., long-term reversal)
+VAL.EW <- (-1) * lag(PerformanceAnalytics::apply.rolling(COMLR$XRET.EW, 48, cumsum, by=1), 12)
+VAL.LS <- (-1) * lag(PerformanceAnalytics::apply.rolling(COMLR$XRET.LS, 48, cumsum, by=1), 12)
+
+# Momentum
+# measured by previous 12-month return
+MOM.EW <- PerformanceAnalytics::apply.rolling(COMLR$XRET.EW, 12, cumsum, by=1)
+MOM.LS <- PerformanceAnalytics::apply.rolling(COMLR$XRET.LS, 12, cumsum, by=1)
+
+# Carry
+# measured as the backwardated/contango value of the commodity index
+# COMLR$PFC.AGG
+
+data.styles <- merge(
+  COMLR['1877/2015', c('XRET.EW', 'XRET.LS', 'PFC.AGG')]
+  , VAL.EW
+  , VAL.LS
+  , MOM.EW
+  , MOM.LS
+)
+colnames(data.styles) <- c(
+  'XRET.EW', 'XRET.LS', 'PFC.AGG'
+  , 'VAL.EW', 'VAL.LS', 'MOM.EW', 'MOM.LS'
+)
+
+# Regressions on Equal-weighted and Long-short portfolios
+## Monthly
+mods <- list(
+  EW = c('XRET.EW', 'MOM.EW', 'VAL.EW', 'PFC.AGG')
+  , LS = c('XRET.LS', 'MOM.LS', 'VAL.LS', 'PFC.AGG') 
+)
+style.regs <- lapply(mods, function(x) {
+  model.formula <- formula(
+    paste(
+      x[1], paste(x[2:length(x)], collapse='+'),
+      sep='~' 
+    )
+  )
+  lm(
+    model.formula, data=data.styles
+  )
+})
+lapply(style.regs, summary)
+```
+
 ## Asset allocation and drawdown analysis
