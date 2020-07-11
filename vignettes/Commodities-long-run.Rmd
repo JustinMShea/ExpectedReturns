@@ -157,6 +157,8 @@ macro.regs <- lapply(1:length(y), function(x) {
 lapply(macro.regs, summary)
 ```
 
+Next, following authors we run multivariate regressions of the returns of comodities indexes portfolios, equal-weighted and long-short, on investment styles. These are namely momentum, measured by portofolios previous 12-month return, value measured as the negative 48-month return 12-months ago (i.e., long-term reversal), and carry measured as the backwardated/contango value of the commodity index. 
+
 ```{r Table 7 NBER paper}
 # Value
 # measured as the negative 48-month return 12-months ago (i.e., long-term reversal)

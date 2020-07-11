@@ -9,8 +9,8 @@ output:
     citation_package: biblatex
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{\"Expected Returns\" Project Replication Examples}
-  %\VignetteEngine{rmarkdown::render}
+  %\VignetteIndexEntry{"Expected Returns" Project Replication Examples}
+  %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
 
