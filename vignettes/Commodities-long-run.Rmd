@@ -28,13 +28,9 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-This vignette aims at reproducing \textcite{levine-al-2018}.
+This vignette aims at reproducing \textcite{levine-al-2018}. Authors find that returns of commodity futures indexes are positive over the long run. Return premiums are associated with both carry and spot returns, and in different economic states vary mostly as a result of moves in the underlying spot price as opposed to the carry component. Economic states are examined as important drivers of commodity returns, even after conditioning on whether commodity markets are in backwardation or contango. Also, commodity returns predictability is analyzed through investment style measures. Each of these analyses is in turn repeated across different horizons for insights on the predictive power variables may exhibit with respect to commodities portfolios' returns. Lastly, to address whether investors should consider allocations in commodities portfolios, authors also tackle a performance and drawdown analysis in comparison with more popular stocks/bonds portfolios. Needless to say, these sort of comparisons are certainly of fundamental importance for investors, however we are more concerned assessing commodities portfolios performance themselves.
 
-Authors find that returns of commodity futures indexes is positive over the long run. Return premiums are associated with both carry and spot returns, in different economic states vary mostly as a result of moves in the underlying spot price.
-
-*Economic states*, namely economic system expansion or recession, are examined as important drivers of commodity returns, even after conditioning on whether commodity markets are in backwardation or contango.
-
-By the cost of carry model, commodity futures prices are
+First of all, let us introduce some definitions. By the cost of carry model, commodity futures prices are
 $$
 F_{t,T} = S_t e^{(r - \psi)(T - t)}
 $$
@@ -56,12 +52,12 @@ R_{t,t+1}^{F_T} = (1 + \psi_{t,t+1})R_{t,t+1}^{\textrm{ES}} + \psi_{t,t+1}
 R_{t,t+1}^{\textrm{ES}} = [(1 + R_{t,t+1}^{\textrm{S}})(1 + R_{t,t+1})] - 1
 $$
 
-# Commodity portfolios returns and economic states
-\textcite{levine-al-2018} construct two commodity futures portfolios, an *equal-weighted* portfolio to capture the average return across commodities securities and a *long-short* backwardation-based mimicking portfolio.
+# Commodity portfolios returns performance
+\textcite{levine-al-2018} construct two commodity futures portfolios, an *equal-weighted* portfolio to capture the average return across commodities securities and a *long-short* backwardation-based mimicking portfolio. Economic drivers and investment styles measures are investigated to explain their performance. Also, analyses extends with respect to different sampling periods (1877-2015, 1877-1945, and 1946-2015 as originally done in the paper, and 1877-2020 until the available updated data set permits) and with respect to different analysis horizons (monthly, one year, and five years) to provide some guidance on the predictive power such drivers may exhibit. 
 
-Let us begin with an exploratory analysis of these commodities portfolios returns.
+Let us begin with an exploratory analysis of these commodities portfolios returns. Summary statistics and graphical representations are presented.
 
-```{r}
+```{r Data sourcing}
 parser.path <- file.path('inst', 'parsers', 'COMLR.R')
 source(parser.path)
 parser.path <- file.path('inst', 'parsers', 'Business-Cycle.R')
@@ -121,21 +117,21 @@ plot(
 )
 ```
 
-## Commodity portfolios and macro performance 
-In particular, below the three state variables adopted in \textcite{levine-al-2018} are discussed. 
+## Commodity portfolios and macro indicators 
+In this section the three state variables adopted in \textcite{levine-al-2018} are introduced and studied.
 
-1. **Commodity futures market backwardation or contango dummy**  
-This ex-ante measure is whether the commodity futures market is in a state of backwardation or contango. Authors determine the state based on the so called *aggregate backwardation* (contango) as average level of backwardation (contango) reflecting the inventories and hedging demand level across commodities, that is
+1. **Commodity futures market backwardation/contango state**  
+This ex-ante measure is whether the commodity futures market is in a state of backwardation or contango. Authors determine the state based on the so called *aggregate backwardation* (contango) as the average level of backwardation (contango) reflecting inventories and hedging demand level across commodities, that is
 $$
 \frac{1}{N}\sum_{i=1}^{N}\frac{F_{i,t,T_{1}} - F_{i,t,T_{2}}}{(T_{2} - T_{1})F_{i,t,T_{1}}} > 0
 $$
 With $F_{i,t,T_{k}}$ the price of the $i$-th future derivative contract with maturity $T_{k}$, in period $t$.  
 
-2. **Economic expansion or recession dummy**  
+2. **Economic expansion or recession state**  
 This variable is regularly estimated and published by The National Bureau of Economic Research from macroeconomic business cycle data. More explicitly, the economy is considered to be expanding when the business cycle moves trough to peak, vice versa an economic recession is registered. We use data series disseminated by the Federal Reserve Bank of St. Louis via FRED.
 
-3. **Unexpected inflation**  
-Measured by the one-year change in one-year inflation, expresses whether the inflation rate lies above or below its full sample mean. It is calculated from the US Consumer Price Index published by the US Bureau of Labor Statistics since 1913, whereas series before 1913 are provided by Prof. Robert Shiller.
+3. **Inflation state**  
+Measured by the unexpected inflation as one-year change in one-year inflation, expresses whether the inflation rate lies above or below its full sample mean. It is calculated from the US Consumer Price Index published by the US Bureau of Labor Statistics since 1913, whereas series before 1913 are provided by Prof. Robert Shiller.
 
 ```{r Table 6 NBER paper}
 # Prepare data set
@@ -157,7 +153,8 @@ macro.regs <- lapply(1:length(y), function(x) {
 lapply(macro.regs, summary)
 ```
 
-Next, following authors we run multivariate regressions of the returns of comodities indexes portfolios, equal-weighted and long-short, on investment styles. These are namely momentum, measured by portofolios previous 12-month return, value measured as the negative 48-month return 12-months ago (i.e., long-term reversal), and carry measured as the backwardated/contango value of the commodity index. 
+## Commodity portfolios and investment styles
+Next, following authors we run multivariate regressions of the returns of equal-weighted and long-short commodities portfolios on investment styles. Styles they analyze are *momentum*, measured by previous 12-month return, *value* measured as the negative 48-month return 12-months ago (which they call "long-term reversal"), and *carry* measured as the aggregated backwardation (contango) across commodities.
 
 ```{r Table 7 NBER paper}
 # Value
@@ -206,4 +203,3 @@ style.regs <- lapply(mods, function(x) {
 lapply(style.regs, summary)
 ```
 
-## Asset allocation and drawdown analysis
