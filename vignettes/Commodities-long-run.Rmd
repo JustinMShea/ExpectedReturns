@@ -133,6 +133,30 @@ This variable is regularly estimated and published by The National Bureau of Eco
 3. **Inflation state**  
 Measured by the unexpected inflation as one-year change in one-year inflation, expresses whether the inflation rate lies above or below its full sample mean. It is calculated from the US Consumer Price Index published by the US Bureau of Labor Statistics since 1913, whereas series before 1913 are provided by Prof. Robert Shiller.
 
+```{r Regressions utility function}
+LmHorizon <- function(Y, X, horizon, data) {
+  # @param Y A character vector, dependent variables. Must be present in `data`, matching column names
+  # @param X A character vector, independent variables. Must be present in `data`, matching column names
+  # @param horizon A numeric vector, number of months to shift independent variables by
+  # @param data An xts object, the data set whose independent variables `X` will be shifted of `horizon`
+  out <- vector('list', length(Y))
+  for (h in horizon) {
+    data[, X] <- lag(data[, X], h)
+    for(y in Y) {
+      i <- match(y, Y)
+      j <- match(h, horizon)
+      out[[i]][[j]] <- lm(
+        formula(paste(y, paste0(X, collapse='+'), sep='~')),
+        data=data
+      )
+      names(out[[i]])[] <- paste('H', horizon, sep='')
+    }
+  }
+  names(out) <- Y
+  return(out)
+}
+```
+
 ```{r Table 6 NBER paper}
 # Prepare data set
 data.macros <- merge(
@@ -143,14 +167,13 @@ data.macros[, -ncol(data.macros)] <- zoo::na.locf(data.macros[, -ncol(data.macro
 data.macros <- data.macros[complete.cases(data.macros), ]
 
 # Regressions
-y <- c('XRET.EW', 'XRET.LS')
-macro.regs <- lapply(1:length(y), function(x) {
-  lm(
-    formula(paste(y[x], '~ USREC + PFC.STATE + INFL.STATE')),
-    data=data.macros
-  )
-})
-lapply(macro.regs, summary)
+macro.regs <- LmHorizon(
+  Y = c('XRET.EW', 'XRET.LS'), 
+  X = c('USREC', 'PFC.STATE', 'INFL.STATE'), 
+  horizon = c(0, 11, 59),
+  data = data.macros 
+)
+lapply(unlist(macro.regs, recursive=FALSE), summary)
 ```
 
 ## Commodity portfolios and investment styles
@@ -180,7 +203,8 @@ data.styles <- merge(
 )
 colnames(data.styles) <- c(
   'XRET.EW', 'XRET.LS', 'PFC.AGG'
-  , 'VAL.EW', 'VAL.LS', 'MOM.EW', 'MOM.LS'
+  , 'VAL.EW', 'VAL.LS'
+  , 'MOM.EW', 'MOM.LS'
 )
 
 # Regressions on Equal-weighted and Long-short portfolios
