@@ -73,7 +73,7 @@ CalcReturnMeasures <- function(R, periods, const=100) {
   # @param R An `xts` object with portfolios returns series
   # @param periods A character vector specifying subperiod(s) to subset `R` by 
   # @param const A numeric, multiplication constant. Default to 100 used to express percent values
-  out <- vector('list', 4)
+  out <- vector('list', length(periods))
   res <- matrix(NA, 4, ncol(R), 
     dimnames=list(
       c(
@@ -103,7 +103,7 @@ CalcReturnMeasures <- function(R, periods, const=100) {
   names(out) <- periods
   return(out)
 }
-CalcReturnMeasures(COMLR[, 1:8], periods=c('', '1877/2015', '1877/1945', '1946/2015'))
+CalcReturnMeasures(COMLR[, 1:8], periods=c('1877/2020', '1877/2015', '1877/1945', '1946/2015'))
 ```
 
 ```{r Figure 2, fig.cap="Equal-weighted Commodity Index Decomposition"}
