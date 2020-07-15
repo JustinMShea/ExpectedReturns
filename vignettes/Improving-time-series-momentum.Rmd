@@ -44,7 +44,7 @@ Also, of methodological relevance is that futures quotes series are adjusted for
 ImportFuturesData <- function() {
   symbols.files <- normalizePath(
     list.files(
-      file.path('data', 'FuturesData'), 
+      file.path('sandbox', 'data', 'FuturesData'), 
       pattern="*.RData", recursive=TRUE, full.names=TRUE
     )
   )
