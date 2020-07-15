@@ -36,6 +36,25 @@ Data series we analyze are obtained from Bloomberg. For reproducibility purposes
 
 Also, of methodological relevance is that futures quotes series are adjusted for rollovers so to limit attention to the most liquid contract, and series are aligned among the various exchanges where the contracts are traded in order to avoid the introduction of undue lead-lag effects in the analyses.
 
+```{r Load/source futures data}
+# Commodities, equity indexes, currencies, and interest rates
+# NOTE: Select needed files (see 'symbols' below) and place them in sandbox/data/FuturesData 
+# TODO: Eurostoxx50 in USD?
+# TODO: 'EC1' for EUR/USD FX rate?
+ImportFuturesData <- function() {
+  symbols.files <- normalizePath(
+    list.files(
+      file.path('data', 'FuturesData'), 
+      pattern="*.RData", recursive=TRUE, full.names=TRUE
+    )
+  )
+  for (symbol.file in symbols.files) {
+    load(symbol.file, envir=globalenv())
+  }
+}
+ImportFuturesData()
+```
+
 # Time-series Momentum Strategies
 Time-series momentum is defined analogously to \textcite{moskowitz-ooi-pedersen-2012}. Generally, *univariate time-series momentum* is the trading rule that imposes to take a long/short position on a given asset depending on a metric of its past performance. The rule is completely identified by two parameters, namely the *lookback period* $J$ over which such performance is taken into account and the *holding period* $K$ during which the asset is effectively held in the portfolio. Since the same holds in principle for every tradable assets, time-series momentum can and is also be aggregated at portfolio level. Adopting \textcite{baltas-kosowski-2012} symbols and notation for readability purposes, such quantity is expressed as
 $$
