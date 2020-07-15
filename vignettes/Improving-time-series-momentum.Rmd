@@ -55,6 +55,32 @@ ImportFuturesData <- function() {
 ImportFuturesData()
 ```
 
+```{r Prepare data sets}
+symbols <- c('CC1', 'CL1', 'DX1', 'EC1', 'ED1', 'GC1', 'HG1', 'NG1', 'SPX', 'SX5E', 'TY1', 'W 1')
+futures.data <- mget(symbols)
+
+# Convert to data.frame
+futures.data <- lapply(futures.data, function(x) {
+  colnames(x) <- if (ncol(x) == 6) {
+    c('Open', 'High', 'Low', 'Settle', 'Volume', 'Open.Interest')
+  } else if (ncol(x) == 5) {
+    c('Open', 'High', 'Low', 'Last', 'Volume')
+  }
+  data.frame(
+    Date=zoo::index(x), 
+    zoo::coredata(x)
+  )
+})
+# Assign tickers' names
+futures.data <- mapply(function(x, y) {
+  x$Symbol <- rep(y, nrow(x))
+  return(x)
+}, futures.data, symbols)
+
+# Make panel 
+futures.data.panel <- Reduce(function(...) merge(..., all=TRUE), futures.data)
+```
+
 # Time-series Momentum Strategies
 Time-series momentum is defined analogously to \textcite{moskowitz-ooi-pedersen-2012}. Generally, *univariate time-series momentum* is the trading rule that imposes to take a long/short position on a given asset depending on a metric of its past performance. The rule is completely identified by two parameters, namely the *lookback period* $J$ over which such performance is taken into account and the *holding period* $K$ during which the asset is effectively held in the portfolio. Since the same holds in principle for every tradable assets, time-series momentum can and is also be aggregated at portfolio level. Adopting \textcite{baltas-kosowski-2012} symbols and notation for readability purposes, such quantity is expressed as
 $$
