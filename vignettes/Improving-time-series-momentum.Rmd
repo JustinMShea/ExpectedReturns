@@ -36,6 +36,8 @@ Data series we analyze are obtained from Bloomberg. For reproducibility purposes
 
 Of methodological relevance is that authors adjust futures quotes series for rollovers, so to limit attention to the most liquid contract per instrument. Our data set is simpler, in that it only contemplates each instrument traded in a single Exchange, as indicated above. In addition, authors have to align among the various Exchanges where contracts are traded in order to avoid the introduction of undue lead-lag effects in the analyses. Because our data set consists of daily data this step does not apply and we only refer to a end-of-day characterization of (all) markets. It should be clear that authors' framework is more rigorous, especially in sight of volatility estimations where high-frequency data aim at more or less drastically reduce microstructure noise. Unfortunately we do not have readily available intra-day time-series and therefore use daily data.
 
+Furthermore, as will be better detailed in following sections, we consider daily settlement futures prices as opposed to closing prices (see [CME Group Daily Settlement Procedures](https://www.cmegroup.com/market-data/files/CME_Group_Settlement_Procedures.pdf) for information). This is chiefly dictated by the fact closing price data is not readily available in our data set. However, we observe that often the two series are row-wise equal and when they're not prices result to be quite close indeed. However, there are important conceptual differences between the two and thus this "substitution" shouldn't take place when full OCHL data is available. 
+
 ```{r Load/source futures data}
 # Commodities, equity indexes, currencies, and interest rates
 # NOTE: Select needed files (see 'symbols' below) and place them in sandbox/data/FuturesData 
@@ -57,15 +59,14 @@ ImportFuturesData()
 
 ```{r Prepare data sets}
 symbols <- c('CC1', 'CL1', 'DX1', 'EC1', 'ED1', 'GC1', 'HG1', 'NG1', 'SPX', 'SX5E', 'TY1', 'W 1')
+symbols.vars <- c('Open', 'High', 'Low', 'Settle', 'Volume', 'Open.Interest')
 futures.data <- mget(symbols)
 
 # Convert to data.frame
 futures.data <- lapply(futures.data, function(x) {
-  colnames(x) <- if (ncol(x) == 6) {
-    c('Open', 'High', 'Low', 'Settle', 'Volume', 'Open.Interest')
-  } else if (ncol(x) == 5) {
-    c('Open', 'High', 'Low', 'Last', 'Volume')
-  }
+  # For equity indexes, 'Settle' should truly be 'Last', meaning closing price.
+  # Renaming for computational convenience.
+  colnames(x) <- symbols.vars[1:ncol(x)]
   data.frame(
     Date=zoo::index(x), 
     zoo::coredata(x)
