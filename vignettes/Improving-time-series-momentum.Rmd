@@ -59,13 +59,14 @@ ImportFuturesData()
 
 ```{r Prepare data sets}
 symbols <- c('CC1', 'CL1', 'DX1', 'EC1', 'ED1', 'GC1', 'HG1', 'NG1', 'SPX', 'SX5E', 'TY1', 'W 1')
-symbols.vars <- c('Open', 'High', 'Low', 'Settle', 'Volume', 'Open.Interest')
+symbols.vars <- c('Open', 'High', 'Low', 'Close', 'Volume', 'Open.Interest')
 futures.data <- mget(symbols)
 
 # Convert to data.frame
 futures.data <- lapply(futures.data, function(x) {
-  # For equity indexes, 'Settle' should truly be 'Last', meaning closing price.
-  # Renaming for computational convenience.
+  # For all but equity indexes, 'Close' (closing price) is in reality 'Settle' (daily settlement price).
+  # For the majority of instruments we do not have closing prices readily available at this time. 
+  # Renaming is chiefly due to computational and illustration convenience.
   colnames(x) <- symbols.vars[1:ncol(x)]
   data.frame(
     Date=zoo::index(x), 
