@@ -24,6 +24,7 @@ Depends:
   R (>= 3.5),
   FactorAnalytics (>= 2.0.36)
 Imports:
+  PerformanceAnalytics,
   xts,
   XML
 Remotes:  
