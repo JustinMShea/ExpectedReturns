@@ -76,6 +76,9 @@ futures.data <- lapply(futures.data, function(x) {
   # For the majority of instruments we do not have closing prices readily available at this time. 
   # Renaming is chiefly due to computational and illustration convenience.
   colnames(x) <- symbols.vars[1:ncol(x)]
+  # Returns
+  x$Return <- PerformanceAnalytics::Return.calculate(x$Close, 'discrete')
+  x$Comp.Return <- PerformanceAnalytics::Return.calculate(x$Close, 'log')
   data.frame(
     Date=zoo::index(x), 
     zoo::coredata(x)
