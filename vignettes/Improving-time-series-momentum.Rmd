@@ -40,21 +40,29 @@ Furthermore, as will be better detailed in following sections, we consider daily
 
 ```{r Load/source futures data}
 # Commodities, equity indexes, currencies, and interest rates
-# NOTE: Select needed files (see 'symbols' below) and place them in sandbox/data/FuturesData 
 # TODO: Eurostoxx50 in USD?
 # TODO: 'EC1' for EUR/USD FX rate?
-ImportFuturesData <- function() {
+LoadFuturesData <- function(symbols) {
+  #' @param symbols A character vector, specifying symbols to be loaded from `sandbox/data/FuturesData/`. 
+  #'                Must match corresponding `.RData` files names
   symbols.files <- normalizePath(
     list.files(
       file.path('sandbox', 'data', 'FuturesData'), 
       pattern="*.RData", recursive=TRUE, full.names=TRUE
     )
   )
-  for (symbol.file in symbols.files) {
+  symbols.files.avail <- unlist(
+    strsplit(
+      basename(symbols.files), split='.RData'
+    )
+  )
+  sm <- match(symbols, symbols.files.avail)
+  for (symbol.file in symbols.files[sm]) {
     load(symbol.file, envir=globalenv())
   }
 }
-ImportFuturesData()
+symbols <- c('CC1', 'CL1', 'DX1', 'EC1', 'ED1', 'GC1', 'HG1', 'NG1', 'SPX', 'SX5E', 'TY1', 'W 1')
+LoadFuturesData(symbols)
 ```
 
 ```{r Prepare data sets}
