@@ -117,6 +117,7 @@ Authors empirically investigate and propose the following momentum signals:
 
 ```{r TSMOM strats signals}
 mom.sign <- MomSignal(futures.data, lookback=12, signal='SIGN')
+mom.ma <- MomSignal(futures.data, lookback=12, signal='MA')
 ```
 
 ### Returns predictability

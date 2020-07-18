@@ -25,7 +25,7 @@ returns are needed. \code{MA}, \code{EEMD}, \code{TREND}, and \code{SMT} require
 }
 \references{
 Baltas, Akindynos-Nikolaos and Kosowski, Robert (2012). \emph{Improving time-series momentum strategies: The role of trading signals and volatility estimators}.
-\href{https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility}{EDHEC-Risk Institute}
+\href{https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility}{EDHEC-Risk Institute}.
 }
 \author{
 Vito Lestingi

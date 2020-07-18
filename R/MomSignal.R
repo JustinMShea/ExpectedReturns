@@ -16,13 +16,13 @@
 #'
 #' @references
 #' Baltas, Akindynos-Nikolaos and Kosowski, Robert (2012). *Improving time-series momentum strategies: The role of trading signals and volatility estimators*.
-#' [EDHEC-Risk Institute](https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility)
+#' [EDHEC-Risk Institute](https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility).
 #'
 #' @author
 #' Vito Lestingi
 #'
 #' @importFrom PerformanceAnalytics apply.rolling
-#' @importFrom xts is.xts xts
+#' @importFrom xts endpoints is.xts period.sum xts
 #'
 #' @export
 #'
@@ -42,7 +42,8 @@ MomSignal <- function(X
   }
   # Signals calcs
   if (missing(signal)) signal <- 'SIGN'
-  signals.avail <- c('SIGN') # c('SIGN', 'MA', 'EEMD', 'TREND', 'SMT')
+  # TODO: c('EEMD', 'TREND', 'SMT')
+  signals.avail <- c('SIGN', 'MA')
   signal <- match.arg(signal, signals.avail)
   switch (signal,
     SIGN = {
@@ -52,6 +53,17 @@ MomSignal <- function(X
             x$Comp.Return, width=lookback, cumsum, by=1
           )
         )
+        y[y == 0] <- (-1L)
+        return(y)
+      })
+    },
+    MA = {
+      mom.signal <- lapply(X, function(x) {
+        ep <- endpoints(x)
+        ma <- 1/diff(ep) * period.sum(x$Close, ep)
+        y <- (-1L) * sign(ma - as.numeric(ma[nrow(ma)-1, ]))
+        y[y == 0] <- (-1L)
+        return(y)
       })
     }
   )
