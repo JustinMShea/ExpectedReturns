@@ -7,14 +7,14 @@
 MomSignal(X, lookback, signal)
 }
 \arguments{
-\item{X}{An \code{xts} object, storing assets data. See 'Details'.}
+\item{X}{A list of \code{xts} objects, storing assets data. See 'Details'.}
 
 \item{lookback}{A numeric, indicating the number of lookback periods in months.}
 
 \item{signal}{A character, selecting the momentum signal. One of \code{SIGN}, \code{MA}, \code{EEMD}, \code{TREND}, or \code{SMT}.}
 }
 \value{
-
+A list of \code{xts} objects, consisting of the chosen momentum \code{signal} for the corresponding assets data \code{X} provided.
 }
 \description{
 Function to compute several momentum trading signals.

@@ -2,12 +2,13 @@
 #'
 #' Function to compute several momentum trading signals.
 #'
-#' @param X An `xts` object, storing assets data. See 'Details'.
+#' @param X A list of `xts` objects, storing assets data. See 'Details'.
 #' @param lookback A numeric, indicating the number of lookback periods in months.
 #' @param signal A character, selecting the momentum signal. One of `SIGN`, `MA`, `EEMD`, `TREND`, or `SMT`.
 # #' @param speed A boolean, whether or not to compute the *momentum signal speed*.
 #'
 #' @return
+#' A list of `xts` objects, consisting of the chosen momentum `signal` for the corresponding assets data `X` provided.
 #'
 #' @details
 #' Data strictly needed in `X` depends on the `signal` chosen. For `SIGN` only
@@ -21,7 +22,7 @@
 #' Vito Lestingi
 #'
 #' @importFrom PerformanceAnalytics apply.rolling
-#' @importFrom xts xts
+#' @importFrom xts is.xts xts
 #'
 #' @export
 #'
@@ -31,6 +32,15 @@ MomSignal <- function(X
                       # , speed
                       )
 {
+  xts.check <- all(vapply(X, is.xts, FUN.VALUE=logical(1L)))
+  if (!xts.check) {
+    X <- lapply(X, function(x) {
+      # Drop 'character' data type
+      x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
+      xts(x[, -1], order.by=x[, 1])
+    })
+  }
+  # Signals calcs
   if (missing(signal)) signal <- 'SIGN'
   signals.avail <- c('SIGN') # c('SIGN', 'MA', 'EEMD', 'TREND', 'SMT')
   signal <- match.arg(signal, signals.avail)
@@ -39,8 +49,7 @@ MomSignal <- function(X
       mom.signal <- lapply(X, function(x) {
         y <- sign(
           apply.rolling(
-            xts(x$Comp.Return, x$Date),
-            width=lookback, cumsum, by=1
+            x$Comp.Return, width=lookback, cumsum, by=1
           )
         )
       })
