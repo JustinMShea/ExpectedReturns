@@ -54,6 +54,7 @@ MomSignal <- function(X
           )
         )
         y[y == 0] <- (-1L)
+        colnames(y) <- signal
         return(y)
       })
     },
@@ -63,6 +64,7 @@ MomSignal <- function(X
         ma <- 1/diff(ep) * period.sum(x$Close, ep)
         y <- (-1L) * sign(ma - as.numeric(ma[nrow(ma)-1, ]))
         y[y == 0] <- (-1L)
+        colnames(y) <- signal
         return(y)
       })
     }
