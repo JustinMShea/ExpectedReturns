@@ -26,7 +26,8 @@ Depends:
 Imports:
   PerformanceAnalytics,
   xts,
-  XML
+  XML,
+  zoo
 Remotes:  
     braverock/FactorAnalytics
 License: GPL-3
