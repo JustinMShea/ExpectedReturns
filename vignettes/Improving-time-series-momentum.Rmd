@@ -116,8 +116,9 @@ Authors empirically investigate and propose the following momentum signals:
 * **SMT**, more robust version of the previous signal using the statistically meaningful trend methodology.
 
 ```{r TSMOM strats signals}
-mom.sign <- MomSignal(futures.data, lookback=12, signal='SIGN')
-mom.ma <- MomSignal(futures.data, lookback=12, signal='MA')
+# 12 months lookback as 261 trading days
+mom.sign <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SIGN')
+mom.ma <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='MA')
 ```
 
 ### Returns predictability

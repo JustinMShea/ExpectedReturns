@@ -21,8 +21,8 @@
 #' @author
 #' Vito Lestingi
 #'
-#' @importFrom PerformanceAnalytics apply.rolling
-#' @importFrom xts endpoints is.xts period.sum xts
+#' @importFrom xts endpoints is.xts xts
+#' @importFrom zoo rollmeanr rollsumr
 #'
 #' @export
 #'
@@ -32,6 +32,7 @@ MomSignal <- function(X
                       # , speed
                       )
 {
+  # xts conversion
   xts.check <- all(vapply(X, is.xts, FUN.VALUE=logical(1L)))
   if (!xts.check) {
     X <- lapply(X, function(x) {
@@ -48,24 +49,23 @@ MomSignal <- function(X
   switch (signal,
     SIGN = {
       mom.signal <- lapply(X, function(x) {
-        y <- sign(
-          apply.rolling(
-            x$Comp.Return, width=lookback, cumsum, by=1
-          )
-        )
-        y[y == 0] <- (-1L)
-        colnames(y) <- signal
-        return(y)
+        # [t - j, t], j = 0, ..., lookback, for a fixed t
+        y <- rollsumr(x$Comp.Return, lookback, na.rm=TRUE)
+        s <- sign(y)
+        s[s == 0] <- (-1L)
+        colnames(s) <- signal
+        return(s)
       })
     },
     MA = {
       mom.signal <- lapply(X, function(x) {
-        ep <- endpoints(x)
-        ma <- 1/diff(ep) * period.sum(x$Close, ep)
-        y <- (-1L) * sign(ma - as.numeric(ma[nrow(ma)-1, ]))
-        y[y == 0] <- (-1L)
-        colnames(y) <- signal
-        return(y)
+        # [t - j, t], j = 0, ..., lookback, for a fixed t
+        y <- rollmeanr(x$Comp.Return, lookback, na.rm=TRUE)
+        z <- rollmeanr(x$Comp.Return, round(lookback/12), na.rm=TRUE)
+        s <- (-1L) * sign(y - z)
+        s[s == 0] <- (-1L)
+        colnames(s) <- signal
+        return(s)
       })
     }
   )
