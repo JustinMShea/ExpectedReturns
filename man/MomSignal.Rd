@@ -9,7 +9,7 @@ MomSignal(X, lookback, signal)
 \arguments{
 \item{X}{A list of \code{xts} objects, storing assets data. See 'Details'.}
 
-\item{lookback}{A numeric, indicating the number of lookback periods in months.}
+\item{lookback}{A numeric, indicating the lookback period in the same frequency of \code{X} series.}
 
 \item{signal}{A character, selecting the momentum signal. One of \code{SIGN}, \code{MA}, \code{EEMD}, \code{TREND}, or \code{SMT}.}
 }

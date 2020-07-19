@@ -1,9 +1,10 @@
-#' Momentum Trading Signal
+#' @title Momentum Trading Signal
 #'
+#' @description
 #' Function to compute several momentum trading signals.
 #'
 #' @param X A list of `xts` objects, storing assets data. See 'Details'.
-#' @param lookback A numeric, indicating the number of lookback periods in months.
+#' @param lookback A numeric, indicating the lookback period in the same frequency of `X` series.
 #' @param signal A character, selecting the momentum signal. One of `SIGN`, `MA`, `EEMD`, `TREND`, or `SMT`.
 # #' @param speed A boolean, whether or not to compute the *momentum signal speed*.
 #'
