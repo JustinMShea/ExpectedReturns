@@ -24,7 +24,9 @@ Depends:
   R (>= 3.5),
   FactorAnalytics (>= 2.0.36)
 Imports:
+  lmtest,
   PerformanceAnalytics,
+  sandwich,
   xts,
   XML,
   zoo

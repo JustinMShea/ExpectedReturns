@@ -3,6 +3,8 @@
 export(GetFactors)
 export(MomSignal)
 export(SetFactorModel)
+importFrom(lmtest,coeftest)
+importFrom(sandwich,NeweyWest)
 importFrom(stats,quantile)
 importFrom(utils,download.file)
 importFrom(utils,read.csv)

@@ -22,6 +22,8 @@
 #' @author
 #' Vito Lestingi
 #'
+#' @importFrom lmtest coeftest
+#' @importFrom sandwich NeweyWest
 #' @importFrom xts endpoints is.xts xts
 #' @importFrom zoo rollmeanr rollsumr
 #'
@@ -44,8 +46,8 @@ MomSignal <- function(X
   }
   # Signals calcs
   if (missing(signal)) signal <- 'SIGN'
-  # TODO: c('EEMD', 'TREND', 'SMT')
-  signals.avail <- c('SIGN', 'MA')
+  # TODO: 'SMT', 'EEMD'
+  signals.avail <- c('SIGN', 'MA', 'TREND')
   signal <- match.arg(signal, signals.avail)
   switch (signal,
     SIGN = {
@@ -66,6 +68,31 @@ MomSignal <- function(X
         s <- (-1L) * sign(y - z)
         s[s == 0] <- (-1L)
         colnames(s) <- signal
+        return(s)
+      })
+    },
+    TREND = {
+      mom.signal <- lapply(X, function(x) {
+        lind <- lookback:(nrow(x) - 1)
+        nw.tstats <- matrix(NA, length(lind)) # TODO: rsq
+        obs.lag <- lookback:1
+        for (i in 1:(nrow(x) - lookback)) {
+          # Normalize prices
+          w <- x[i:(i + lookback - 1)] / as.numeric(x[i])
+          # Regressions
+          data <- cbind(w, obs.lag)
+          colnames(data) <- c('Close.Norm', 'Obs.Lag')
+          mfit <- lm(Close.Norm ~ Obs.Lag, data=data)
+          # TODO: rsq[i, ] <- summary(mfit)$r.squared
+          # Newey-West t-stats
+          nw.ts <- coeftest(mfit, vcov=NeweyWest(mfit, prewhite=FALSE))
+          nw.tstats[i, ] <- nw.ts[2, 't value']
+        }
+        s <- matrix(nw.tstats, dimnames=list(NULL, 'TREND'))
+        s[-2 <= s & s <= 2] <- 0L
+        s[s < (-2)] <- (-1L)
+        s[s > 2] <- 1L
+        s <- xts(s, order.by=index(x)[lind])
         return(s)
       })
     }
