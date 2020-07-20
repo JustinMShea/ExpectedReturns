@@ -73,9 +73,10 @@ MomSignal <- function(X
     },
     TREND = {
       mom.signal <- lapply(X, function(x) {
+        x <- x$Close
+        obs.lag <- lookback:1
         lind <- lookback:(nrow(x) - 1)
         nw.tstats <- matrix(NA, length(lind)) # TODO: rsq
-        obs.lag <- lookback:1
         for (i in 1:(nrow(x) - lookback)) {
           # Normalize prices
           w <- x[i:(i + lookback - 1)] / as.numeric(x[i])
