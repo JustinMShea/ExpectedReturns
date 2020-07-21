@@ -35,6 +35,7 @@ MomSignal <- function(X
                       # , speed
                       )
 {
+  cl <- match.call()
   # xts conversion
   xts.check <- all(vapply(X, is.xts, FUN.VALUE=logical(1L)))
   if (!xts.check) {
@@ -45,9 +46,13 @@ MomSignal <- function(X
     })
   }
   # Signals calcs
-  if (missing(signal)) signal <- 'SIGN'
-  # TODO: 'SMT', 'EEMD'
-  signals.avail <- c('SIGN', 'MA', 'TREND')
+  if (missing(signal)) {
+    signal <- 'SIGN'
+  } else if (signal == 'TREND' | signal == 'SMT') {
+    signal <- 'TREND.SMT'
+  }
+  # TODO: 'EEMD'
+  signals.avail <- c('SIGN', 'MA', 'TREND.SMT')
   signal <- match.arg(signal, signals.avail)
   switch (signal,
     SIGN = {
@@ -71,12 +76,13 @@ MomSignal <- function(X
         return(s)
       })
     },
-    TREND = {
+    TREND.SMT = {
       mom.signal <- lapply(X, function(x) {
         x <- x$Close
         obs.lag <- lookback:1
         lind <- lookback:(nrow(x) - 1)
-        nw.tstats <- matrix(NA, length(lind)) # TODO: rsq
+        nw.tstats <- rsq <- matrix(NA, length(lind))
+        s <- matrix(NA, length(lind), dimnames=list(NULL, cl$signal))
         for (i in 1:(nrow(x) - lookback)) {
           # Normalize prices
           w <- x[i:(i + lookback - 1)] / as.numeric(x[i])
@@ -84,17 +90,26 @@ MomSignal <- function(X
           data <- cbind(w, obs.lag)
           colnames(data) <- c('Close.Norm', 'Obs.Lag')
           mfit <- lm(Close.Norm ~ Obs.Lag, data=data)
-          # TODO: rsq[i, ] <- summary(mfit)$r.squared
+          rsq[i, ] <- summary(mfit)$r.squared
           # Newey-West t-stats
           nw.ts <- coeftest(mfit, vcov=NeweyWest(mfit, prewhite=FALSE))
           nw.tstats[i, ] <- nw.ts[2, 't value']
         }
-        s <- matrix(nw.tstats, dimnames=list(NULL, 'TREND'))
-        s[-2 <= s & s <= 2] <- 0L
-        s[s < (-2)] <- (-1L)
-        s[s > 2] <- 1L
-        s <- xts(s, order.by=index(x)[lind])
-        return(s)
+        if (cl$signal == 'TREND') {
+          s[1:length(lind), ] <- nw.tstats
+          s[-2 <= s & s <= 2] <- 0L
+          s[s < (-2)] <- (-1L)
+          s[s > 2] <- 1L
+        } else if (cl$signal == 'SMT') {
+          tmp <- data.frame(s=s, nwts=nw.tstats, rsq=rsq)
+          tmp <- within(tmp, {
+            SMT[(-2 <= nwts & nwts <= 2) | (0 <= rsq & rsq <= 1)] <- 0L
+            SMT[nwts < (-2) & rsq >= 0.65] <- (-1L)
+            SMT[nwts > 2 & rsq >= 0.65] <- 1L
+          })
+          s <- tmp[, 'SMT', drop=FALSE]
+        }
+        return(xts(s, order.by=index(x)[lind]))
       })
     }
   )
