@@ -11,28 +11,48 @@ MomSignal(X, lookback, signal, cutoffs)
 
 \item{lookback}{A numeric, indicating the lookback period in the same frequency of \code{X} series.}
 
-\item{signal}{A character, selecting the momentum signal. One of \code{SIGN}, \code{MA}, \code{EEMD}, \code{TREND}, or \code{SMT}.}
+\item{signal}{A character, specifying the momentum signal. One of \code{SIGN}, \code{MA}, \code{EEMD}, \code{TREND}, or \code{SMT}.}
 
 \item{cutoffs}{A numeric vector, with positional cutoffs for \emph{Newey-West t-statitics} and \eqn{R^2}, see 'Details'.}
 }
 \value{
-A list of \code{xts} objects, consisting of the chosen momentum \code{signal} for the corresponding assets data \code{X} provided.
+A list of \code{xts} objects, consisting of the chosen momentum \code{signal} for the
+corresponding assets data \code{X} provided. Signals are {-1, 0, 1} for short,
+inactive, and long positions, respectively. \code{TREND} and \code{SMT} are the only
+signals that can result in inactive positions.
 }
 \description{
-Function to compute several momentum trading signals.
+Function to generate several momentum trading signals. Signals currently implemented are:
+\itemize{
+\item \strong{Return Sign} (SIGN) of Moskowitz-Ooi-Pedersen (2012)
+\item \strong{Moving Average} (MA)
+\item \strong{Time-Trend t-statistic} (TREND)
+\item \strong{Statistically Meaningful Trend} (SMT) of Bryhn-Dimberg (2011)
+}
+
+All the signals are as defined in Baltas-Kosowski (2012).
 }
 \details{
-Data strictly needed in \code{X} depends on the \code{signal} chosen. For \code{SIGN} only
-returns are needed. \code{MA}, \code{EEMD}, \code{TREND}, and \code{SMT} require closing prices.
+Data strictly needed in \code{X} depends on the \code{signal} chosen. \code{SIGN} is based on
+assets returns. \code{MA}, \code{EEMD}, \code{TREND}, and \code{SMT} are price-based momentum signals.
 
 For the \code{TREND}, Newey-West t-statitics lower and upper \code{cutoffs} can be provided.
 With \code{SMT}, \code{cutoffs} can additionally provide the lower \eqn{R^2} cutoff.
 Defaults are set at \eqn{-2}, \eqn{2} for NW t-statitics and a minimum \eqn{R^2}
 of \eqn{0.65}.
+
+\code{SMT} over sub-periods is not currently supported.
 }
 \references{
-Baltas, Akindynos-Nikolaos and Kosowski, Robert (2012). \emph{Improving time-series momentum strategies: The role of trading signals and volatility estimators}.
+Bryhn, A. C and Dimberg, P. H. (2011). \emph{An operational definition of a statistically meaningful trend}. PLoS One.
+
+Moskowitz, T. J. and Ooi, Y. H. and Pedersen, L. H. (2012). \emph{Time series momentum}. Journal of Financial Economics.
+
+Baltas, A. N. and Kosowski, R. (2012). \emph{Improving time-series momentum strategies: The role of trading signals and volatility estimators}.
 \href{https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility}{EDHEC-Risk Institute}.
+}
+\seealso{
+\code{\link[sandwich:NeweyWest]{sandwich::NeweyWest()}}
 }
 \author{
 Vito Lestingi
