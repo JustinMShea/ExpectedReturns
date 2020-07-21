@@ -48,8 +48,9 @@
 #'
 #' @importFrom lmtest coeftest
 #' @importFrom sandwich NeweyWest
+#' @importFrom stats lm
 #' @importFrom xts is.xts xts
-#' @importFrom zoo rollmeanr rollsumr
+#' @importFrom zoo index rollmeanr rollsumr
 #'
 #' @export
 #'
@@ -124,7 +125,7 @@ MomSignal <- function(X
           mfit <- lm(Close.Norm ~ Obs.Lag, data=data)
           rsq[i, ] <- summary(mfit)$r.squared
           # Newey-West t-stats
-          nw.ts <- coeftest(mfit, vcov=NeweyWest(mfit, prewhite=FALSE))
+          nw.ts <- coeftest(mfit, vcov.=NeweyWest(mfit, prewhite=FALSE))
           nw.tstats[i, ] <- nw.ts[2, 't value']
         }
         if (cl$signal == 'TREND') {
