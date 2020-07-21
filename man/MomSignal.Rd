@@ -4,7 +4,7 @@
 \alias{MomSignal}
 \title{Momentum Trading Signal}
 \usage{
-MomSignal(X, lookback, signal)
+MomSignal(X, lookback, signal, cutoffs)
 }
 \arguments{
 \item{X}{A list of \code{xts} objects, storing assets data. See 'Details'.}
@@ -12,6 +12,8 @@ MomSignal(X, lookback, signal)
 \item{lookback}{A numeric, indicating the lookback period in the same frequency of \code{X} series.}
 
 \item{signal}{A character, selecting the momentum signal. One of \code{SIGN}, \code{MA}, \code{EEMD}, \code{TREND}, or \code{SMT}.}
+
+\item{cutoffs}{A numeric vector, with positional cutoffs for \emph{Newey-West t-statitics} and \eqn{R^2}, see 'Details'.}
 }
 \value{
 A list of \code{xts} objects, consisting of the chosen momentum \code{signal} for the corresponding assets data \code{X} provided.
@@ -22,6 +24,11 @@ Function to compute several momentum trading signals.
 \details{
 Data strictly needed in \code{X} depends on the \code{signal} chosen. For \code{SIGN} only
 returns are needed. \code{MA}, \code{EEMD}, \code{TREND}, and \code{SMT} require closing prices.
+
+For the \code{TREND}, Newey-West t-statitics lower and upper \code{cutoffs} can be provided.
+With \code{SMT}, \code{cutoffs} can additionally provide the lower \eqn{R^2} cutoff.
+Defaults are set at \eqn{-2}, \eqn{2} for NW t-statitics and a minimum \eqn{R^2}
+of \eqn{0.65}.
 }
 \references{
 Baltas, Akindynos-Nikolaos and Kosowski, Robert (2012). \emph{Improving time-series momentum strategies: The role of trading signals and volatility estimators}.

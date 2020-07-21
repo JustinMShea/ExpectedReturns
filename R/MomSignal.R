@@ -6,6 +6,7 @@
 #' @param X A list of `xts` objects, storing assets data. See 'Details'.
 #' @param lookback A numeric, indicating the lookback period in the same frequency of `X` series.
 #' @param signal A character, selecting the momentum signal. One of `SIGN`, `MA`, `EEMD`, `TREND`, or `SMT`.
+#' @param cutoffs A numeric vector, with positional cutoffs for *Newey-West t-statitics* and \eqn{R^2}, see 'Details'.
 # #' @param speed A boolean, whether or not to compute the *momentum signal speed*.
 #'
 #' @return
@@ -14,6 +15,11 @@
 #' @details
 #' Data strictly needed in `X` depends on the `signal` chosen. For `SIGN` only
 #' returns are needed. `MA`, `EEMD`, `TREND`, and `SMT` require closing prices.
+#'
+#' For the `TREND`, Newey-West t-statitics lower and upper `cutoffs` can be provided.
+#' With `SMT`, `cutoffs` can additionally provide the lower \eqn{R^2} cutoff.
+#' Defaults are set at \eqn{-2}, \eqn{2} for NW t-statitics and a minimum \eqn{R^2}
+#' of \eqn{0.65}.
 #'
 #' @references
 #' Baltas, Akindynos-Nikolaos and Kosowski, Robert (2012). *Improving time-series momentum strategies: The role of trading signals and volatility estimators*.
@@ -32,6 +38,7 @@
 MomSignal <- function(X
                       , lookback
                       , signal
+                      , cutoffs
                       # , speed
                       )
 {
@@ -50,6 +57,10 @@ MomSignal <- function(X
     signal <- 'SIGN'
   } else if (signal == 'TREND' | signal == 'SMT') {
     signal <- 'TREND.SMT'
+    if (missing(cutoffs)) {
+      # lower NW t-stat, upper NW t-stat, lower R^2
+      cutoffs <- c(-2, 2, 0.65)
+    }
   }
   # TODO: 'EEMD'
   signals.avail <- c('SIGN', 'MA', 'TREND.SMT')
@@ -77,6 +88,9 @@ MomSignal <- function(X
       })
     },
     TREND.SMT = {
+      nwl <- cutoffs[1]
+      nwu <- cutoffs[2]
+      rsl <- cutoffs[3]
       mom.signal <- lapply(X, function(x) {
         x <- x$Close
         obs.lag <- lookback:1
@@ -97,15 +111,15 @@ MomSignal <- function(X
         }
         if (cl$signal == 'TREND') {
           s[1:length(lind), ] <- nw.tstats
-          s[-2 <= s & s <= 2] <- 0L
-          s[s < (-2)] <- (-1L)
-          s[s > 2] <- 1L
+          s[nwl <= s & s <= nwu] <- 0L
+          s[s < nwl] <- (-1L)
+          s[s > nwu] <- 1L
         } else if (cl$signal == 'SMT') {
           tmp <- data.frame(s=s, nwts=nw.tstats, rsq=rsq)
           tmp <- within(tmp, {
-            SMT[(-2 <= nwts & nwts <= 2) | (0 <= rsq & rsq <= 1)] <- 0L
-            SMT[nwts < (-2) & rsq >= 0.65] <- (-1L)
-            SMT[nwts > 2 & rsq >= 0.65] <- 1L
+            SMT[(nwl <= nwts & nwts <= nwu) | (0 <= rsq & rsq <= 1)] <- 0L
+            SMT[nwts < nwl & rsq >= rsl] <- (-1L)
+            SMT[nwts > nwu & rsq >= rsl] <- 1L
           })
           s <- tmp[, 'SMT', drop=FALSE]
         }
