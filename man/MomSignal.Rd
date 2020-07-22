@@ -4,7 +4,7 @@
 \alias{MomSignal}
 \title{Momentum Trading Signal}
 \usage{
-MomSignal(X, lookback, signal, cutoffs)
+MomSignal(X, lookback, signal, cutoffs, speed = FALSE)
 }
 \arguments{
 \item{X}{A list of \code{xts} objects, storing assets data. See 'Details'.}
@@ -14,12 +14,15 @@ MomSignal(X, lookback, signal, cutoffs)
 \item{signal}{A character, specifying the momentum signal. One of \code{SIGN}, \code{MA}, \code{EEMD}, \code{TREND}, or \code{SMT}.}
 
 \item{cutoffs}{A numeric vector, with positional cutoffs for \emph{Newey-West t-statitics} and \eqn{R^2}, see 'Details'.}
+
+\item{speed}{A boolean, whether or not to compute the chosen momentum \code{signal} \emph{speed}.}
 }
 \value{
 A list of \code{xts} objects, consisting of the chosen momentum \code{signal} for the
 corresponding assets data \code{X} provided. Signals are {-1, 0, 1} for short,
 inactive, and long positions, respectively. \code{TREND} and \code{SMT} are the only
 signals that can result in inactive positions.
+With \code{speed}, additionally the chosen \emph{momentum speed} for the given assets.
 }
 \description{
 Function to generate several momentum trading signals. Signals currently implemented are:
@@ -31,6 +34,12 @@ Function to generate several momentum trading signals. Signals currently impleme
 }
 
 All the signals are as defined in Baltas-Kosowski (2012).
+
+Also, to each of signal can be associated a so called \emph{momentum speed}, which is
+an activity to turnover-ratio used to assess signals trading intensity. Letting
+\eqn{X} the signal, its speed is defined as
+\deqn{SPEED_{X} = \sqrt{\frac{E[X^2]}{E[(\DeltaX)^2]}}}
+The higher the speed, the larger the signal activity and thus the portfolio turnover.
 }
 \details{
 Data strictly needed in \code{X} depends on the \code{signal} chosen. \code{SIGN} is based on

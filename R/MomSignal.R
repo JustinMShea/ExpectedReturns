@@ -9,17 +9,24 @@
 #'
 #' All the signals are as defined in Baltas-Kosowski (2012).
 #'
+#' Also, to each of signal can be associated a so called *momentum speed*, which is
+#' an activity to turnover-ratio used to assess signals trading intensity. Letting
+#' \eqn{X} the signal, its speed is defined as
+#' \deqn{SPEED_{X} = \sqrt{\frac{E[X^2]}{E[(\DeltaX)^2]}}}
+#' The higher the speed, the larger the signal activity and thus the portfolio turnover.
+#'
 #' @param X A list of `xts` objects, storing assets data. See 'Details'.
 #' @param lookback A numeric, indicating the lookback period in the same frequency of `X` series.
 #' @param signal A character, specifying the momentum signal. One of `SIGN`, `MA`, `EEMD`, `TREND`, or `SMT`.
 #' @param cutoffs A numeric vector, with positional cutoffs for *Newey-West t-statitics* and \eqn{R^2}, see 'Details'.
-# #' @param speed A boolean, whether or not to compute the *momentum signal speed*.
+#' @param speed A boolean, whether or not to compute the chosen momentum `signal` *speed*.
 #'
 #' @return
 #' A list of `xts` objects, consisting of the chosen momentum `signal` for the
 #' corresponding assets data `X` provided. Signals are {-1, 0, 1} for short,
 #' inactive, and long positions, respectively. `TREND` and `SMT` are the only
 #' signals that can result in inactive positions.
+#' With `speed`, additionally the chosen *momentum speed* for the given assets.
 #'
 #' @details
 #' Data strictly needed in `X` depends on the `signal` chosen. `SIGN` is based on
@@ -58,8 +65,7 @@ MomSignal <- function(X
                       , lookback
                       , signal
                       , cutoffs
-                      # , speed
-                      )
+                      , speed=FALSE)
 {
   cl <- match.call()
   # xts conversion
@@ -146,9 +152,21 @@ MomSignal <- function(X
       })
     }
   )
-  # TODO
-  # if (speed) {
-  #
-  # }
+  if (speed) {
+    mom.speed <- lapply(mom.signal, function(x) {
+      t <- (nrow(x) - lookback - 1)/(nrow(x) - lookback)
+      # X.sq == 1 for SIGN, MA, EEMD
+      X.sq <- sum(x^2)
+      DX.sq <- sum(diff(x)^2, na.rm=TRUE)
+      x.speed <- sqrt(t * X.sq / DX.sq)
+      return(x.speed)
+    })
+    return(
+      list(
+        mom.signal=mom.signal,
+        mom.speed=mom.speed
+      )
+    )
+  }
   return(mom.signal)
 }
