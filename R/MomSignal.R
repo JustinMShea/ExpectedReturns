@@ -12,7 +12,7 @@
 #' Also, to each of signal can be associated a so called *momentum speed*, which is
 #' an activity to turnover-ratio used to assess signals trading intensity. Letting
 #' \eqn{X} the signal, its speed is defined as
-#' \deqn{SPEED_{X} = \sqrt{\frac{E[X^2]}{E[(\DeltaX)^2]}}}
+#' \deqn{SPEED_{X} = \sqrt{\frac{E[X^2]}{E[(\Delta X)^2]}}}
 #' The higher the speed, the larger the signal activity and thus the portfolio turnover.
 #'
 #' @param X A list of `xts` objects, storing assets data. See 'Details'.
