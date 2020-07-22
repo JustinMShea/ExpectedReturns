@@ -107,13 +107,20 @@ The outline of subsections is as follows. First of all, in order to compute the 
 Traditional daily volatility estimators, like the standard deviation of daily past returns, provide relatively noisy volatility estimates. Authors study volatility estimators, the **realized variance** of \textcite{andersen-bollerslev-1998} and **volatility range estimators** including the estimators of \textcites{parkinson-1980, garman-klass-1980, rogers-satchell-1991, yang-zhang-2000}.
 
 ## Momentum signals
-Authors empirically investigate and propose the following momentum signals: 
+Authors empirically investigate five momentum signals, summarized below. All the signals may possibly result in a value in the set $\{-1, 0, 1\}$, for short, inactive, and long positions, respectively.
 
-* **SIGN**, is the sign of the past return \textcite{moskowitz-ooi-pedersen-2012}, 
-* **MA**, the moving average indicator.
-* **EEMD**, related to the price trend that is extracted using the Ensemble Empirical Mode Decomposition.
-* **TREND**, t-statistic of the slope coefficient from a least-squares fit of a linear trend on the asset price.
-* **SMT**, more robust version of the previous signal using the statistically meaningful trend methodology.
+1. **Return Sign (SIGN)**  
+This momentum measurement has been proposed since the first studies documenting *momentum* anomaly. In the time-series momentum literature, it was introduced by \textcite{moskowitz-ooi-pedersen-2012} and consists in the past returns sign. 
+2. **Moving Average methodology (MA)**  
+The signal is generated depending on the relationship between a short-term moving average of the asset prices and a longer-term one, over the lookback period. This market-timing feature is a peculiarity of this methodology, in contrast to the other signals studied.
+3. **Time-Trend t-statistic (TREND)**  
+t-statistic of the slope coefficient from a least-squares fit of a linear trend on the asset price.
+4. **Statistically Meaningful Trend (SMT)**
+A more robust version of the previous signal, it is represented by the statistically meaningful trend methodology of \textcite{bryhn-dimberg-2011}.
+5. **Ensemble Empirical Mode Decomposition (EEMD)**
+This signal processing technique was proposed by  \textcite{wu-huang-2009}. \textcite{baltas-kosowski-2012} apply the methodology to extract assets' price trends.
+
+To notice is that TREND and SMT are the only signals that can result in inactive positions. Further, given that SMT is more restrictive than TREND, it tends to hold more frequent or longer inactivity periods.   
 
 ```{r TSMOM strats signals}
 # 12 months lookback as 261 trading days
