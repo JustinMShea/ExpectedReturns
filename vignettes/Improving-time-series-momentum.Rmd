@@ -106,6 +106,33 @@ The outline of subsections is as follows. First of all, in order to compute the 
 ## Volatility estimation
 Traditional daily volatility estimators, like the standard deviation of daily past returns, provide relatively noisy volatility estimates. Authors study volatility estimators, the **realized variance** of \textcite{andersen-bollerslev-1998} and **volatility range estimators** including the estimators of \textcites{parkinson-1980, garman-klass-1980, rogers-satchell-1991, yang-zhang-2000}.
 
+```{r Volatility estimators}
+vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
+EstimateVolatility <- function(X, estimator, ...) {
+  vol.res <- vector('list', length(estimator))
+  vol.est <- lapply(X, function(x) {
+    # Get dates, OHLC prices, and convert
+    x <- x[, 1:5]
+    x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
+    x <- xts(x[, -1], order.by=x[, 1])
+    for (m in 1:length(estimator)) {
+      vol.res[[m]] <- TTR::volatility(x, calc=estimator[m], ...) 
+    }
+    names(vol.res) <- estimator
+    return(vol.res)
+  })
+  return(vol.est)
+}
+vol30 <- EstimateVolatility(
+  lapply(futures.data, zoo::na.locf), estimator=vol.estimators,
+  n=30, N=261, type='continuous'
+)
+vol60 <- EstimateVolatility(
+  lapply(futures.data, zoo::na.locf), estimator=vol.estimators, 
+  n=60, N=261, type='continuous'
+)
+```
+
 ## Momentum signals
 Authors empirically investigate five momentum signals, summarized below. All the signals may possibly result in a value in the set $\{-1, 0, 1\}$, for short, inactive, and long positions, respectively.
 
