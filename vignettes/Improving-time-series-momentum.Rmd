@@ -142,7 +142,7 @@ To compute volatility estimations we use functionality provided in the `TTR` pac
 ```{r Volatility estimators}
 vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
 EstimateVolatility <- function(X, estimator, ...) {
-  vol.res <- vector('list', length(estimator))
+  vol.res <- vol.bias <- vto <- vector('list', length(estimator))
   vol.est <- lapply(X, function(x) {
     # Get dates, OHLC prices, and convert
     x <- x[, 1:5]
@@ -150,9 +150,11 @@ EstimateVolatility <- function(X, estimator, ...) {
     x <- xts(x[, -1], order.by=x[, 1])
     for (m in 1:length(estimator)) {
       vol.res[[m]] <- TTR::volatility(x, calc=estimator[m], ...) 
+      vol.bias[[m]] <- 1 / nrow(x) * sum(vol.res[[1]] - vol.res[[m]], na.rm=TRUE)
+      vto[[m]] <- 1 / (nrow(x) + 1) * sum(abs((1 / vol.res[[m]]) - (1 / lag(vol.res[[m]]))), na.rm=TRUE)
     }
-    names(vol.res) <- estimator
-    return(vol.res)
+    names(vol.res) <- names(vol.bias) <- names(vto) <- estimator
+    return(list(vol.est=vol.res, vol.bias=vol.bias, VTO=vto))
   })
   return(vol.est)
 }
