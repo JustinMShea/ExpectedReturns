@@ -104,14 +104,40 @@ where $M$ is the number of available assets, $X_{i}(t-J, t)$, $\sigma_{i}(t,D)$,
 The outline of subsections is as follows. First of all, in order to compute the above quantity we need a momentum signal and a volatility estimator. Each class of such elements shall receive individual treatment: many alternatives have consolidated in decades of research, each presents pros and cons by its own and in relation with the objectives of the particular study we aim to replicate.
 
 ## Volatility estimation
-Traditional daily volatility estimators, like the standard deviation of daily past returns, provide relatively noisy volatility estimates. Authors study volatility estimators, the **realized variance** of \textcite{andersen-bollerslev-1998} and **volatility range estimators** including the estimators of \textcites{parkinson-1980, garman-klass-1980, rogers-satchell-1991, yang-zhang-2000}.
+Traditional daily volatility estimators, like the standard deviation of daily past returns, provide relatively noisy volatility estimates. Authors study volatility estimators, the **realized variance** of \textcite{andersen-bollerslev-1998} and **volatility range estimators** including the estimators of \textcites{parkinson-1980, garman-klass-1980, rogers-satchell-1991, yang-zhang-2000}. 
+
+Denote $S_{o}(t)$, $S_{h}(t)$, $S_{l}(t)$, $S_{c}(t)$ for the opening, high, low, and closing prices in the time period $t$, for a given asset. In other words, the asset OHLC data. Variance estimators investigated are defined as follows, volatility being the square root.
 
 1. **Realized variance (RV)**  
+$$
+\sigma_{\textrm{RV}}^{2}(t) = \sum_{t}^{T}R_{t}^{2}
+$$
+with $R_{t}$ the continuously compounded returns.
+
 2. **Parkinson estimator (PK)**  
+$$
+\sigma_{\textrm{PK}}^{2}(t) = \frac{1}{4 \ln{2}}[S_{h}(t) - S_{l}(t)]^2
+$$
 3. **Garman-Klass estimator (GK)**  
+$$
+\sigma_{\textrm{GK}}^{2}(t) = \frac{1}{2}[S_{h}(t) - S_{l}(t)]^2 - (2\ln{2} - 1)S_{c}^{2}(t)
+$$
 4. **Garman-Klass-Yang-Zhang estimator (GKYZ)**  
+Yang-Zhang modification of the Garman-Klass estimator.
+$$
+\sigma_{\textrm{GKYZ}}^{2}(t) = \sigma_{\textrm{GK}}^{2}(t) + [S_{o}(t) - S_{c}(t - 1)]^2
+$$
 5. **Rogers-Satchell estimator (RS)**  
+$$
+\sigma_{\textrm{RS}}^{2}(t) = S_{h}(t)[S_{h}(t) - S_{c}(t)] + S_{l}(t)[S_{l}(t) - S_{c}(t)]
+$$
 6. **Yang-Zhang estimator (YZ)**  
+$$
+\sigma_{\textrm{YZ}}^{2}(t) = \sigma_{o}^{2}(t, D) + k\sigma_{\textrm{STDEV}}^{2}(t, D) + (1 - k)\sigma_{\textrm{RS}}^{2}(t)
+$$
+where $\sigma_{o}^{2}(t, D)$ is the variance of opening prices over a $D$ time period, annualized with respect to a given year of 261 trading days. The parameter $k$ is chosen so to minimize the variance of the estimator.
+
+To compute volatility estimations we use functionality provided in the `TTR` package, `TTR::volatility()` specifically.
 
 ```{r Volatility estimators}
 vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
