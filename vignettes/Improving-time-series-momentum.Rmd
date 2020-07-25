@@ -97,7 +97,7 @@ Time-series momentum is defined analogously to \textcite{moskowitz-ooi-pedersen-
 $$
 R^{\textrm{TS}}(t,t+K) = \sum_{i=1}^{M} X_{i}(t-J, t) \frac{10\% / \sqrt{M}}{\sigma_{i}(t,D)} R_{i}(t,t+K)
 $$
-where $M$ is the number of available assets, $X_{i}(t-J, t)$, $\sigma_{i}(t,D)$, and $\sqrt{M}$ is the scaling factor used in order to achieve a 10% ex-ante volatility.
+where $M$ is the number of available assets, $X_{i}(t-J, t)$ the momentum signal, $\sigma_{i}(t,D)$ the volatility estimates, and $\sqrt{M}$ is the scaling factor used in order to achieve a 10% ex-ante volatility.
 
 The outline of subsections is as follows. First of all, in order to compute the above quantity we need a momentum signal and a volatility estimator. Each class of such elements shall receive individual treatment: many alternatives have consolidated in decades of research, each presents pros and cons by its own and in relation with the objectives of the particular study we aim to replicate.
 
@@ -182,14 +182,55 @@ Authors empirically investigate five momentum signals, summarized below. All the
 
 1. **Return Sign (SIGN)**  
 This momentum measurement has been proposed since the first studies documenting *momentum* anomaly. In the time-series momentum literature, it was introduced by \textcite{moskowitz-ooi-pedersen-2012} and consists in the past returns sign. 
+$$
+\textrm{SIGN(t-J, t)} = 
+\begin{cases} 
++1 & R(t-J, t) > 0\\
+-1 & \text{otherwise}
+\end{cases}
+$$
+
 2. **Moving Average methodology (MA)**  
 The signal is generated depending on the relationship between a short-term moving average of the asset prices and a longer-term one, over the lookback period. This market-timing feature is a peculiarity of this methodology, in contrast to the other signals studied.
+$$
+\textrm{MA(t-J, t)} = 
+\begin{cases} 
++1 & A_{J}(t) < A_{1}(t)\\
+-1 & \text{otherwise}
+\end{cases}
+$$
+
 3. **Time-Trend t-statistic (TREND)**  
 t-statistic of the slope coefficient from a least-squares fit of a linear trend on the asset price.
+$$
+\textrm{TREND(t-J, t)} = 
+\begin{cases} 
++1 & t(\beta) > +2\\
+-1 & t(\beta) < -2\\
+ 0 & \text{otherwise}
+\end{cases}
+$$
+
 4. **Statistically Meaningful Trend (SMT)**
 A more robust version of the previous signal, it is represented by the statistically meaningful trend methodology of \textcite{bryhn-dimberg-2011}.
+$$
+\textrm{SMT(t-J, t)} = 
+\begin{cases} 
++1 & t(\beta) > +2, R^2 > 0.65 \\
+-1 & t(\beta) < -2, R^2 > 0.65\\
+ 0 & \text{otherwise}
+\end{cases}
+$$
+
 5. **Ensemble Empirical Mode Decomposition (EEMD)**
-This signal processing technique was proposed by  \textcite{wu-huang-2009}. \textcite{baltas-kosowski-2012} apply the methodology to extract assets' price trends.
+This signal processing technique was proposed by \textcite{wu-huang-2009}. \textcite{baltas-kosowski-2012} apply the methodology to extract assets' price trends.
+$$
+\textrm{EEMD(t-J, t)} = 
+\begin{cases} 
++1 & p(t) > p(t-J) \\
+-1 & \textrm{otherwise}
+\end{cases}
+$$
 
 To notice is that TREND and SMT are the only signals that can result in inactive positions. Further, given that SMT is more restrictive than TREND, it tends to hold more frequent or longer inactivity periods.   
 
@@ -198,6 +239,13 @@ To notice is that TREND and SMT are the only signals that can result in inactive
 mom.sign <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SIGN')
 mom.ma <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='MA')
 ```
+
+Also, to each momentum signal can be associated a so called *momentum speed*, which is an activity to turnover-ratio and is used to assess signals trading intensity. Letting $X(t)$ the momentum signal in $t$, its speed is defined as
+$$
+\textrm{SPEED}_{X} = \sqrt{\frac{\textrm{E}[X^2]}{E[(\Delta X)^2]}} 
+= \sqrt{\frac{\frac{1}{T-J}\sum_{t=1}^{T}X^{2}(t-J,t)}{\frac{1}{T-J-1}\sum_{t=1}^{T}[X(t-J,t) - X(t-J-1,t-1)]^2}}
+$$
+where $\textrm{E}[X]$ is the expected value of the momentum signal. The higher the speed, the larger the signal activity and thus the portfolio turnover.
 
 ### Returns predictability
 Generally speaking, trading a given future contract or a portfolio based on momentum signals detailed above leads to more or less different returns streams. 
