@@ -28,7 +28,7 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-These notes aim at reproducing \textcite{baltas-kosowski-2012}. The work has three fundamental aims:
+These notes aim at reproducing \textcites{baltas-kosowski-2012, baltas-kosowski-2013}. The work has three fundamental aims:
 first of all, to document empirical time-series momentum patterns, second to examine the information content of traditional and new signals to capture assets' momentum and third, to investigate a family of volatility estimators and assess their efficiency from a momentum investing point of view.
 
 # Data and methodology
