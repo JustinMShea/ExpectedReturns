@@ -66,11 +66,9 @@ LoadFuturesData(symbols)
 ```
 
 ```{r Prepare data sets}
-symbols <- c('CC1', 'CL1', 'DX1', 'EC1', 'ED1', 'GC1', 'HG1', 'NG1', 'SPX', 'SX5E', 'TY1', 'W 1')
-symbols.vars <- c('Open', 'High', 'Low', 'Close', 'Volume', 'Open.Interest')
-futures.data <- mget(symbols)
-
 # Convert to data.frame
+futures.data <- mget(symbols)
+symbols.vars <- c('Open', 'High', 'Low', 'Close', 'Volume', 'Open.Interest')
 futures.data <- lapply(futures.data, function(x) {
   # For all but equity indexes, 'Close' (closing price) is in reality 'Settle' (daily settlement price).
   # For the majority of instruments we do not have closing prices readily available at this time. 
@@ -138,6 +136,17 @@ $$
 where $\sigma_{o}^{2}(t, D)$ is the variance of opening prices over a $D$ time period, annualized with respect to a given year of 261 trading days. The parameter $k$ is chosen so to minimize the variance of the estimator.
 
 To compute volatility estimations we use functionality provided in the `TTR` package, `TTR::volatility()` specifically.
+
+To assess volatility estimates efficiency, authors assume $\sigma_{\textrm{RV}}$ as the "true" volatility and compute for the generic estimator $\sigma_{0}$ a bias
+$$
+\textrm{BIAS} = \frac{1}{T - D}\sum_{t=D}^{T}[\sigma_{\textrm{RV}} - \sigma_{0}]
+$$
+with $T$ the total number of observations in the sample period and $D$ the time period over which volatility estimates are based.
+
+Also, in order to assess volatility estimates persistence and to investigate the role of volatility estimators choice on portfolio turnover, authors compute the *volatility turnover* (VTO). This quantity is expressed as
+$$
+\textrm{VTO} = \frac{1}{T - D - 1} \sum_{t = D+1}^{T} \Bigl| \frac{1}{\sigma{(t, D)}} - \frac{1}{\sigma{(t-1, D)}} \Bigr|
+$$
 
 ```{r Volatility estimators}
 vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
