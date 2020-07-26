@@ -131,7 +131,7 @@ $$
 $$
 6. **Yang-Zhang estimator (YZ)**  
 $$
-\sigma_{\textrm{YZ}}^{2}(t) = \sigma_{o}^{2}(t, D) + k\sigma_{\textrm{STDEV}}^{2}(t, D) + (1 - k)\sigma_{\textrm{RS}}^{2}(t)
+\sigma_{\textrm{YZ}}^{2}(t) = \sigma_{o}^{2}(t, D) + k\sigma_{\textrm{STDEV}}^{2}(t, D) + (1 - k)\sigma_{\textrm{RS}}^{2}(t, D)
 $$
 where $\sigma_{o}^{2}(t, D)$ is the variance of opening prices over a $D$ time period, annualized with respect to a given year of 261 trading days. The parameter $k$ is chosen so to minimize the variance of the estimator.
 
@@ -163,20 +163,38 @@ EstimateVolatility <- function(X, estimator, ...) {
       vol.abrd[[v]] <- abs((1 / vol.estm[[v]]) - (1 / lag(vol.estm[[v]])))
       vto[[v]] <- 1 / (nrow(x) + 1) * sum(vol.abrd[[v]], na.rm=TRUE)
     }
-    out <- list(vol.est=vol.estm, vol.bias=vol.bias, vol.absd=vol.abrd, vto=vto)
+    out <- list(vol.est=vol.estm, vol.bias=vol.bias, vol.abrd=vol.abrd, vto=vto)
     out <- lapply(out, function(x) setNames(x, estimator))
     return(out)
   })
   return(vol.calcs)
 }
+
+# 30-days volatility estimates
 vol30 <- EstimateVolatility(
   lapply(futures.data, zoo::na.locf), estimator=vol.estimators,
   n=30, N=261, type='continuous'
 )
+# 60-days volatility estimates
 vol60 <- EstimateVolatility(
   lapply(futures.data, zoo::na.locf), estimator=vol.estimators, 
   n=60, N=261, type='continuous'
 )
+```
+
+```{r Table 2}
+avg.bias <- avg.abrd <- matrix(
+  NA, length(vol60), length(vol.estimators), dimnames=list(names(vol60), vol.estimators)
+)
+for (a in 1:length(vol60)) {
+  # Panel B
+  # Annualized volatility estimators bias across futures contracts
+  # NOTE: assuming close-to-close is the "true" volatility
+  avg.bias[a, ] <- vapply(vol60[[a]]$vol.bias, mean, FUN.VALUE=double(1L), na.rm=TRUE)
+  # Panel C
+  # VTO across futures contracts
+  avg.abrd[a, ] <- vapply(vol60[[a]]$vol.abrd, mean, FUN.VALUE=double(1L), na.rm=TRUE)
+}
 ```
 
 ## Momentum signals
