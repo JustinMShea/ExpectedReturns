@@ -184,7 +184,8 @@ vol60 <- EstimateVolatility(
 
 ```{r Table 2}
 avg.bias <- avg.abrd <- matrix(
-  NA, length(vol60), length(vol.estimators), dimnames=list(names(vol60), vol.estimators)
+  NA, length(vol60), length(vol.estimators), 
+  dimnames=list(names(vol60), vol.estimators)
 )
 for (a in 1:length(vol60)) {
   # Panel B
@@ -192,7 +193,7 @@ for (a in 1:length(vol60)) {
   # NOTE: assuming close-to-close is the "true" volatility
   avg.bias[a, ] <- vapply(vol60[[a]]$vol.bias, mean, FUN.VALUE=double(1L), na.rm=TRUE)
   # Panel C
-  # VTO across futures contracts
+  # Average absolute reciprocal volatility change across futures contracts
   avg.abrd[a, ] <- vapply(vol60[[a]]$vol.abrd, mean, FUN.VALUE=double(1L), na.rm=TRUE)
 }
 ```
