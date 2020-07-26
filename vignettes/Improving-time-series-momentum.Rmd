@@ -151,21 +151,23 @@ $$
 ```{r Volatility estimators}
 vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
 EstimateVolatility <- function(X, estimator, ...) {
-  vol.res <- vol.bias <- vto <- vector('list', length(estimator))
-  vol.est <- lapply(X, function(x) {
+  vol.estm <- vol.bias <- vol.abrd <- vto <- vector('list', length(estimator))
+  vol.calcs <- lapply(X, function(x) {
     # Get dates, OHLC prices, and convert
     x <- x[, 1:5]
     x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
     x <- xts(x[, -1], order.by=x[, 1])
-    for (m in 1:length(estimator)) {
-      vol.res[[m]] <- TTR::volatility(x, calc=estimator[m], ...) 
-      vol.bias[[m]] <- 1 / nrow(x) * sum(vol.res[[1]] - vol.res[[m]], na.rm=TRUE)
-      vto[[m]] <- 1 / (nrow(x) + 1) * sum(abs((1 / vol.res[[m]]) - (1 / lag(vol.res[[m]]))), na.rm=TRUE)
+    for (v in 1:length(estimator)) {
+      vol.estm[[v]] <- TTR::volatility(x, calc=estimator[v], ...) 
+      vol.bias[[v]] <- 1 / nrow(x) * sum(vol.estm[[1]] - vol.estm[[v]], na.rm=TRUE)
+      vol.abrd[[v]] <- abs((1 / vol.estm[[v]]) - (1 / lag(vol.estm[[v]])))
+      vto[[v]] <- 1 / (nrow(x) + 1) * sum(vol.abrd[[v]], na.rm=TRUE)
     }
-    names(vol.res) <- names(vol.bias) <- names(vto) <- estimator
-    return(list(vol.est=vol.res, vol.bias=vol.bias, VTO=vto))
+    out <- list(vol.est=vol.estm, vol.bias=vol.bias, vol.absd=vol.abrd, vto=vto)
+    out <- lapply(out, function(x) setNames(x, estimator))
+    return(out)
   })
-  return(vol.est)
+  return(vol.calcs)
 }
 vol30 <- EstimateVolatility(
   lapply(futures.data, zoo::na.locf), estimator=vol.estimators,
