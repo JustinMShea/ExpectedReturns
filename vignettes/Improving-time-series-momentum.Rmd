@@ -197,10 +197,29 @@ for (a in 1:length(vol60)) {
   avg.abrd[a, ] <- vapply(vol60[[a]]$vol.abrd, mean, FUN.VALUE=double(1L), na.rm=TRUE)
   avg.vto[a, ] <- vapply(vol60[[a]]$vto, mean, FUN.VALUE=double(1L), na.rm=TRUE)
 }
-lapply(list(avg.bias, avg.abrd), function(x) {
+panels.AB <- lapply(list(avg.bias, avg.abrd), function(x) {
   avg.rank <- rowMeans(apply(x, 1, function(r) rank(abs(r))))
   rbind(x, Avg.Rank=avg.rank)
 })
+```
+
+```{r Figure 3}
+# Volatility estimators average ranks
+# across futures contracts
+vol.avg.ranks <- sapply(panels.AB, function(x) x[nrow(x), ])
+barplot(
+  t(vol.avg.ranks), 
+  main='Average ranks across futures contracts',
+  beside=TRUE, 
+  ylim=c(0, ceiling(max(vol.avg.ranks))),
+  col=c('darkblue', 'darkred')
+)
+legend(
+  'topright',
+  c('BIAS', 'VTO'),
+  fill=c('darkblue', 'darkred'),
+  bty='n'
+)
 ```
 
 ## Momentum signals
