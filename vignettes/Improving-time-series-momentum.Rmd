@@ -229,30 +229,35 @@ vol60 <- EstimateVolatility(
 ```
 
 ```{r Table 2}
+tab2.panels <- list()
+# Panel A
+# Volatility estimators correlation matrix across futures contracts
+tab2.panels$A <- AvgCor(vol60, vol.estimators, symbols=symbols, type='vol.est')$avg.cor
+# Panel B
+# Annualized volatility estimators bias across futures contracts
+# NOTE: assuming close-to-close is the "true" volatility
+# Panel C
+# Average absolute reciprocal volatility change across futures contracts
 avg.bias <- avg.abrd <- avg.vto <- matrix(
   NA, length(vol60), length(vol.estimators), 
   dimnames=list(names(vol60), vol.estimators)
 )
 for (a in 1:length(vol60)) {
-  # Panel B
-  # Annualized volatility estimators bias across futures contracts
-  # NOTE: assuming close-to-close is the "true" volatility
   avg.bias[a, ] <- vapply(vol60[[a]]$vol.bias, mean, FUN.VALUE=double(1L), na.rm=TRUE)
-  # Panel C
-  # Average absolute reciprocal volatility change across futures contracts
   avg.abrd[a, ] <- vapply(vol60[[a]]$vol.abrd, mean, FUN.VALUE=double(1L), na.rm=TRUE)
   avg.vto[a, ] <- vapply(vol60[[a]]$vto, mean, FUN.VALUE=double(1L), na.rm=TRUE)
 }
-panels.AB <- lapply(list(avg.bias, avg.abrd), function(x) {
+panels.BC <- lapply(list(avg.bias, avg.abrd), function(x) {
   avg.rank <- rowMeans(apply(x, 1, function(r) rank(abs(r))))
   rbind(x, Avg.Rank=avg.rank)
 })
+tab2.panels[c('B', 'C')] <- panels.BC
 ```
 
 ```{r Figure 3}
 # Volatility estimators average ranks
 # across futures contracts
-vol.avg.ranks <- sapply(panels.AB, function(x) x[nrow(x), ])
+vol.avg.ranks <- sapply(tab2.panels[c('B', 'C')], function(x) x[nrow(x), ])
 barplot(
   t(vol.avg.ranks), 
   main='Average ranks across futures contracts',
