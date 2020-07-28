@@ -254,6 +254,12 @@ panels.BC <- lapply(list(avg.bias, avg.abrd), function(x) {
 tab2.panels[c('B', 'C')] <- panels.BC
 ```
 
+```{r Figure 2}
+vol60.inst <- AggregateByInstrument(vol60, type='vol.est')
+layout(matrix(1:length(vol60.inst), 4, 3, byrow=TRUE))
+mapply(function(x, y) plot(x * 100, main=y), vol60.inst, symbols)
+```
+
 ```{r Figure 3}
 # Volatility estimators average ranks
 # across futures contracts
