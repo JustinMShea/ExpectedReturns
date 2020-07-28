@@ -27,6 +27,52 @@ knitr::opts_chunk$set(
 )
 ```
 
+```{r Utility functions}
+AggregateByInstrument <- function(X, type) {
+  #' Aggregate 'type' by instrument
+  #' @param X A `list` of `xts` objects storing instruments data
+  #' @param type A character specifying `X` inner list name or index
+  
+  X <- lapply(X, function(x) {
+    y <- x[[type]]
+    z <- Reduce(cbind, y)[complete.cases(Reduce(cbind, y)), ]
+    colnames(z) <- names(y)
+    return(z)
+  })
+  return(X)
+}
+
+AvgCor <- function(X, y, symbols, type, ...) {
+  #' Average correlation aggregated by instrument
+  #' @param X A `list` of `xts` objects storing instruments data
+  #' @param y A character vector, the names of objects to extract from `X` (e.g., momentum signals, volatility estimators)
+  #' @param symbols A character vector, specifying the instruments in `X`
+  #' @param type A character specifying `X` inner list name or index preceding `y`s
+  
+  # X aggregated by y
+  X <- AggregateByInstrument(X, type=type)
+  # y aggregated by X
+  X.all <- Reduce(function(...) merge(..., all=TRUE), X)
+  idxs <- matrix(1:(length(symbols) * length(y)), length(y))
+  idxs <- asplit(idxs, 1)
+  X.avg <- lapply(idxs, function(j) {
+    x.inst <- X.all[complete.cases(X.all[, j]), j]
+    x.inst.avg <- xts::xts(rowMeans(x.inst), zoo::index(x.inst))
+    return(x.inst.avg)
+  })
+  X.avg <- Reduce(function(...) merge(..., all=TRUE), X.avg)
+  colnames(X.avg) <- y
+  # Calc correlation
+  avg.cor <- cor(X.avg, ...)
+  return(
+    list(
+      X.avg=X.avg,
+      avg.cor=avg.cor
+    )
+  )
+}
+```
+
 # Introduction
 These notes aim at reproducing \textcites{baltas-kosowski-2012, baltas-kosowski-2013}. The work has three fundamental aims:
 first of all, to document empirical time-series momentum patterns, second to examine the information content of traditional and new signals to capture assets' momentum and third, to investigate a family of volatility estimators and assess their efficiency from a momentum investing point of view.
