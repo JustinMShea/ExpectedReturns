@@ -29,7 +29,7 @@ knitr::opts_chunk$set(
 
 ```{r Utility functions}
 AggregateByInstrument <- function(X, type) {
-  #' Aggregate 'type' by instrument
+  #' Aggregate instrument by type
   #' @param X A `list` of `xts` objects storing instruments data
   #' @param type A character specifying `X` inner list name or index
   
@@ -42,10 +42,29 @@ AggregateByInstrument <- function(X, type) {
   return(X)
 }
 
+AggregateByType <- function(X, y, symbols, type) {
+  #' Aggregate type by instrument
+  #' @param X A `list` of `xts` objects storing instruments data
+  #' @param y A character vector, the names of objects to extract from `symbols` in `X` (e.g., momentum signals, volatility estimators)
+  #' @param symbols A character vector, specifying the instruments in `X`
+  #' @param type A character specifying `X` inner list name or index
+  
+  X <- AggregateByInstrument(X, type=type)
+  X <- Reduce(function(...) merge(..., all=TRUE), X)
+  idxs <- matrix(1:(length(symbols) * length(y)), length(y))
+  idxs <- asplit(idxs, 1)
+  X <- lapply(idxs, function(j) {
+    jinst <- X[complete.cases(X[, j]), j]
+    return(jinst)
+  })
+  names(X) <- y
+  return(X)
+}
+
 AvgCor <- function(X, y, symbols, type, ...) {
   #' Average correlation aggregated by instrument
   #' @param X A `list` of `xts` objects storing instruments data
-  #' @param y A character vector, the names of objects to extract from `X` (e.g., momentum signals, volatility estimators)
+  #' @param y A character vector, the names of objects to extract from `symbols` in `X` (e.g., momentum signals, volatility estimators)
   #' @param symbols A character vector, specifying the instruments in `X`
   #' @param type A character specifying `X` inner list name or index preceding `y`s
   
@@ -125,19 +144,20 @@ futures.data <- lapply(futures.data, function(x) {
   # Returns
   x$Return <- PerformanceAnalytics::Return.calculate(x$Close, 'discrete')
   x$Comp.Return <- PerformanceAnalytics::Return.calculate(x$Close, 'log')
-  data.frame(
-    Date=zoo::index(x),
-    zoo::coredata(x)
-  )
+  # data.frame(
+  #   Date=zoo::index(x),
+  #   zoo::coredata(x)
+  # )
+  return(x)
 })
 # Assign tickers' names
-futures.data <- mapply(function(x, y) {
-  x$Symbol <- rep(y, nrow(x))
-  return(x)
-}, futures.data, symbols)
+# futures.data <- mapply(function(x, y) {
+#   x$Symbol <- rep(y, nrow(x))
+#   return(x)
+# }, futures.data, symbols)
 
 # Make panel 
-futures.data.panel <- Reduce(function(...) merge(..., all=TRUE), futures.data)
+# futures.data.panel <- Reduce(function(...) merge(..., all=TRUE), futures.data)
 ```
 
 # Time-series Momentum Strategies
@@ -203,8 +223,8 @@ EstimateVolatility <- function(X, estimator, ...) {
   vol.calcs <- lapply(X, function(x) {
     # Get dates, OHLC prices, and convert
     x <- x[, 1:5]
-    x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
-    x <- xts::xts(x[, -1], order.by=x[, 1])
+    # x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
+    # x <- xts::xts(x[, -1], order.by=x[, 1])
     for (v in 1:length(estimator)) {
       vol.estm[[v]] <- TTR::volatility(x, calc=estimator[v], ...) 
       vol.bias[[v]] <- 1 / nrow(x) * sum(vol.estm[[1]] - vol.estm[[v]], na.rm=TRUE)
