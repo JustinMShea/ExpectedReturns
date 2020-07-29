@@ -120,11 +120,13 @@ futures.data <- lapply(futures.data, function(x) {
   # For the majority of instruments we do not have closing prices readily available at this time. 
   # Renaming is chiefly due to computational and illustration convenience.
   colnames(x) <- symbols.vars[1:ncol(x)]
+  # Drop incomplete cases
+  x <- x[complete.cases(x), ]
   # Returns
   x$Return <- PerformanceAnalytics::Return.calculate(x$Close, 'discrete')
   x$Comp.Return <- PerformanceAnalytics::Return.calculate(x$Close, 'log')
   data.frame(
-    Date=zoo::index(x), 
+    Date=zoo::index(x),
     zoo::coredata(x)
   )
 })
@@ -202,7 +204,7 @@ EstimateVolatility <- function(X, estimator, ...) {
     # Get dates, OHLC prices, and convert
     x <- x[, 1:5]
     x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
-    x <- xts(x[, -1], order.by=x[, 1])
+    x <- xts::xts(x[, -1], order.by=x[, 1])
     for (v in 1:length(estimator)) {
       vol.estm[[v]] <- TTR::volatility(x, calc=estimator[v], ...) 
       vol.bias[[v]] <- 1 / nrow(x) * sum(vol.estm[[1]] - vol.estm[[v]], na.rm=TRUE)
@@ -218,12 +220,12 @@ EstimateVolatility <- function(X, estimator, ...) {
 
 # 30-days volatility estimates
 vol30 <- EstimateVolatility(
-  lapply(futures.data, zoo::na.locf), estimator=vol.estimators,
+  futures.data, estimator=vol.estimators,
   n=30, N=261, type='continuous'
 )
 # 60-days volatility estimates
 vol60 <- EstimateVolatility(
-  lapply(futures.data, zoo::na.locf), estimator=vol.estimators, 
+  futures.data, estimator=vol.estimators, 
   n=60, N=261, type='continuous'
 )
 ```
