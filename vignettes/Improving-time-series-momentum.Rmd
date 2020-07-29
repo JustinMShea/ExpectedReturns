@@ -250,6 +250,25 @@ vol60 <- EstimateVolatility(
 )
 ```
 
+```{r Figure 1}
+# Futures closing prices plots (1st column)
+mapply(
+  function(x, y) {
+    plot(x$Close, main=y)
+  }, futures.data, symbols
+)
+# Volatility YZ estimators plots (2nd column)
+vol60.by.est <- AggregateByType(vol60, vol.estimators, symbols=symbols, type='vol.est')
+mapply(
+  function(x, y) {
+    plot(
+      vol60.by.est$yang.zhang[, y] * sqrt(261), 
+      main=paste0(symbols[y], ' 60-days annualized YZ volatility')
+    )
+  }, futures.data, 1:length(symbols)
+)
+```
+
 ```{r Table 2}
 tab2.panels <- list()
 # Panel A
@@ -279,7 +298,7 @@ tab2.panels[c('B', 'C')] <- panels.BC
 ```{r Figure 2}
 vol60.inst <- AggregateByInstrument(vol60, type='vol.est')
 layout(matrix(1:length(vol60.inst), 4, 3, byrow=TRUE))
-mapply(function(x, y) plot(x * 100, main=y), vol60.inst, symbols)
+mapply(function(x, y) plot(x * sqrt(261), main=y), vol60.inst, symbols)
 ```
 
 ```{r Figure 3}
