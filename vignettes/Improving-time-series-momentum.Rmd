@@ -69,7 +69,9 @@ AvgCor <- function(X, y, symbols, type, ...) {
   #' @param type A character specifying `X` inner list name or index preceding `y`s
   
   # X aggregated by y
-  X <- AggregateByInstrument(X, type=type)
+  if (!missing(type)) {
+    X <- AggregateByInstrument(X, type=type)
+  }
   # y aggregated by X
   X.all <- Reduce(function(...) merge(..., all=TRUE), X)
   idxs <- matrix(1:(length(symbols) * length(y)), length(y))
@@ -387,8 +389,48 @@ To notice is that TREND and SMT are the only signals that can result in inactive
 
 ```{r TSMOM strats signals}
 # 12 months lookback as 261 trading days
+signals <- c('SIGN', 'MA', 'TREND', 'SMT')
 mom.sign <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SIGN')
 mom.ma <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='MA')
+mom.trend <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='TREND')
+mom.smt <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SMT')
+```
+
+```{r Table 3}
+# Panel A1
+# Momentum signals correlation matrix across instruments
+mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt)
+mom.signals.avg <- lapply(mom.signals, function(x) {
+  x.inst <- Reduce(function(...) merge(..., all=TRUE), x)
+  x.inst.avg <- xts::xts(rowMeans(x.inst, na.rm=TRUE), zoo::index(x.inst))
+  return(x.inst.avg)
+})
+mom.signals.avg <- Reduce(function(...) merge(..., all=TRUE), mom.signals.avg)
+colnames(mom.signals.avg) <- signals
+cor(mom.signals.avg)
+
+# Panel A2
+# Position agreement matrix
+# TODO
+
+# Panel B
+# Momentum signals long/short activity
+ls.positions <- lapply(mom.signals, function(x) {
+  x.inst <- Reduce(function(...) merge(..., all=TRUE), x)
+  lsp <- apply(x.inst, 2, function(j) {
+    long <- length(which(j == 1))
+    short <- length(which(j == (-1)))
+    los <- rbind(long, short)
+    y <- los / NROW(na.omit(j)) * 100
+    return(y)
+  })
+  lsp <- t(lsp)
+  rownames(lsp) <- symbols
+  colnames(lsp) <- paste(
+    colnames(x[[1]]), c('L', 'S'), sep='.'
+  )
+  return(lsp)
+})
 ```
 
 Also, to each momentum signal can be associated a so called *momentum speed*, which is an activity to turnover-ratio and is used to assess signals trading intensity. Letting $X(t)$ the momentum signal in $t$, its speed is defined as
