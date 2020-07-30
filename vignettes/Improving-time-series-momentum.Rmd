@@ -253,22 +253,29 @@ vol60 <- EstimateVolatility(
 )
 ```
 
-```{r Figure 1}
+```{r Figure 1A, fig.cap="Futures closing prices"}
 # Futures closing prices plots (1st column)
+layout(matrix(1:length(symbols), 4, 3, byrow=TRUE))
 mapply(
   function(x, y) {
-    plot(x$Close, main=y)
-  }, futures.data, symbols
+    plot(x$Close, main=y, yaxis.right=FALSE)
+  }, 
+  futures.data, symbols
 )
+```
+```{r Figure 1B, fig.cap="Annualized volatility estimates"}
 # Volatility YZ estimators plots (2nd column)
 vol60.by.est <- AggregateByType(vol60, vol.estimators, symbols=symbols, type='vol.est')
+layout(matrix(1:length(symbols), 4, 3, byrow=TRUE))
 mapply(
   function(x, y) {
     plot(
       vol60.by.est$yang.zhang[, y] * sqrt(261), 
-      main=paste0(symbols[y], ' 60-days annualized YZ volatility')
+      main=paste(symbols[y], '60-days annualized YZ volatility'),
+      yaxis.right=FALSE
     )
-  }, futures.data, 1:length(symbols)
+  }, 
+  futures.data, 1:length(symbols)
 )
 ```
 
@@ -298,15 +305,13 @@ panels.BC <- lapply(list(avg.bias, avg.abrd), function(x) {
 tab2.panels[c('B', 'C')] <- panels.BC
 ```
 
-```{r Figure 2}
+```{r Figure 2, fig.cap="Annualized volatility estimates across instruments"}
 vol60.inst <- AggregateByInstrument(vol60, type='vol.est')
 layout(matrix(1:length(vol60.inst), 4, 3, byrow=TRUE))
-mapply(function(x, y) plot(x * sqrt(261), main=y), vol60.inst, symbols)
+mapply(function(x, y) plot(x * sqrt(261), main=y, yaxis.right=FALSE), vol60.inst, symbols)
 ```
 
-```{r Figure 3}
-# Volatility estimators average ranks
-# across futures contracts
+```{r Figure 3, fig.cap="Volatility estimates average ranks across instruments"}
 vol.avg.ranks <- sapply(tab2.panels[c('B', 'C')], function(x) x[nrow(x), ])
 barplot(
   t(vol.avg.ranks), 
