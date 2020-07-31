@@ -168,8 +168,13 @@ data <- data.frame(
 # Indexes
 date.id <- matrix(1:nrow(data), dimnames=list(NULL, 'DATE.ID'))
 data <- cbind(data, date.id)
+# The period used in the paper for running the time series regression is Jan 1985 - Dec 2009
+# The AQR website TSMOM portfolios from which we sourced our data for this replication start # reporting data from that date, but keep the data up to date. For the purposes of
+# replicating the time period in the paper, we will need to truncate the 'data' object after # Dec 2009. The resulting t-stats of the alpha intercepts are more inline with the paper if
+# we do. For the updated alpha t-stats the user can comment this line of code. 
+data <- data[-((which(data$DATE=="2009-12-31")+1):nrow(data)),]
 # Regressions variables
-y <- colnames(TSM[, -1])
+y <- colnames(TSM)
 X <- c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM')
 # Time-series regressions
 tsmom.ts.reg <- lapply(1:length(y), function(x) {
