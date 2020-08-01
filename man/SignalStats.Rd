@@ -13,9 +13,12 @@ SignalStats(X, symbols, signals, method, ...)
 
 \item{signals}{A character vector specifying the names of signals provided in \code{X}.}
 
-\item{method}{A string indicating which stats to compute for \code{X} signals.}
+\item{method}{A string indicating which statistics to compute among \code{X} signals. One of "activity", "agreement", or "cor".}
 
 \item{...}{Any other pass through parameter.}
+}
+\value{
+Varies depending on the chosen \code{method}.
 }
 \description{
 Trading signals can be further analyzed with several statistics, across instruments.
@@ -24,8 +27,11 @@ Signal statistics currently implemented include:
 \item \strong{Activity matrix} (\code{method="activity"}).
 Represents the number of long or short positions over the periods considered.
 It is expressed in percentage units.
-\item \strong{Correlation matrix} (\code{method="cor"}).
-The average correlation among signals and across instruments.
+\item \strong{Agreement matrix} (\code{method="agreement"}).
+It denotes the number of periods during which signals pairs agree on the position,
+on average across instruments. It is expressed in percentage units.
+\item \strong{Correlation matrix} (\code{method="correlation"}).
+The average correlation among signals, across instruments.
 }
 }
 \note{

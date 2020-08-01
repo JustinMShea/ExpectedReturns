@@ -401,11 +401,11 @@ mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt)
 
 # Panel A1
 # Momentum signals correlation matrix across instruments
-ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, method='cor')
+ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, method='correlation')
 
 # Panel A2
 # Position agreement matrix
-# TODO
+ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, method='agreement')
 
 # Panel B
 # Momentum signals long/short activity
