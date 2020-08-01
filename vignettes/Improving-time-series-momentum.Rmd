@@ -165,6 +165,26 @@ futures.data <- lapply(futures.data, function(x) {
 # futures.data.panel <- Reduce(function(...) merge(..., all=TRUE), futures.data)
 ```
 
+```{r Table 1}
+futures.data.monthly <- lapply(futures.data, function(x) x[xts::endpoints(x), ])
+
+# Futures contracts summary statistics
+futures.summary <- lapply(futures.data.monthly, function(x) {
+  x.ret <- x$Comp.Return
+  avg <- mean(x.ret, na.rm=TRUE) * 100
+  sr <- PerformanceAnalytics::SharpeRatio.annualized(x.ret, scale=12)
+  sk <- PerformanceAnalytics::skewness(x.ret, na.rm=TRUE)
+  kr <- PerformanceAnalytics::kurtosis(x.ret, na.rm=TRUE)
+  y <- rbind(
+    'Avg Returns (%)'=avg
+    , 'Annualized SR'=as.numeric(sr)
+    , 'Skewness'=sk
+    , 'Kurtosis'=kr
+  )
+  return(y)
+})
+```
+
 # Time-series Momentum Strategies
 Time-series momentum is defined analogously to \textcite{moskowitz-ooi-pedersen-2012}. Generally, *univariate time-series momentum* is the trading rule that imposes to take a long/short position on a given asset depending on a metric of its past performance. The rule is completely identified by two parameters, namely the *lookback period* $J$ over which such performance is taken into account and the *holding period* $K$ during which the asset is effectively held in the portfolio. Since the same holds in principle for every tradable assets, time-series momentum can and is also be aggregated at portfolio level. Adopting \textcite{baltas-kosowski-2012} symbols and notation for readability purposes, such quantity is expressed as
 $$
