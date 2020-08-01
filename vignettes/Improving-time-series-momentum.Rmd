@@ -397,17 +397,11 @@ mom.smt <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SMT')
 ```
 
 ```{r Table 3}
+mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt)
+
 # Panel A1
 # Momentum signals correlation matrix across instruments
-mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt)
-mom.signals.avg <- lapply(mom.signals, function(x) {
-  x.inst <- Reduce(function(...) merge(..., all=TRUE), x)
-  x.inst.avg <- xts::xts(rowMeans(x.inst, na.rm=TRUE), zoo::index(x.inst))
-  return(x.inst.avg)
-})
-mom.signals.avg <- Reduce(function(...) merge(..., all=TRUE), mom.signals.avg)
-colnames(mom.signals.avg) <- signals
-cor(mom.signals.avg)
+ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, method='cor')
 
 # Panel A2
 # Position agreement matrix
@@ -415,22 +409,7 @@ cor(mom.signals.avg)
 
 # Panel B
 # Momentum signals long/short activity
-ls.positions <- lapply(mom.signals, function(x) {
-  x.inst <- Reduce(function(...) merge(..., all=TRUE), x)
-  lsp <- apply(x.inst, 2, function(j) {
-    long <- length(which(j == 1))
-    short <- length(which(j == (-1)))
-    los <- rbind(long, short)
-    y <- los / NROW(na.omit(j)) * 100
-    return(y)
-  })
-  lsp <- t(lsp)
-  rownames(lsp) <- symbols
-  colnames(lsp) <- paste(
-    colnames(x[[1]]), c('L', 'S'), sep='.'
-  )
-  return(lsp)
-})
+ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, method='activity')
 ```
 
 Also, to each momentum signal can be associated a so called *momentum speed*, which is an activity to turnover-ratio and is used to assess signals trading intensity. Letting $X(t)$ the momentum signal in $t$, its speed is defined as
