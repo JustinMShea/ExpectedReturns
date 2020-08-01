@@ -20,7 +20,7 @@
 #' @param X A list of `xts` objects storing signals series. See 'Details'.
 #' @param symbols A character vector providing the names of symbols signals were computed for.
 #' @param signals A character vector specifying the names of signals provided in `X`.
-#' @param method A string indicating which statistics to compute among `X` signals. One of "activity", "agreement", or "cor".
+#' @param method A string indicating which statistics to compute among `X` signals. One of "activity", "agreement", or "correlation".
 #' @param ... Any other pass through parameter.
 #'
 #' @return

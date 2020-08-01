@@ -396,6 +396,11 @@ mom.trend <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='TREN
 mom.smt <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SMT')
 ```
 
+Next, we further analyze generated momentum trading signals, across instruments and through several statistics.
+First of all, we consider the *correlation matrix* the average correlation among signals. 
+We then study the *activity matrix*, representing the number of long or short positions over the periods considered.
+Finally, the *position agreement matrix*, denoting the number of periods during which signals pairs agree on the position, on average across instruments.
+
 ```{r Table 3}
 mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt)
 

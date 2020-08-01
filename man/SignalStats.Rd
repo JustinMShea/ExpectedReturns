@@ -13,7 +13,7 @@ SignalStats(X, symbols, signals, method, ...)
 
 \item{signals}{A character vector specifying the names of signals provided in \code{X}.}
 
-\item{method}{A string indicating which statistics to compute among \code{X} signals. One of "activity", "agreement", or "cor".}
+\item{method}{A string indicating which statistics to compute among \code{X} signals. One of "activity", "agreement", or "correlation".}
 
 \item{...}{Any other pass through parameter.}
 }
