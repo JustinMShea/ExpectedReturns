@@ -171,15 +171,21 @@ futures.data.monthly <- lapply(futures.data, function(x) x[xts::endpoints(x), ])
 # Futures contracts summary statistics
 futures.summary <- lapply(futures.data.monthly, function(x) {
   x.ret <- x$Comp.Return
-  avg <- mean(x.ret, na.rm=TRUE) * 100
+  avg <- mean(x.ret, na.rm=TRUE) * sqrt(261) * 100
   sr <- PerformanceAnalytics::SharpeRatio.annualized(x.ret, scale=12)
   sk <- PerformanceAnalytics::skewness(x.ret, na.rm=TRUE)
   kr <- PerformanceAnalytics::kurtosis(x.ret, na.rm=TRUE)
+  jb <- tseries::jarque.bera.test(as.ts(x.ret))$p.value
+  lb <- Box.test(as.ts(x.ret), type='Ljung-Box')$p.value
+  lf <- nortest::lillie.test(x.ret)$p.value
   y <- rbind(
-    'Avg Returns (%)'=avg
-    , 'Annualized SR'=as.numeric(sr)
+    'Annual.Avg.Return'=avg
+    , 'Annual.SR'=as.numeric(sr)
     , 'Skewness'=sk
     , 'Kurtosis'=kr
+    , 'JarqueBera.pvalue'=jb
+    , 'LjungBox.pvalue'=lb
+    , 'Lilliefors.pvalue'=lf
   )
   return(y)
 })
