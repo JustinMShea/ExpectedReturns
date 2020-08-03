@@ -476,7 +476,14 @@ ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, meth
 
 # Panel B
 # Momentum signals long/short activity
-ExpectedReturns::SignalStats(mom.signals, symbols=symbols, signals=signals, method='activity')
+ls.positions <- ExpectedReturns::SignalStats(
+  mom.signals, symbols=symbols, signals=signals, method='activity'
+)
+lapply(ls.positions, function(x) {
+  y <- rbind(x, colMeans(x))
+  rownames(y)[nrow(y)] <- 'Avg'
+  return(y)
+})
 ```
 
 Also, to each momentum signal can be associated a so called *momentum speed*, which is an activity to turnover-ratio and is used to assess signals trading intensity. Letting $X(t)$ the momentum signal in $t$, its speed is defined as
