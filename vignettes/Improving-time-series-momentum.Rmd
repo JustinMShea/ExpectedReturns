@@ -222,7 +222,9 @@ futures.summary <- lapply(futures.data.monthly, function(x) {
   )
   return(out)
 })
-futures.summary
+futures.summary.tab <- t(Reduce(cbind, futures.summary))
+rownames(futures.summary.tab) <- names(futures.data.monthly)
+futures.summary.tab
 ```
 
 # Time-series Momentum Strategies
