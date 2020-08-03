@@ -92,6 +92,19 @@ AvgCor <- function(X, y, symbols, type, ...) {
     )
   )
 }
+
+SharpeRatioDownsideRisk <- function(r, rf=0, ...) {
+  #' Downside-Risk Sharpe Ratio, Ziemba (2015)
+  #' @param r An `xts` object, the return series.
+  #' @param rf A numeric, or vector or `xts` object of the same length of `r`.
+  #' @param ... Any other pass through paramater.
+  r.xs <- r - rf
+  avg.bench <- mean(rf, na.rm=TRUE)
+  dwn.risk <- sum(min(r.xs, avg.bench)^2 - avg.bench) / (nrow(r.xs) - 1)
+  # rxs.annual <- PerformanceAnalytics::Return.annualized(r.xs, ...)
+  drsr <- mean(r.xs, na.rm=TRUE)/sqrt(2 * dwn.risk)
+  return(drsr)
+}
 ```
 
 # Introduction
@@ -170,10 +183,13 @@ futures.data.monthly <- lapply(futures.data, function(x) x[xts::endpoints(x), ])
 
 # Futures contracts summary statistics
 futures.summary <- lapply(futures.data.monthly, function(x) {
+  # x.ret <- x$Return
   x.ret <- x$Comp.Return
-  avg <- mean(x.ret, na.rm=TRUE) * sqrt(261) * 100
-  vol <- sd(x.ret, na.rm=TRUE) * sqrt(261) * 100
-  sr <- PerformanceAnalytics::SharpeRatio.annualized(x.ret, scale=12)
+  avg <- PerformanceAnalytics::Return.annualized(x.ret, scale=12) * 100
+  # vol <- PerformanceAnalytics::StdDev.annualized(x.ret, scale=12) * 100
+  vol <- sd(x.ret, na.rm=TRUE) * sqrt(12) * 100
+  sr <- PerformanceAnalytics::SharpeRatio.annualized(x.ret)
+  drsr <- SharpeRatioDownsideRisk(x.ret, scale=1)
   sk <- PerformanceAnalytics::skewness(x.ret, na.rm=TRUE)
   kr <- PerformanceAnalytics::kurtosis(x.ret, na.rm=TRUE)
   jb <- tseries::jarque.bera.test(as.ts(x.ret))$p.value
@@ -193,9 +209,10 @@ futures.summary <- lapply(futures.data.monthly, function(x) {
     }
   )
   out <- rbind(
-    'Annual.Avg.Return'=avg
-    , 'Volatility'=vol
+    'Annual.Return'=as.numeric(avg)
+    , 'Annual.Volatility'=as.numeric(vol)
     , 'Annual.SR'=as.numeric(sr)
+    , 'Annual.DRSR'=as.numeric(drsr)
     , 'Skewness'=sk
     , 'Kurtosis'=kr
     , 'JarqueBera.pvalue'=jb
@@ -205,6 +222,7 @@ futures.summary <- lapply(futures.data.monthly, function(x) {
   )
   return(out)
 })
+futures.summary
 ```
 
 # Time-series Momentum Strategies
