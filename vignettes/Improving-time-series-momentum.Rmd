@@ -513,6 +513,51 @@ TSMOM <- function(X, signal, estimator, lookback, holding, ...) {
   ret.ptf <- xts::xts(rowSums(ret.ptf), zoo::index(ret.ptf))
   return(ret.ptf)
 }
+
+# Time series momentum strategies performance measurements
+TsmomStats <- function(X, signal, estimator, lookback, holding, measure, ...) {
+  measures.avail <- c('Annual.Mean', 'Annual.Vol', 'SR', 'DRSR')
+  measure <- match.arg(measure, measures.avail, several.ok=TRUE)
+  out <- array(
+    NA, dim=c(length(lookback), length(holding), length(signals), length(measure)),
+    dimnames=list(as.character(1:length(lookback)), as.character(1:length(holding)), signals, measure)
+  )
+  for (b in 1:length(lookback)) {
+    for (h in 1:length(holding)) {
+      for (s in 1:length(signal)) {
+        tsmom <- TSMOM(
+          futures.data.monthly, signal=signals[s], estimator=estimator, 
+          lookback=lookback[b], holding=holding[h], ...
+        )
+        for (m in measure) {
+          switch (m,
+            Annual.Mean = {
+              out[b, h, s, m] <- PerformanceAnalytics::Return.annualized(tsmom, scale=12, geometric=FALSE) * 100
+            },
+            Annual.Vol = {
+              out[b, h, s, m] <- PerformanceAnalytics::StdDev.annualized(tsmom, scale=12) * 100
+            },
+            SR = {
+              out[b, h, s, m] <- PerformanceAnalytics::SharpeRatio.annualized(tsmom)
+            }, 
+            DRSR = {
+              out[b, h, s, m] <- SharpeRatioDownsideRisk(tsmom, scale=1)
+            }
+          )
+        }
+      }
+    }
+  }
+  return(out)
+}
+
+# Lookback and holding periods (months)
+lb <- hp <- c(1, 3, 6, 12, 24)
+TsmomStats(
+  futures.data.monthly, signal=signals[1:2], estimator='yang.zhang', 
+  lookback=lb, holding=hp, n=2, N=12, type='continuous',
+  measure=c('Annual.Mean', 'Annual.Vol', 'NW.tstat', 'Dollar.Growth', 'SR', 'DRSR')
+)
 ```
 
 ## Time-series momentum strategies profitability
