@@ -520,7 +520,7 @@ The $\sqrt{2}$ factor compensates for the fact only returns in excess of the spe
 ```{r Table 4}
 TSMOM <- function(X, signal, estimator, lookback, holding, ...) {
   # Momentum signals
-  mom.sig.inst <- MomSignal(X=X, lookback=lookback, signal=signal)
+  mom.sig.inst <- MomSignal(X, lookback, signal)
   mom.sig <- Reduce(cbind, mom.sig.inst)
   # Volatility 
   # TODO: are authors estimating volatility on daily data nevertheless?
@@ -529,6 +529,7 @@ TSMOM <- function(X, signal, estimator, lookback, holding, ...) {
     y=estimator, symbols=names(X), type='vol.est'
   )
   vol <- Reduce(cbind, vol.est)
+  # Aggregated TSMOM 
   ret.inst <- Reduce(cbind, lapply(X, function(x) x$Comp.Return))
   ret.ptf <- mom.sig * (0.1 / sqrt(length(X)) / vol) * ret.inst
   ret.ptf <- xts::xts(rowSums(ret.ptf), zoo::index(ret.ptf))
@@ -537,20 +538,24 @@ TSMOM <- function(X, signal, estimator, lookback, holding, ...) {
 
 # Time series momentum strategies performance measurements
 TsmomStats <- function(X, signal, estimator, lookback, holding, measure, ...) {
+  nsg <- length(signal)
+  nlb <- length(lookback)
+  nhp <- length(holding)
+  nms <- length(measure)
   measures.avail <- c('Annual.Mean', 'Annual.Vol', 'SR', 'DRSR')
   measure <- match.arg(measure, measures.avail, several.ok=TRUE)
   out <- array(
-    NA, dim=c(length(lookback), length(holding), length(signals), length(measure)),
-    dimnames=list(as.character(1:length(lookback)), as.character(1:length(holding)), signals, measure)
+    NA, dim=c(nlb, nhp, nsg, nms),
+    dimnames=list(as.character(lookback), as.character(holding), signal, measure)
   )
-  for (b in 1:length(lookback)) {
-    for (h in 1:length(holding)) {
-      for (s in 1:length(signal)) {
-        tsmom <- TSMOM(
-          futures.data.monthly, signal=signals[s], estimator=estimator, 
-          lookback=lookback[b], holding=holding[h], ...
-        )
+  for (b in 1:nlb) {
+    for (h in 1:nhp) {
+      for (s in 1:nsg) {
         for (m in measure) {
+          tsmom <- TSMOM(
+            futures.data.monthly, signal=signal[s], estimator=estimator, 
+            lookback=lookback[b], holding=holding[h], ...
+          )
           switch (m,
             Annual.Mean = {
               out[b, h, s, m] <- PerformanceAnalytics::Return.annualized(tsmom, scale=12, geometric=FALSE) * 100
@@ -577,7 +582,7 @@ lb <- hp <- c(1, 3, 6, 12, 24)
 TsmomStats(
   futures.data.monthly, signal=signals[1:2], estimator='yang.zhang', 
   lookback=lb, holding=hp, n=2, N=12, type='continuous',
-  measure=c('Annual.Mean', 'Annual.Vol', 'NW.tstat', 'Dollar.Growth', 'SR', 'DRSR')
+  measure=c('Annual.Mean', 'Annual.Vol', 'SR', 'DRSR') # 'NW.tstat', 'Dollar.Growth', 
 )
 ```
 

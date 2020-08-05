@@ -67,7 +67,7 @@ MomSignal <- function(X
                       , cutoffs
                       , speed=FALSE)
 {
-  cl <- match.call()
+  # cl <- match.call()
   # xts conversion
   xts.check <- all(vapply(X, is.xts, FUN.VALUE=logical(1L)))
   if (!xts.check) {
@@ -79,9 +79,12 @@ MomSignal <- function(X
   }
   # Signals calcs
   if (missing(signal)) {
-    signal <- 'SIGN'
-  } else if (signal == 'TREND' | signal == 'SMT') {
-    signal <- 'TREND.SMT'
+    sig <- 'SIGN'
+  } else {
+    sig <- signal
+  }
+  if (signal == 'TREND' | signal == 'SMT') {
+    sig <- 'TREND.SMT'
     if (missing(cutoffs)) {
       # lower NW t-stat, upper NW t-stat, lower R^2
       cutoffs <- c(-2, 2, 0.65)
@@ -89,8 +92,8 @@ MomSignal <- function(X
   }
   # TODO: 'EEMD'
   signals.avail <- c('SIGN', 'MA', 'TREND.SMT')
-  signal <- match.arg(signal, signals.avail)
-  switch (signal,
+  sig <- match.arg(sig, signals.avail)
+  switch (sig,
     SIGN = {
       mom.signal <- lapply(X, function(x) {
         # [t - j, t], j = 0, ..., lookback, for a fixed t
@@ -121,7 +124,7 @@ MomSignal <- function(X
         obs.lag <- lookback:1
         lind <- lookback:(nrow(x) - 1)
         nw.tstats <- rsq <- matrix(NA, length(lind))
-        s <- matrix(NA, length(lind), dimnames=list(NULL, cl$signal))
+        s <- matrix(NA, length(lind), dimnames=list(NULL, signal))
         for (i in 1:(nrow(x) - lookback)) {
           # Normalize prices
           w <- x[i:(i + lookback - 1)] / as.numeric(x[i])
@@ -134,12 +137,12 @@ MomSignal <- function(X
           nw.ts <- coeftest(mfit, vcov.=NeweyWest(mfit, prewhite=FALSE))
           nw.tstats[i, ] <- nw.ts[2, 't value']
         }
-        if (cl$signal == 'TREND') {
+        if (signal == 'TREND') {
           s[1:length(lind), ] <- nw.tstats
           s[nwl <= s & s <= nwu] <- 0L
           s[s < nwl] <- (-1L)
           s[s > nwu] <- 1L
-        } else if (cl$signal == 'SMT') {
+        } else if (signal == 'SMT') {
           tmp <- data.frame(s=s, nwts=nw.tstats, rsq=rsq)
           tmp <- within(tmp, {
             SMT[(nwl <= nwts & nwts <= nwu) | (0 <= rsq & rsq <= 1)] <- 0L
