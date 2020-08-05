@@ -280,10 +280,10 @@ data <- merge(
     row.names=NULL
   )
 )
-X <- c('XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'SMB', 'HML', 'MOM')
-tsmom.div.all <- lapply(X, function(x) {
+Y <- c('XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'SMB', 'HML', 'MOM')
+tsmom.div.all <- lapply(Y, function(y) {
   plm::plm(
-    formula(paste('TSMOM', x, sep='~')), 
+    formula(paste(y, 'TSMOM', sep='~')), 
     data=data, model='pooling', index='DATE.ID'
   )
 })
