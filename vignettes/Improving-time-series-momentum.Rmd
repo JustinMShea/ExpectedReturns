@@ -486,6 +486,49 @@ lapply(ls.positions, function(x) {
 })
 ```
 
+```{r Figure 4}
+AvgSignalSpeed <- function(X, signal, lookback) {
+  ninst <- length(X)
+  nsg <- length(signal)
+  nlb <- length(lookback)
+  mom.speed <- array(
+    NA, dim=c(ninst, nsg, nlb),
+    dimnames=list(names(X), signal, as.character(lookback))
+  )
+  for (b in 1:nlb) {
+    for (s in 1:nsg) {
+      mom.speed[, s, b] <- unlist(
+        MomSignal(X, lookback=lookback[b], signal=signal[s], speed=TRUE)$mom.speed
+      )
+    }
+  }
+  avg.mom.speed <- apply(mom.speed, 3, colMeans)
+  return(avg.mom.speed)
+}
+PlotAvgSignalSpeed <- function(avg.speed, ...) {
+  nsg <- nrow(avg.speed)
+  x <- matrix(rep(as.numeric(colnames(avg.speed)), nsg), ncol=nsg)
+  matplot(
+    x=x, y=t(avg.speed),
+    xlab='Lookback (months)', 
+    ylab='Avg. speed',
+    type='b', pch=0:nsg, 
+    ...
+  )
+  legend(
+    'topleft', rownames(avg.speed), 
+    col=1:nsg, pch=0:nsg, 
+    lty=1:nsg, bty='n'
+  )
+  grid()
+}
+
+# Lookback periods (in months)
+lb.months <- c(1, 3, 6, 12, 24)
+avg.mom.speed <- AvgSignalSpeed(futures.data.monthly, signal=signals, lookback=lb.months[2:5])
+PlotAvgSignalSpeed(avg.mom.speed, main='Average Momentum Signals Speed')
+```
+
 Also, to each momentum signal can be associated a so called *momentum speed*, which is an activity to turnover-ratio and is used to assess signals trading intensity. Letting $X(t)$ the momentum signal in $t$, its speed is defined as
 $$
 \textrm{SPEED}_{X} = \sqrt{\frac{\textrm{E}[X^2]}{E[(\Delta X)^2]}} 
@@ -582,7 +625,7 @@ lb <- hp <- c(1, 3, 6, 12, 24)
 TsmomStats(
   futures.data.monthly, signal=signals[1:2], estimator='yang.zhang', 
   lookback=lb, holding=hp, n=2, N=12, type='continuous',
-  measure=c('Annual.Mean', 'Annual.Vol', 'SR', 'DRSR') # 'NW.tstat', 'Dollar.Growth', 
+  measure=c('Annual.Mean', 'Annual.Vol', 'SR', 'DRSR') # 'NW.tstat', 'Dollar.Growth',
 )
 ```
 
