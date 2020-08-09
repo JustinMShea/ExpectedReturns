@@ -168,14 +168,6 @@ futures.data <- lapply(futures.data, function(x) {
   # )
   return(x)
 })
-# Assign tickers' names
-# futures.data <- mapply(function(x, y) {
-#   x$Symbol <- rep(y, nrow(x))
-#   return(x)
-# }, futures.data, symbols)
-
-# Make panel 
-# futures.data.panel <- Reduce(function(...) merge(..., all=TRUE), futures.data)
 ```
 
 ```{r Table 1}
