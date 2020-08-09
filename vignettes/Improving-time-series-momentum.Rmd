@@ -564,12 +564,6 @@ TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, la
   vol <- Reduce(cbind, vol.est)
   # Dependent variable
   y <- ret.inst / lag(vol, 1)
-  # Independent variable
-  # if (!is.null(signal)) {
-  #   mom.sig.inst <- MomSignal(X, lookback, signal)
-  #   mom.sig <- Reduce(cbind, mom.sig.inst)
-  # }
-  # Regressions data set
   data.inst <- mapply(
     function(x, s) {
       df.inst <- data.frame(
@@ -590,35 +584,52 @@ TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, la
   data <- cbind(data, idxs)
   
   # Regressions
-  xa.reg <- vector('list', nlags)
-  xa.nwts <- vector('numeric', nlags)
-  for (l in lags) {
-    x.inst <- lag(ret.inst, l) / lag(vol, 1 + l)
-    x <- Reduce(append, asplit(x.inst, 2))
-    data.auto <- cbind(data, 'Ret.Scaled.Lagged'=x)
+  mfit <- vector('list', nlags)
+  # mnwts <- vector('numeric', nlags)
+  if (!is.null(signal)) {
+    # Regressions on lagged signal of choice
+    mom.sig.inst <- MomSignal(X, lookback, signal)
+    mom.sig <- Reduce(cbind, mom.sig.inst)
+    mom.sig <- zoo::na.locf(mom.sig)
+    mom.sig <- mom.sig[zoo::index(y), ]
+    for (l in lags) {
+      sig.lag <- lag(mom.sig, l)
+      x <- Reduce(append, asplit(sig.lag, 1))
+      data.sig <- cbind(data, 'Signal.Lagged'=x)
+      mfit[[l]] <- plm::pmg(
+        Ret.Scaled ~ Signal.Lagged, 
+        data=data.sig, index=c('Symbol.ID', 'Date.ID')
+      )
+    }
+  } else {
     # Autoregressions on lagged returns
-    xa.reg[[l]] <- plm::pmg(
-      Ret.Scaled ~ Ret.Scaled.Lagged, 
-      data=data.auto, index=c('Symbol.ID', 'Date.ID')
-    )
-    # xa.nwts[l] <- lmtest::coeftest(
-    #   xa.reg[[l]], vcov.=sandwich::NeweyWest(xa.reg[[l]])
-    # )[2, 't value']
+    for (l in lags) {
+      x.inst <- lag(ret.inst, l) / lag(vol, 1 + l)
+      x <- Reduce(append, asplit(x.inst, 2))
+      data.auto <- cbind(data, 'Ret.Scaled.Lagged'=x)
+      mfit[[l]] <- plm::pmg(
+        Ret.Scaled ~ Ret.Scaled.Lagged, 
+        data=data.auto, index=c('Symbol.ID', 'Date.ID')
+      )
+      # mnwts[l] <- lmtest::coeftest(
+      #   mfit[[l]], vcov.=sandwich::NeweyWest(mfit[[l]])
+      # )[2, 't value']
+    }
   }
+  names(mfit) <- paste('lag', lags, sep='')
   return(
     list(
-      xa.reg=xa.reg
-      # xa.nwts=xa.nwts
+      mfit=mfit
+      # mnwts=mnwts
     )
   )
 }
 
-# Lags (in months)
-test <- TsmomPredictability(
+TsmomPredictability(
   futures.data.monthly, 
-  # signal=c('SIGN', 'TREND', 'SMT'),
+  signal = 'SIGN',
   estimator='yang.zhang',
-  # lookback=lb.months, 
+  lookback=lb.months[2], 
   lags=1:24, 
   n=2, N=12
 )
