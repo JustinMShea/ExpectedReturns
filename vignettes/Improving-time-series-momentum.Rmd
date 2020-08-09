@@ -605,7 +605,7 @@ TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, la
     # Autoregressions on lagged returns
     for (l in lags) {
       x.inst <- lag(ret.inst, l) / lag(vol, 1 + l)
-      x <- Reduce(append, asplit(x.inst, 2))
+      x <- Reduce(append, asplit(x.inst, 1))
       data.auto <- cbind(data, 'Ret.Scaled.Lagged'=x)
       mfit[[l]] <- plm::pmg(
         Ret.Scaled ~ Ret.Scaled.Lagged, 
