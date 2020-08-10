@@ -645,8 +645,13 @@ where $\sigma_{x^{-}}$ is the so called *downside risk*,
 $$
 \sigma_{x^{-}} = \sqrt{\frac{\sum_{i=1}^{n}(x_{i} - \bar{x})_{-}^2}{n - 1}},
 $$
-The $x_{i}$ returns considered are restricted to those below $\bar{x}$. In turn, the $\bar{x}$ benchmark can be $0$, as Ziemba originally did for illustration and interpretation purposes, or one of the risk-free rate, average or median returns.
-The $\sqrt{2}$ factor compensates for the fact only returns in excess of the specified benchmark are taken into account in the downside risk. However, generally, the compensation is only partial because there is no guarantee half the returns distribution will indeed lay above (below) the benchmark.
+The $x_{i}$ returns considered are restricted to those below $\bar{x}$. In turn, the $\bar{x}$ benchmark can be $0$, as Ziemba originally did for illustration and interpretation purposes, or one of the risk-free rate, average or median returns. The $\sqrt{2}$ factor compensates for the fact only returns in excess of the specified benchmark are taken into account in the downside risk. However, generally, the compensation is only partial because there is no guarantee half the returns distribution will indeed lay above (below) the benchmark.
+
+Following authors, for each momentum signal we report its associated turnover across contracts, defined as
+$$
+X_{\textrm{turnover}}(t-1, t) = \frac{|\Delta{X_{t}}|}{\sigma}
+$$
+Authors claim that momentum signals able to reduce long-short swings can reduce the TSMOM strategy turnover thus improving its performance as transaction costs would decrease accordingly.
 
 ```{r Table 4 and 5}
 TSMOM <- function(X, signal, estimator, lookback, holding, ...) {
