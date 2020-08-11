@@ -542,6 +542,8 @@ $$
 \frac{R(t-1, t)}{\sigma(t-2,t)} = \alpha + \beta_{\lambda}X(t-1-\lambda, t-\lambda) + \epsilon(t)
 $$
 
+The objective of these cross-sectional regressions in this context is to compute the Newey-West t-statistics associated with the estimated $\hat{\beta_{\lambda}}$, indicated as $t(\hat{\beta_{\lambda}})$.
+
 ```{r TSMOM returns predictability}
 TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, lags, ...) {
   #' Compute Newey-West cross-sectional regressions t-statistics for TSMOM strategies returns
@@ -629,6 +631,8 @@ TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, la
   return(nw.tstat=nw.tstat)
 }
 ```
+
+The following bar plots display Newey-West t-statistics computed on volatility-scaled TSMOM returns and two momentum signals (SIGN and TREND), for all the lags specified.
 
 ```{r Figure 5, fig.cap="Time series momentum returns predictability"}
 # Time lags (in months)
