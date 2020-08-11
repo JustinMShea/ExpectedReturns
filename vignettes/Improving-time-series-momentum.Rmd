@@ -542,20 +542,30 @@ $$
 \frac{R(t-1, t)}{\sigma(t-2,t)} = \alpha + \beta_{\lambda}X(t-1-\lambda, t-\lambda) + \epsilon(t)
 $$
 
-```{r Returns predictability and figure 5}
+```{r TSMOM returns predictability}
 TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, lags, ...) {
-  nlags <- length(lags)
-  # nsigs <- length(signal)
+  #' Compute Newey-West cross-sectional regressions t-statistics for TSMOM strategies returns
+  #' @note
+  #' When `signal=NULL` cross-sectional regressions on scaled lagged `X` returns series are run by default.
+  #' @param X A list of `xts` objects storing assets data.
+  #' @param signal A string specifying the momentum signal. See `ExpectedReturns::MomSignal()`.
+  #' @param estimator A string specifying the volatility estimator. One accepted by `TTR::volatility()`.
+  #' @param lookback A numeric, the momentum `signal` lookback period. Used only when `signal` is used.
+  #' @param holding A numeric, the momentum `signal` holding period. Used only when `signal` is used.
+  #' @param lags A numeric vector, cross-sectional regressions are computed for each lag specified.
+  #' @param ... Any other pass through parameter.
+  
   # Instruments returns series
   ret.inst <- Reduce(cbind, lapply(X, function(x) x$Comp.Return))
   # Volatility estimates
-  vol.est <- AggregateByType(
+  vol <- AggregateByType(
     EstimateVolatility(X, estimator, ...), 
     y=estimator, symbols=names(X), type='vol.est'
   )
-  vol <- Reduce(cbind, vol.est)
+  vol.inst <- Reduce(cbind, vol)
   # Dependent variable
-  y <- ret.inst / lag(vol, 1)
+  y <- ret.inst[zoo::index(vol.inst), ] / lag(vol.inst, 1)
+  y <- y[-1, ]
   data.inst <- mapply(
     function(x, s) {
       df.inst <- data.frame(
@@ -569,62 +579,55 @@ TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, la
     SIMPLIFY=FALSE
   )
   data <- Reduce(function(...) merge(..., all=TRUE), data.inst)
-  idxs <- expand.grid(
-    Symbol.ID=1:length(X), 
-    Date.ID=1:length(unique(data$Date))
-  )
-  data <- cbind(data, idxs)
-  
   # Regressions
-  mfit <- vector('list', nlags)
-  # mnwts <- vector('numeric', nlags)
-  if (!is.null(signal)) {
-    # Regressions on lagged signal of choice
-    mom.sig.inst <- MomSignal(X, lookback, signal)
-    mom.sig <- Reduce(cbind, mom.sig.inst)
-    mom.sig <- zoo::na.locf(mom.sig)
-    mom.sig <- mom.sig[zoo::index(y), ]
-    for (l in lags) {
-      sig.lag <- lag(mom.sig, l)
-      x <- Reduce(append, asplit(sig.lag, 1))
-      data.sig <- cbind(data, 'Signal.Lagged'=x)
-      mfit[[l]] <- plm::pmg(
-        Ret.Scaled ~ Signal.Lagged, 
-        data=data.sig, index=c('Symbol.ID', 'Date.ID')
-      )
-    }
-  } else {
-    # Autoregressions on lagged returns
-    for (l in lags) {
-      x.inst <- lag(ret.inst, l) / lag(vol, 1 + l)
-      x <- Reduce(append, asplit(x.inst, 1))
-      data.auto <- cbind(data, 'Ret.Scaled.Lagged'=x)
-      mfit[[l]] <- plm::pmg(
-        Ret.Scaled ~ Ret.Scaled.Lagged, 
-        data=data.auto, index=c('Symbol.ID', 'Date.ID')
-      )
-      # mnwts[l] <- lmtest::coeftest(
-      #   mfit[[l]], vcov.=sandwich::NeweyWest(mfit[[l]])
-      # )[2, 't value']
-    }
+  nlags <- length(lags)
+  nw.tstat <- vector('numeric', nlags)
+  is.signal <- !is.null(signal)
+  if (is.signal) {
+    mom.sig <- ExpectedReturns::MomSignal(X, lookback, signal)
+    mom.sig.inst <- Reduce(cbind, mom.sig)
+    mom.sig.inst <- zoo::na.locf(mom.sig.inst)
+    mom.sig.inst <- mom.sig.inst[data$Date, ]
   }
-  names(mfit) <- paste('lag', lags, sep='')
-  return(
-    list(
-      mfit=mfit
-      # mnwts=mnwts
-    )
-  )
+  for (l in lags) {
+    # Independent variables
+    if (is.signal) {
+      # On lagged signal
+      x.inst <- lag(mom.sig.inst, l)
+    } else {
+      # On lagged returns
+      x.inst <- lag(ret.inst, l) / lag(vol.inst, 1 + l)
+      x.inst <- x.inst[data$Date, ]
+    }
+    x <- Reduce(append, asplit(x.inst, 1))
+    data.reg <- cbind(data, 'x'=x)
+    dates <- unique(data.reg$Date)
+    # Time-series regressions
+    betas <- matrix(NA, length(X), 2)
+    for (i in 1:length(X)) {
+      aind <- which(data.reg[, 'Symbol'] == names(X)[i])
+      tsreg <- lm(
+        Ret.Scaled ~ x, 
+        data=data.reg[aind, ]
+      )
+      betas[i, ] <- tsreg$coefficients
+    }
+    # Cross-sectional regressions 
+    mnwts <- matrix(NA, length(dates), 1)
+    for (t in 1:length(dates)) {
+      tind <- which(data.reg[, 'Date'] == dates[t])
+      yt <- data.reg[tind, 'Ret.Scaled']
+      datacs <- data.frame('Ret.Scaled'=yt, 'x'=betas[, 2])
+      csreg <- lm(Ret.Scaled ~ x, data=datacs)
+      mnwts[t, ] <- lmtest::coeftest(
+        csreg, vcov.=sandwich::NeweyWest(csreg)
+      )['x', 't value']
+      # TODO: confidence intervals
+    }
+    nw.tstat[l] <- mean(mnwts, na.rm=TRUE)
+  }
+  return(nw.tstat=nw.tstat)
 }
-
-TsmomPredictability(
-  futures.data.monthly, 
-  signal = 'SIGN',
-  estimator='yang.zhang',
-  lookback=lb.months[2], 
-  lags=1:24, 
-  n=2, N=12
-)
 ```
 
 ## Time-series momentum strategies profitability
