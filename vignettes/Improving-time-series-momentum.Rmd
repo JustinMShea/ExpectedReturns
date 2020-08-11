@@ -630,6 +630,39 @@ TsmomPredictability <- function(X, signal=NULL, estimator, lookback, holding, la
 }
 ```
 
+```{r Figure 5, fig.cap="Time series momentum returns predictability"}
+# Time lags (in months)
+lags <- 1:24
+returns.pred <- TsmomPredictability(
+  futures.data.monthly, 
+  estimator='yang.zhang',
+  lags=lags, 
+  n=2, N=12
+)
+sign.pred <- TsmomPredictability(
+  futures.data.monthly, 
+  signal='SIGN',
+  estimator='yang.zhang',
+  lookback=1, 
+  lags=lags, 
+  n=2, N=12
+)
+# trend.pred <- TsmomPredictability(
+#   futures.data.monthly, 
+#   signal='TREND',
+#   estimator='yang.zhang',
+#   lookback=1, 
+#   lags=lags, 
+#   n=2, N=12
+# )
+
+# Barplots
+barplot(returns.pred, main='Newey-West t-stats TSMOM Lagged Returns', names.arg=as.character(lags))
+barplot(sign.pred, main='Newey-West t-stats SIGN momentum signal', names.arg=as.character(lags))
+# barplot(trend.pred, main='Newey-West t-stats TREND momentum signal', names.arg=as.character(lags))
+```
+
+
 ## Time-series momentum strategies profitability
 With what examined in past sections, we now return to study time series momentum strategies profitability. The time series momentum strategy return was defined as
 $$
