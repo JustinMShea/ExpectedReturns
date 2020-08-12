@@ -660,10 +660,24 @@ sign.pred <- TsmomPredictability(
 #   n=2, N=12
 # )
 
-# Barplots
-barplot(returns.pred, main='Newey-West t-stats TSMOM Lagged Returns', names.arg=as.character(lags))
-barplot(sign.pred, main='Newey-West t-stats SIGN momentum signal', names.arg=as.character(lags))
-# barplot(trend.pred, main='Newey-West t-stats TREND momentum signal', names.arg=as.character(lags))
+# Bar plots
+mapply(
+  function(x, title) {
+    barplot(
+      x, main=title, xlab='lag', names.arg=as.character(lags),
+      ylim=c(floor(min(x)), ceiling(max(x)))
+    )
+  },
+  list(
+    returns.pred
+    , sign.pred
+    # , trend.pred
+  ), 
+  list(
+    'Newey-West t-stats TSMOM Lagged Returns'
+    , 'Newey-West t-stats SIGN momentum signal'
+  )
+)
 ```
 
 
