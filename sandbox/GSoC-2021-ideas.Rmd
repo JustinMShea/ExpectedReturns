@@ -1,0 +1,19 @@
+---
+title: "Google Summer of Code 2021 ideas"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+Effectively create an open source `Barra`.
+
+- Replicate all factors from **q-factor** testing portfolios http://global-q.org/testingportfolios.html
+
+- Port all stata code to `R` code from **Open Source Cross Sectional Asset Pricing** https://github.com/OpenSourceAP/CrossSection
+
+- Replicate all Factors from **…and the Cross-Section of Expected Returns** "https://papers.ssrn.com/sol3/papers.cfm?abstract_id=2249314
+
+- Replicate factors from Doug Martin's **The fundamental law of active management: Redux** https://ideas.repec.org/a/eee/empfin/v43y2017icp91-114.html
+
