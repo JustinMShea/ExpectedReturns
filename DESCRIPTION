@@ -30,8 +30,9 @@ Imports:
   xts,
   XML,
   zoo
-Remotes:  
-    braverock/FactorAnalytics
+Remotes:
+    braverock/FactorAnalytics,
+    helske/Rlibeemd
 License: GPL-3
 VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8

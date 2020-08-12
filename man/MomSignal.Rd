@@ -4,7 +4,7 @@
 \alias{MomSignal}
 \title{Momentum Trading Signal}
 \usage{
-MomSignal(X, lookback, signal, cutoffs, speed = FALSE)
+MomSignal(X, lookback, signal, cutoffs, speed = FALSE, ...)
 }
 \arguments{
 \item{X}{A list of \code{xts} objects, storing assets data. See 'Details'.}
@@ -15,11 +15,13 @@ MomSignal(X, lookback, signal, cutoffs, speed = FALSE)
 
 \item{cutoffs}{A numeric vector, with positional cutoffs for \emph{Newey-West t-statitics} and \eqn{R^2}, see 'Details'.}
 
-\item{speed}{A boolean, whether or not to compute the chosen momentum \code{signal} \emph{speed}.}
+\item{speed}{A boolean, whether or not to compute the chosen momentum signal \emph{speed}.}
+
+\item{...}{Any other pass through parameter.}
 }
 \value{
 A list of \code{xts} objects, consisting of the chosen momentum \code{signal} for the
-corresponding assets data \code{X} provided. Signals are {-1, 0, 1} for short,
+corresponding assets data \code{X} provided. Signals are \eqn{{-1, 0, 1}} for short,
 inactive, and long positions, respectively. \code{TREND} and \code{SMT} are the only
 signals that can result in inactive positions.
 With \code{speed}, additionally the chosen \emph{momentum speed} for the given assets.
@@ -31,37 +33,44 @@ Function to generate several momentum trading signals. Signals currently impleme
 \item \strong{Moving Average} (MA)
 \item \strong{Time-Trend t-statistic} (TREND)
 \item \strong{Statistically Meaningful Trend} (SMT) of Bryhn-Dimberg (2011)
+\item \strong{Ensamble Empirical Mode Decomposition} (EEMD) of Wu-Huang (2009)
 }
 
 All the signals are as defined in Baltas-Kosowski (2012).
 
-Also, to each of signal can be associated a so called \emph{momentum speed}, which is
-an activity to turnover-ratio used to assess signals trading intensity. Letting
-\eqn{X} the signal, its speed is defined as
+Also, to each signal can be associated a so called \emph{momentum speed}, which is
+an activity to turnover-ratio used to assess signals trading intensity.
+Letting \eqn{X} the signal, its speed is defined as
+
 \deqn{SPEED_{X} = \sqrt{\frac{E[X^2]}{E[(\Delta X)^2]}}}
+
 The higher the speed, the larger the signal activity and thus the portfolio turnover.
 }
 \details{
 Data strictly needed in \code{X} depends on the \code{signal} chosen. \code{SIGN} is based on
 assets returns. \code{MA}, \code{EEMD}, \code{TREND}, and \code{SMT} are price-based momentum signals.
 
-For the \code{TREND}, Newey-West t-statitics lower and upper \code{cutoffs} can be provided.
-With \code{SMT}, \code{cutoffs} can additionally provide the lower \eqn{R^2} cutoff.
-Defaults are set at \eqn{-2}, \eqn{2} for NW t-statitics and a minimum \eqn{R^2}
-of \eqn{0.65}.
+For the \code{TREND}, Newey-West t-statistics lower and upper \code{cutoffs} can be provided.
+With \code{SMT}, \code{cutoffs} can additionally provide the lower \eqn{R^2} cut-off.
+Defaults are set at \eqn{-2}, \eqn{2} for Newey-West t-statistics and a minimum
+\eqn{R^2 = 0.65}.
 
 \code{SMT} over sub-periods is not currently supported.
 }
 \references{
+Baltas, A. N. and Kosowski, R. (2012). \emph{Improving time-series momentum strategies: The role of trading signals and volatility estimators}.
+\href{https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility}{EDHEC-Risk Institute}.
+
 Bryhn, A. C and Dimberg, P. H. (2011). \emph{An operational definition of a statistically meaningful trend}. PLoS One.
+
+Luukko, P. JJ. and Helske, J. and Rasanen, E. (2016). \emph{Introducing libeemd: A program package for performing the ensemble empirical mode decomposition}. Computational Statistics.
 
 Moskowitz, T. J. and Ooi, Y. H. and Pedersen, L. H. (2012). \emph{Time series momentum}. Journal of Financial Economics.
 
-Baltas, A. N. and Kosowski, R. (2012). \emph{Improving time-series momentum strategies: The role of trading signals and volatility estimators}.
-\href{https://risk.edhec.edu/publications/improving-time-series-momentum-strategies-role-trading-signals-and-volatility}{EDHEC-Risk Institute}.
+Wu, Z. and Huang, N. E. (2009). \emph{Ensemble empirical mode decomposition: a noise-assisted data analysis method}. Advances in Adaptive Data Analysis.
 }
 \seealso{
-\code{\link[sandwich:NeweyWest]{sandwich::NeweyWest()}}
+\code{\link[sandwich:NeweyWest]{sandwich::NeweyWest()}}, \code{\link[Rlibeemd:eemd]{Rlibeemd::eemd()}}
 }
 \author{
 Vito Lestingi
