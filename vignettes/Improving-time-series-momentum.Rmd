@@ -430,7 +430,13 @@ $$
 $$
 
 5. **Ensemble Empirical Mode Decomposition (EEMD)**
-This signal processing technique was proposed by \textcite{wu-huang-2009}. \textcite{baltas-kosowski-2012} apply the methodology to extract assets' price trends.
+This signal processing technique was proposed by \textcite{wu-huang-2009}. \textcite{baltas-kosowski-2012} apply the methodology to extract assets' price trends and deduce a momentum trading signal. In simple words and without making justice to the topic, since the *Empirical Mode Decomposition* (EMD) a time series is decomposed as a number $n$ of *intrinsic mode functions* (IMFs) and a (local) mean signal (trend) which is found as a residual. The latter is extracted from the former ones via a so called *sifting procedure*. The IMFs are oscillating components and in EEMD more noise is added to them. 
+Following \textcite{baltas-kosowski-2012} notation, we decompose the price process as
+$$
+S(t) = \sum_{i=1}^{n}c_{i}(t) + p_{i}(t)
+$$
+where $c_{i}(t)$ are the IMFs and $p(t)$ the trend.
+The EEMD momentum signal they deduce from the long-term trend $p(t)$ is
 $$
 \textrm{EEMD(t-J, t)} = 
 \begin{cases} 
@@ -438,16 +444,18 @@ $$
 -1 & \textrm{otherwise}
 \end{cases}
 $$
+For the *ensemble empirical mode decomposition* algorithms we used `Rlibeemd`, an R interface to the `libeemd` `C` package, both authored by \textcite{luukko-al-2016}. In particular, we point to the  "development" version freely available on GitHub under [helske/Rlibeemd](https://github.com/helske/Rlibeemd) as opposed to its [CRAN version](https://cran.r-project.org/web/packages/Rlibeemd/index.html), because the former allows for `OpenMP` parallel computing capabilities and thus computational efficiency gains. Core functionality shall be the same.
 
 To notice is that TREND and SMT are the only signals that can result in inactive positions. Further, given that SMT is more restrictive than TREND, it tends to hold more frequent or longer inactivity periods.   
 
 ```{r TSMOM strats signals}
 # 12 months lookback as 261 trading days
-signals <- c('SIGN', 'MA', 'TREND', 'SMT')
+signals <- c('SIGN', 'MA', 'TREND', 'SMT', 'EEMD')
 mom.sign <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SIGN')
 mom.ma <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='MA')
 mom.trend <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='TREND')
 mom.smt <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SMT')
+mom.eemd <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='EEMD')
 ```
 
 Next, we further analyze generated momentum trading signals, across instruments and through several statistics.
@@ -456,7 +464,7 @@ We then study the *activity matrix*, representing the number of long or short po
 Finally, the *position agreement matrix*, denoting the number of periods during which signals pairs agree on the position, on average across instruments.
 
 ```{r Table 3}
-mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt)
+mom.signals <- list(mom.sign, mom.ma, mom.trend, mom.smt, mom.eemd)
 
 # Panel A1
 # Momentum signals correlation matrix across instruments

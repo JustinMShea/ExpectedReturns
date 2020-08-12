@@ -174,7 +174,9 @@ MomSignal <- function(X
         dtrend <- diff(x.trend, lookback)
         s[dtrend > 0] <- 1L
         s[dtrend <= 0] <- (-1L)
-        return(xts(s, index(x)[lind]))
+        s <- xts(s, index(x)[lind])
+        colnames(s) <- signal
+        return(s)
       })
     }
   )
