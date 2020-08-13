@@ -278,6 +278,9 @@ $$
 ```{r Volatility estimators}
 vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
 EstimateVolatility <- function(X, estimator, ...) {
+  #' @param X A list of `xts` objects storing assets data.
+  #' @param estimator A character vector specifying volatility estimators. Any of those supported by `TTR::volatility()`.
+  #' @param ... Any other pass through parameter.
   vol.estm <- vol.bias <- vol.abrd <- vto <- vector('list', length(estimator))
   vol.calcs <- lapply(X, function(x) {
     # Get dates, normalized OHLC prices, and convert
@@ -488,6 +491,9 @@ lapply(ls.positions, function(x) {
 
 ```{r Figure 4}
 AvgSignalSpeed <- function(X, signal, lookback) {
+  #' @param X A list of `xts` objects storing assets data.
+  #' @param signal A string specifying the momentum signal. See `ExpectedReturns::MomSignal()`.
+  #' @param lookback A numeric, the momentum `signal` lookback period. Used only when `signal` is used.
   ninst <- length(X)
   nsg <- length(signal)
   nlb <- length(lookback)
@@ -506,6 +512,8 @@ AvgSignalSpeed <- function(X, signal, lookback) {
   return(avg.mom.speed)
 }
 PlotAvgSignalSpeed <- function(avg.speed, ...) {
+  #' @param avg.speed A `matrix` storing average momentum speed across assets and over lookback periods.
+  #' @param ... Any other pass through parameter.
   nsg <- nrow(avg.speed)
   x <- matrix(rep(as.numeric(colnames(avg.speed)), nsg), ncol=nsg)
   matplot(
