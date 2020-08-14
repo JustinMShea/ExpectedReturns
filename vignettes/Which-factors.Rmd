@@ -1,0 +1,31 @@
+---
+title: '"Which Factors? q-factor and traditional models"'
+subtitle: "(draft)"
+author: "Vito Lestingi"
+date: "`r Sys.Date()`"
+abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+output:
+  rmarkdown::pdf_document:
+  citation_package: biblatex
+bibliography: references.bib
+vignette: >
+  %\VignetteIndexEntry{"Which Factors? q-factor and traditional models"}
+  %\VignetteEngine{rmarkdown::render}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_knit$set(
+  root.dir = normalizePath('..')
+)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE,
+  warning = FALSE,
+  error = FALSE
+)
+```
+
+# Introduction
+These notes aim at reproducing several works on factors modeling and their comparison.
