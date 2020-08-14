@@ -28,4 +28,12 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-These notes aim at reproducing several works on factors modeling and their comparison.
+These notes aim at reproducing several works on factors modeling and their comparisons. The framework is the one adopted by \textcite{hou-al-2018}, who systematically examine how seemingly different factor models are related among each other.
+
+# Q-factor models
+
+## q-factor model 
+In this section we strive to replicate the model introduced by \textcite{hou-al-2014}.
+
+## $q^5$ factor model
+In this section we strive to replicate the model introduced by \textcite{hou-al-2020}.
