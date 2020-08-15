@@ -33,7 +33,18 @@ These notes aim at reproducing several works on factors modeling and their compa
 # Q-factor models
 
 ## q-factor model 
-In this section we strive to replicate the model introduced by \textcite{hou-al-2014}.
+In this section we first of all summarize research and the model introduced by \textcite{hou-al-2014}, then aim at reproducing it. Their *q-factor model* is inspired by investment-based approach to the asset pricing theory and consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
+The factor regressions specification used to assess the q-factor model performance is 
+$$
+r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\epsilon}_{i,t}
+$$
+where, as usual, $r_{i,t} - r_{f, t}$ stands for the returns on excess of the risk-free rate.
+Authors find their model to largerly capture the cross section of average stock returns.
 
 ## $q^5$ factor model
-In this section we strive to replicate the model introduced by \textcite{hou-al-2020}.
+In this section we first of all summarize research and the model introduced by \textcite{hou-al-2020}, then aim at reproducing it. 
+This model is an extension of the previous four-factor q model and in addition it includes the *expected growth* factor, $EG$.
+The factor regressions specification used to assess the $q^5$-factor model performance is then 
+$$
+r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\beta}_{EG,i}r_{EG,t} + {\epsilon}_{i,t}
+$$
