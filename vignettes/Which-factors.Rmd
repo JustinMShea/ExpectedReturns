@@ -30,6 +30,9 @@ knitr::opts_chunk$set(
 # Introduction
 These notes aim at reproducing several works on factors modeling and their comparisons. The framework is the one adopted by \textcite{hou-al-2018}, who systematically examine how seemingly different factor models are related among each other.
 
+# Data and methodology
+Authors make available data for factors returns analyzed in their research at <http://global-q.org/index.html>. Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
+
 # Q-factor models
 
 ## q-factor model 
