@@ -30,11 +30,12 @@
 #' @source
 #' [Kenneth F. French's data library](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html),
 #' [Robert Shiller's online data](http://www.econ.yale.edu/~shiller/data.htm),
-#' [AQR data sets](https://www.aqr.com/Insights/Datasets)
+#' [AQR data sets](https://www.aqr.com/Insights/Datasets),
+#' [global-q](http://global-q.org/index.html)
 #'
-#' @param x A character string specifying the query specifying the data set to download. One of 'FF3', 'FF5', 'MOM' or 'REV'. See 'Details'.
-#' @param src A character string, the source to download data from. Currently only 'FF' (default) is available.
-#' @param freq A character string, specifying `x` data frequency. One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.
+#' @param x A character string specifying the query specifying the data set to download. One of `FF3`, `FF5`, `MOM`, `REV`, or `q5`. See 'Details'.
+#' @param src A character string, the source to download data from. `FF` (default) and `HXZ` currently available.
+#' @param freq A character string, specifying `x` data frequency. One of 'annual', 'monthly' (default), 'quarterly', 'weekly', 'w2w', or 'daily'. See 'Details'.
 #' @param term A character to be additionally provided when `x='REV'`. Either 'ST' (short-term, default) or 'LT' (long term).
 #' @param country A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.
 #' TODO: param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
@@ -71,6 +72,8 @@
 #' all the possible frequencies specifiable with `freq`.
 #' In particular, with respect to factor data, weekly data frequency is available
 #' for the three-factor model only.
+#' For what concerns the q-factor models, frequencies available also include `w2w`
+#' which is wednesday-to-wednesday weekly data.
 #'
 #' @author Vito Lestingi
 #'
@@ -88,8 +91,12 @@
 #' # Fama-French Five-factor model data
 #' GetFactors('FF5', 'FF', 'weekly') # fails, no data currently available
 #'
+#' # q^5 monthly factors
+#' GetFactors('q5', src='HXZ', 'monthly')
+#'
 #' } #end dontrun
 #'
+#' @importFrom rio import
 #' @importFrom utils download.file read.csv unzip
 #' @importFrom xts as.xts last
 #'
@@ -104,7 +111,7 @@ GetFactors <- function(x
 )
 {
   if(missing(src)) src <- 'FF'
-  src.available <- c("FF")
+  src.available <- c('FF', 'HXZ')
   if(all(src != src.available)) {
     stop("src = ", sQuote(src), " is not currently implemented.")
   } else {
@@ -225,6 +232,58 @@ GetFactors <- function(x
               )
               storage.mode(out) <- 'numeric'
               out <- out/100 # to decimal
+            },
+            HXZ = {
+              base.url <- "http://global-q.org"
+              hxz.links <- XML::getHTMLLinks("http://global-q.org/factors.html")
+              hxz.factors.links <- grep('factor*', hxz.links, ignore.case=TRUE, value=TRUE)
+              hxz.factors.data.links <- grep('*.csv', hxz.factors.links, ignore.case=TRUE, value=TRUE)
+              if (x == 'q5') {
+                files.name <- basename(hxz.factors.data.links)
+                freq.avail <- sapply(
+                  strsplit(files.name, split = '_'), function(x) ifelse(length(x) == 4, x[[3]], x[[4]])
+                )
+                freq.idx <- match(freq, freq.avail)
+                target.url <- hxz.factors.data.links[freq.idx]
+                hxz.data.raw <- import(paste0(base.url, target.url))
+                if (any(freq == c('daily', 'weekly', 'w2w'))) {
+                  yrs <- substr(hxz.data.raw[, 1], 1, 4)
+                  mos <- substr(hxz.data.raw[, 1], 5, 6)
+                  days <- substr(hxz.data.raw[, 1], 7, 8)
+                  dates <- as.Date.character(paste(yrs, mos, days, sep='-'), '%Y-%m-%d')
+                } else if (any(freq == c('monthly', 'quarterly'))) {
+                  if (freq == 'quarterly') {
+                    colnames(hxz.data.raw)[2] <- 'month'
+                    # quarters are expressed as "1, 2, 3, 4" in source
+                    hxz.data.raw$month <- hxz.data.raw$month * 3
+                  }
+                  # variables at end-of-month
+                  yrs <- hxz.data.raw$year
+                  mos <- hxz.data.raw$month
+                  monthly.dates <- as.Date.character(
+                    paste(yrs, mos + 1, '01', sep='-'),
+                    '%Y-%m-%d'
+                  )
+                  dates <- monthly.dates - 1
+                  artificial.thirteenth.idxs <- which(is.na(dates))
+                  dates[artificial.thirteenth.idxs] <- as.Date.character(
+                    paste(yrs, '12', '31', sep='-'),
+                    '%Y-%m-%d'
+                  )[artificial.thirteenth.idxs]
+                } else if (freq == 'annual') {
+                  # arbitrary end-of-year
+                  dates <- as.Date.character(paste0(hxz.data.raw[, 1], '-12-31'), '%Y-%m-%d')
+                }
+                # Convert data set, including all q-factors and the risk-free rate
+                hxz.data.xts <- as.xts(
+                  hxz.data.raw[, (ncol(hxz.data.raw) - 5):ncol(hxz.data.raw)],
+                  order.by=dates
+                )
+                vars <- sapply(strsplit(colnames(hxz.data.xts), '_'), function(x) x[2])
+                vars[vars=='F'] <- 'RF'
+                colnames(hxz.data.xts) <- vars
+                out <- hxz.data.xts
+              }
             }
     )
   }

@@ -6,17 +6,18 @@
 \source{
 \href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library},
 \href{http://www.econ.yale.edu/~shiller/data.htm}{Robert Shiller's online data},
-\href{https://www.aqr.com/Insights/Datasets}{AQR data sets}
+\href{https://www.aqr.com/Insights/Datasets}{AQR data sets},
+\href{http://global-q.org/index.html}{global-q}
 }
 \usage{
 GetFactors(x, src, freq, term, country = NULL)
 }
 \arguments{
-\item{x}{A character string specifying the query specifying the data set to download. One of 'FF3', 'FF5', 'MOM' or 'REV'. See 'Details'.}
+\item{x}{A character string specifying the query specifying the data set to download. One of \code{FF3}, \code{FF5}, \code{MOM}, \code{REV}, or \code{q5}. See 'Details'.}
 
-\item{src}{A character string, the source to download data from. Currently only 'FF' (default) is available.}
+\item{src}{A character string, the source to download data from. \code{FF} (default) and \code{HXZ} currently available.}
 
-\item{freq}{A character string, specifying \code{x} data frequency. One of 'annual', 'monthly' (default), 'weekly' or 'daily'. See 'Details'.}
+\item{freq}{A character string, specifying \code{x} data frequency. One of 'annual', 'monthly' (default), 'quarterly', 'weekly', 'w2w', or 'daily'. See 'Details'.}
 
 \item{term}{A character to be additionally provided when \code{x='REV'}. Either 'ST' (short-term, default) or 'LT' (long term).}
 
@@ -81,6 +82,8 @@ Also, note that not all the Fama-French's series are available with respect to
 all the possible frequencies specifiable with \code{freq}.
 In particular, with respect to factor data, weekly data frequency is available
 for the three-factor model only.
+For what concerns the q-factor models, frequencies available also include \code{w2w}
+which is wednesday-to-wednesday weekly data.
 }
 \examples{
 \dontrun{
@@ -95,6 +98,9 @@ GetFactors('REV', 'FF', 'annual', term='ST')
 
 # Fama-French Five-factor model data
 GetFactors('FF5', 'FF', 'weekly') # fails, no data currently available
+
+# q^5 monthly factors
+GetFactors('q5', src='HXZ', 'monthly')
 
 } #end dontrun
 

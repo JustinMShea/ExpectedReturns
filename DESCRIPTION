@@ -26,6 +26,7 @@ Depends:
 Imports:
   lmtest,
   PerformanceAnalytics,
+  rio,
   sandwich,
   xts,
   XML,
