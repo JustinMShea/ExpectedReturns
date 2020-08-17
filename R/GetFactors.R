@@ -103,8 +103,6 @@ GetFactors <- function(x
                        # , verbose=FALSE
 )
 {
-  # require(xts) # TODO: momentary
-  # require(XML)
   if(missing(src)) src <- 'FF'
   src.available <- c("FF")
   if(all(src != src.available)) {
