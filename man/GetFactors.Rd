@@ -5,8 +5,6 @@
 \title{Scrape Academic Financial Data Libraries}
 \source{
 \href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library},
-\href{http://www.econ.yale.edu/~shiller/data.htm}{Robert Shiller's online data},
-\href{https://www.aqr.com/Insights/Datasets}{AQR data sets},
 \href{http://global-q.org/index.html}{global-q}
 }
 \usage{
@@ -48,9 +46,7 @@ time. On one hand, these resources - of admirable effort - lack important featur
 (financial) databases guarantee; most notably, this results in the impossibility
 to leverage APIs as in most cases there aren't any.
 On the other hand, these data sets satisfy important characteristics: they are
-open sourced, public and free to use, collected by world renowned Researchers
-of the field (Nobel Laureates in some instances, as is the case for
-Prof. \emph{Eugene F. Fama} and Prof. \emph{Robert J. Shiller}).
+open sourced, public and free to use, collected by Researchers of the field.
 
 TODO: provide a general overview of data made available
 In the case of the Fama-French's online library, generally stock data is obtained

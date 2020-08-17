@@ -10,9 +10,7 @@
 #' (financial) databases guarantee; most notably, this results in the impossibility
 #' to leverage APIs as in most cases there aren't any.
 #' On the other hand, these data sets satisfy important characteristics: they are
-#' open sourced, public and free to use, collected by world renowned Researchers
-#' of the field (Nobel Laureates in some instances, as is the case for
-#' Prof. *Eugene F. Fama* and Prof. *Robert J. Shiller*).
+#' open sourced, public and free to use, collected by Researchers of the field.
 #'
 #' TODO: provide a general overview of data made available
 #' In the case of the Fama-French's online library, generally stock data is obtained
@@ -29,8 +27,6 @@
 #'
 #' @source
 #' [Kenneth F. French's data library](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html),
-#' [Robert Shiller's online data](http://www.econ.yale.edu/~shiller/data.htm),
-#' [AQR data sets](https://www.aqr.com/Insights/Datasets),
 #' [global-q](http://global-q.org/index.html)
 #'
 #' @param x A character string specifying the query specifying the data set to download. One of `FF3`, `FF5`, `MOM`, `REV`, or `q5`. See 'Details'.
