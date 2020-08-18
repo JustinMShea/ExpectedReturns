@@ -179,8 +179,9 @@ GetFactors <- function(x
               }
               # Download and format web source target identified
               temp.file <- tempfile()
+              temp.dir <- tempdir()
               download.file(paste0(base.url, target.url), temp.file)
-              ff.data.raw <- unzip(temp.file)
+              ff.data.raw <- unzip(temp.file, exdir=temp.dir)
               # Clean comment lines from data set
               # TODO: 'sanitize' missing data, which they indicate with -99.99 or -999?
               # TODO: nice to add who's the underlying provider (e.g., CRSP, Bloomberg), which is file header
