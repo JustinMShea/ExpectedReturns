@@ -218,17 +218,22 @@ GetFactors <- function(x
                   '%Y-%m-%d'
                 )[artificial.thirteenth.idxs]
                 ff.data.monthly.xts <- as.xts(as.matrix(ff.data.monthly[, -1]), order.by=monthly.dates)
-                out <- ff.data.monthly.xts
+                storage.mode(ff.data.monthly.xts) <- 'numeric'
+                # Convert to decimal values
+                out <- ff.data.monthly.xts / 100
               } else {# (freq == 'weekly' || freq == 'daily') & ...
                 # TODO
               }
+              # Rename variables
               ifelse(
                 ncol(out) == 1,
-                ifelse(x == 'MOM', colnames(out) <- x, colnames(out) <- paste(x, term, sep='.')),
+                ifelse(
+                  x == 'MOM',
+                  colnames(out) <- x,
+                  colnames(out) <- paste(x, term, sep='.')
+                ),
                 colnames(out) <- toupper(colnames(out))
               )
-              storage.mode(out) <- 'numeric'
-              out <- out/100 # to decimal
             },
             HXZ = {
               base.url <- "http://global-q.org"
@@ -276,10 +281,13 @@ GetFactors <- function(x
                   hxz.data.raw[, (ncol(hxz.data.raw) - 5):ncol(hxz.data.raw)],
                   order.by=dates
                 )
-                vars <- sapply(strsplit(colnames(hxz.data.xts), '_'), function(x) x[2])
+                # Convert to decimal values
+                out <- hxz.data.xts / 100
+                # Rename variables
+                vars <- sapply(strsplit(colnames(out), '_'), function(x) x[2])
                 vars[vars=='F'] <- 'RF'
-                colnames(hxz.data.xts) <- vars
-                out <- hxz.data.xts
+                vars[vars=='MKT'] <- 'MKT.RF'
+                colnames(out) <- vars
               }
             }
     )
