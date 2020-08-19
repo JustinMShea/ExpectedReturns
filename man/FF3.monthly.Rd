@@ -20,10 +20,6 @@ Market.
 The object consists of 1126 rows and 4 columns.
 }
 \source{
-\href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/variable_definitions.html}{K. R. French's Variable Definitions}
-
-\href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/Data_Library/variable_definitions.html}{K. R. French's Variable Definitions}
-
 \href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library}
 }
 \usage{
@@ -177,7 +173,7 @@ the occurence.
 \section{Kenneth R. French Copyright}{
 
 
-All of the data series downloaded from Prof. \emph{Kenneth R. French's online data lbrary}
+All the data series downloaded from Prof. \emph{Kenneth R. French's online data library}
 at \url{https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}
 are under the most recent \strong{(c) Kenneth R. French}.
 }
@@ -192,7 +188,7 @@ head(FF3.monthly)
 Fama, Eugene F and French, Kenneth R (1992). The cross-section of expected stock returns. Journal of Finance.
 Fama, Eugene F and French, Kenneth R (1993). Common risk factors in the returns on stocks and bonds. Journal of Financial Economics.
 
-Davis, Fama, and French (2000). Characteristics, Covariances, and Average Returns: 1929-1997. Journal of Finance.
+Davis, Fama, and French (2000). \emph{Characteristics, Covariances, and Average Returns: 1929-1997}. Journal of Finance.
 }
 \seealso{
 The series was generated with \code{\link[=GetFactors]{GetFactors()}}.

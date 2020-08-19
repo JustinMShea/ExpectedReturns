@@ -18,9 +18,14 @@ ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 FF4.monthly <- merge(FF3.monthly[ff.dates, ], MOM.monthly[ff.dates, ])
 FF4.monthly <- FF4.monthly[, c('RF', ff4.vars)]
 
+## Fama-French five-factor model data
+ff5.vars <- c(ff3.vars, 'RMW', 'CMA')
+FF5.monthly <- ExpectedReturns::GetFactors('FF5', 'FF', freq='monthly')
+FF5.monthly <- FF5.monthly[, c('RF', ff5.vars)]
+
 # Save data sets
 # NOTE: save to sandbox if needed
-objs.names <- c('FF3.monthly', 'FF4.monthly')
+objs.names <- c('FF3.monthly', 'FF4.monthly', 'FF5.monthly')
 for (obj in objs.names) {
   save(
     list = obj,
