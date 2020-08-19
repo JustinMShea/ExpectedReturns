@@ -23,9 +23,18 @@ ff5.vars <- c(ff3.vars, 'RMW', 'CMA')
 FF5.monthly <- ExpectedReturns::GetFactors('FF5', 'FF', freq='monthly')
 FF5.monthly <- FF5.monthly[, c('RF', ff5.vars)]
 
+## Fama-French six-factor model data
+ff6.vars <- c(ff5.vars, 'MOM')
+min.tp <- max(xts::first(index(FF5.monthly)), xts::first(index(MOM.monthly)))
+max.tp <- min(xts::last(index(FF5.monthly)), xts::last(index(MOM.monthly)))
+days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+FF6.monthly <- merge(FF5.monthly[ff.dates, ], MOM.monthly[ff.dates, ])
+FF6.monthly <- FF6.monthly[, c('RF', ff6.vars)]
+
 # Save data sets
 # NOTE: save to sandbox if needed
-objs.names <- c('FF3.monthly', 'FF4.monthly', 'FF5.monthly')
+objs.names <- c('FF3.monthly', 'FF4.monthly', 'FF5.monthly', 'FF6.monthly')
 for (obj in objs.names) {
   save(
     list = obj,
