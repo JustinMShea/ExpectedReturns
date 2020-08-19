@@ -1,7 +1,30 @@
-## Download FamaFrench
+# Fama-French Models Factor Data
+#
+# Source: http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html
 
-FF3.monthly <- ExpectedReturns::GetFactors('FF3', 'FF', freq='monthly') # don't run upon knitting
+# Query and arrange data sets
+## Fama-French three-factor model data
+ff3.vars <- c('MKT.RF', 'SMB', 'HML')
+FF3.monthly <- ExpectedReturns::GetFactors('FF3', 'FF', freq='monthly')
+FF3.monthly <- FF3.monthly[, c('RF', ff3.vars)]
 
-# Save to sandbox if needed
-save(FF3.monthly, file = paste0("data/FF3.monthly.RData"),
-     compress = "xz", compression_level = 9)
+## Fama-French-Carhart four-factor model data
+ff4.vars <- c(ff3.vars, 'MOM')
+MOM.monthly <- ExpectedReturns::GetFactors('MOM', 'FF', freq='monthly')
+min.tp <- max(xts::first(index(FF3.monthly)), xts::first(index(MOM.monthly)))
+max.tp <- min(xts::last(index(FF3.monthly)), xts::last(index(MOM.monthly)))
+days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+FF4.monthly <- merge(FF3.monthly[ff.dates, ], MOM.monthly[ff.dates, ])
+FF4.monthly <- FF4.monthly[, c('RF', ff4.vars)]
+
+# Save data sets
+# NOTE: save to sandbox if needed
+objs.names <- c('FF3.monthly', 'FF4.monthly')
+for (obj in objs.names) {
+  save(
+    list = obj,
+    file = paste0('data/', obj, '.RData'),
+    compress = 'xz', compression_level = 9
+  )
+}
