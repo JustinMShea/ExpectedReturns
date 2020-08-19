@@ -4,64 +4,72 @@
 \alias{GetFactors}
 \title{Scrape Academic Financial Data Libraries}
 \source{
-\href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth F. French's data library},
-\href{http://global-q.org/index.html}{global-q}
+\href{http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html}{Kenneth R. French's data library},
+\href{http://global-q.org/index.html}{global-q.org}
 }
 \usage{
 GetFactors(x, src, freq, term, country = NULL)
 }
 \arguments{
-\item{x}{A character string specifying the query specifying the data set to download. One of \code{FF3}, \code{FF5}, \code{MOM}, \code{REV}, or \code{q5}. See 'Details'.}
+\item{x}{A character string specifying which data set to download. One of \code{FF3}, \code{FF5}, \code{MOM}, \code{REV}, or \code{Q5}. See 'Value'.}
 
 \item{src}{A character string, the source to download data from. \code{FF} (default) and \code{HXZ} currently available.}
 
-\item{freq}{A character string, specifying \code{x} data frequency. One of 'annual', 'monthly' (default), 'quarterly', 'weekly', 'w2w', or 'daily'. See 'Details'.}
+\item{freq}{A character string, specifying \code{x} data frequency. One of \code{'annual'}, \code{'monthly'} (default), \code{'quarterly'}, \code{'weekly'}, \code{'w2w'}, or \code{'daily'}. See 'Details'.}
 
-\item{term}{A character to be additionally provided when \code{x='REV'}. Either 'ST' (short-term, default) or 'LT' (long term).}
+\item{term}{A character to be additionally provided when \code{x='REV'}. Either \code{'ST'} (short-term, default) or \code{'LT'} (long term).}
 
-\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.
-TODO: param verbose A boolean, whether or not to retrieve additional info on data sets being downloaded. Not currently used.
-
-TODO: \code{verbose}, if ever needed/wanted, should include Fama-French's data 'details' to provide factor construction info}
+\item{country}{A character string indicating for which country Fama-French's factors are being requested. Default is U.S. factors. See 'Details' for other countries available.}
 }
 \value{
-An \code{xts} object with columns being the requested factors over the whole period available.
+An \code{xts} object with columns being factors over the whole period available
+from source. For \code{FF3}, \code{FF5}, and \code{Q5}, the risk free rate (\code{RF}, e.g. 1-month
+T-Bill return for the U.S.) is included as well. \code{RF} may present small differences
+from data set to data set. All values are returned in decimal units.
+Because the actual object depends on the data set chosen, which more often than not
+resembles factors included in established models in the literature, below we
+provide a brief summary of the factors currently available relative to the
+model they originally belong to.
+\itemize{
+\item \strong{Fama-French three-factor model} (\code{FF3}). Includes \code{MKT.RF} (market excess returns), \code{SMB} (Small Minus Big), and \code{HML} (high minus low).
+\item \strong{Fama-French five-factor model} (\code{FF5}). Adds \code{RMW} (Robust Minus Weak) and \code{CMA} (Conservative Minus Aggressive) to \code{FF3}.
+\item \strong{Q-factor models} (\code{Q5}). The four-factor version includes \code{MKT.RF} (market excess returns), \code{IA} (Investment-to-Assets), \code{ME} (size factor returns), and \code{ROE} (Return On Equity factor returns). \code{Q5} adds \code{EG} (Expected Growth returns).
+}
 
-TODO: document the object columns and their name
-
-WARNING: We are not in a position to interact directly with the online library
-via an API and there could be possible inconsistencies in source files formatting.
-Given this shaking foundations and despite our efforts to guarantee an optimal
-result, it could happen that data obtained is not what expected.
-A sign that the data file downloaded may be incomplete is the lack of the header
-as specified above.
+Other factors downloadable as standalone time series are \code{MOM} - the momentum
+factor, also referred to as Up Minus Down (UMD) - and \code{REV}, the reversal factor
+further distinguished in short- and long-term.
+Adding the former to \code{FF3} gives the factors data set of the so called
+\strong{Fama-French-Carhart model}, while adding it to \code{FF5} originates the
+\strong{Fama-French six-factor model}.
 }
 \description{
 This is a convenience function to provide an easy way to download research
 financial data sets from several accredited sources.
 Specifically, it allows to import them in the \code{R} environment as \code{xts} objects.
-The scientific libraries here contemplated are from several researchers as,
-unfortunately, an open source systematic collection is not available at this
-time. On one hand, these resources - of admirable effort - lack important features
-(financial) databases guarantee; most notably, this results in the impossibility
-to leverage APIs as in most cases there aren't any.
-On the other hand, these data sets satisfy important characteristics: they are
-open sourced, public and free to use, collected by Researchers of the field.
+Scientific libraries here contemplated are from several researchers as,
+unfortunately, a wide open source collection is not available at this time.
+On one hand, these resources - of admirable effort - lack important features
+(financial) databases guarantee: importantly, there aren't APIs to leverage by
+systematic connections. On the other hand, these data sets satisfy important
+characteristics: they are open sourced, free to use for everyone, and collected/maintained
+by researchers of the field.
 
-TODO: provide a general overview of data made available
 In the case of the Fama-French's online library, generally stock data is obtained
 from the \emph{Center for Research in Security Prices, LLC} (CRSP) and the risk-free
 rate is from \emph{Ibbotson and Associates, Inc.} or \emph{Bloomberg} databases.
 
-Please be considerate while using the function. In particular, do not send too
-frequent requests to the web source as the supported/tolerated request rate is
-unknown. Usage remains at your own discretion and responsibility.
-TODO: deal with loops internally so to include some sleeping time?
-
-All the credits for collecting, maintaining and sharing data belong to the
-mentioned authors or copyright holders (see 'Source' below).
+All credits for collecting, maintaining, and sharing data belong to the mentioned
+authors or copyright holders (see 'Source').
 }
 \details{
+Not all the data sets are available at all frequencies.
+Most Fama-French data sets are available on a \code{'annual'}, \code{'monthly'} (default),
+\code{'weekly'}, and \code{'daily'} frequency. However, with respect to factor data,
+\code{'weekly'} data frequency is available for the three-factor model only.
+For what concerns the q-factor models, frequencies available also include
+\code{'quarterly'} and \code{w2w}(Wednesday-to-Wednesday weekly data) frequencies.
+
 The parameter \code{country} can specify one of those "country" (country or region)
 made available by Fama-French.
 Countries they make available are 'Asia Pacific ex Japan', 'Developed',
@@ -69,17 +77,19 @@ Countries they make available are 'Asia Pacific ex Japan', 'Developed',
 'United States' (the 'domestic' country with respect to which the standard
 Fama-French's factors are computed, with markets being NYSE, AMEX and NASDAQ).
 
-The \code{RF} column refers the risk-free rate (e.g., 1-month TBill return for the
-U.S.).
-
 Fama-French often indicate missing data by -99.99 or -999.
+}
+\note{
+WARNING: We are not in a position to interact directly with the online library
+via an API and there could be possible inconsistencies in source files formatting.
+Given this shaking foundations and despite our efforts to guarantee an optimal
+result, it could happen that data obtained is not what expected.
+A sign that the data file downloaded may be incomplete is the lack of the header
+as specified above.
 
-Also, note that not all the Fama-French's series are available with respect to
-all the possible frequencies specifiable with \code{freq}.
-In particular, with respect to factor data, weekly data frequency is available
-for the three-factor model only.
-For what concerns the q-factor models, frequencies available also include \code{w2w}
-which is wednesday-to-wednesday weekly data.
+Also, please be considerate while using the function. In particular, do not send
+too frequent requests to the web source as the supported/tolerated request rate
+is unknown. Usage remains at your own discretion and responsibility.
 }
 \examples{
 \dontrun{
@@ -96,7 +106,7 @@ GetFactors('REV', 'FF', 'annual', term='ST')
 GetFactors('FF5', 'FF', 'weekly') # fails, no data currently available
 
 # q^5 monthly factors
-GetFactors('q5', src='HXZ', 'monthly')
+GetFactors('Q5', src='HXZ', 'monthly')
 
 } #end dontrun
 
