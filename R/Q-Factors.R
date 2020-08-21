@@ -3,9 +3,9 @@
 #' @docType data
 #'
 #' @description
-#' `Q5.monthly` is the Hou-Xue-Zhang q-factor five-factors monthly data series on
-#' U.S. stock market from 1967-01 to 2019-12. The data set also includes the risk-free
-#' rate on 1-month U.S. T-Bill during the same period.
+#' `Q5.monthly` is the Hou-Mo-Xue-Zhang (2020) q-factor five-factors monthly data
+#' series on U.S. stock market from 1967-01 to 2019-12. The data set also includes
+#' the risk-free rate on 1-month U.S. T-Bill during the same period.
 #'
 #' @usage
 #' data("Q5.monthly")
@@ -74,8 +74,9 @@
 #' data("Q4.monthly")
 #'
 #' @format
-#' An `xts` object containing observations of Hou-Xue-Zhang q-factor five-factors
-#' data set on U.S. Stock Market, and the risk-free rate on 1-month U.S. T-Bill.
+#' An `xts` object containing observations of Hou-Xue-Zhang (2015) q-factor
+#' four-factors data set on U.S. Stock Market, and the risk-free rate on 1-month
+#' U.S. T-Bill.
 #'
 #' * __Frequency__: Monthly.
 #' * __Date Range__: 1967-01 to 2019-12.
@@ -104,7 +105,7 @@
 #' @template factor-roe
 #'
 #' @references
-#' Hou, K. and Xue, C. and Zhang, L. (2014). *Digesting Anomalies: An Investment Approach*. The Review of Financial Studies.
+#' Hou, K. and Xue, C. and Zhang, L. (2015). *Digesting Anomalies: An Investment Approach*. The Review of Financial Studies.
 #'
 #' Hou, K. and Mo, H. and Xue, C. and Zhang, L. (2019). *Which factors?*. Review of Finance.
 #'

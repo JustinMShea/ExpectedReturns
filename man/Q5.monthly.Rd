@@ -29,9 +29,9 @@ The object consists of 636 rows and 6 columns.
 data("Q5.monthly")
 }
 \description{
-\code{Q5.monthly} is the Hou-Xue-Zhang q-factor five-factors monthly data series on
-U.S. stock market from 1967-01 to 2019-12. The data set also includes the risk-free
-rate on 1-month U.S. T-Bill during the same period.
+\code{Q5.monthly} is the Hou-Mo-Xue-Zhang (2020) q-factor five-factors monthly data
+series on U.S. stock market from 1967-01 to 2019-12. The data set also includes
+the risk-free rate on 1-month U.S. T-Bill during the same period.
 }
 \details{
 In addition to column definitions, this section contains a glimpse into factors

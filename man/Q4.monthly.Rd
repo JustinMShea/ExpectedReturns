@@ -5,8 +5,9 @@
 \alias{Q4.monthly}
 \title{Hou-Xue-Zhang q-factor Four-Factors Data Set}
 \format{
-An \code{xts} object containing observations of Hou-Xue-Zhang q-factor five-factors
-data set on U.S. Stock Market, and the risk-free rate on 1-month U.S. T-Bill.
+An \code{xts} object containing observations of Hou-Xue-Zhang (2015) q-factor
+four-factors data set on U.S. Stock Market, and the risk-free rate on 1-month
+U.S. T-Bill.
 \itemize{
 \item \strong{Frequency}: Monthly.
 \item \strong{Date Range}: 1967-01 to 2019-12.
@@ -146,7 +147,7 @@ head(Q4.monthly)
 \references{
 Davis, Fama, and French (2000). \emph{Characteristics, Covariances, and Average Returns: 1929-1997}. Journal of Finance.
 
-Hou, K. and Xue, C. and Zhang, L. (2014). \emph{Digesting Anomalies: An Investment Approach}. The Review of Financial Studies.
+Hou, K. and Xue, C. and Zhang, L. (2015). \emph{Digesting Anomalies: An Investment Approach}. The Review of Financial Studies.
 
 Hou, K. and Mo, H. and Xue, C. and Zhang, L. (2019). \emph{Which factors?}. Review of Finance.
 }
