@@ -28,7 +28,9 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-These notes aim at reproducing several works on factors modeling and their comparisons. The framework is the one adopted by \textcite{hou-al-2018}, who systematically examine how seemingly different factor models are related among each other.
+These notes aim at reproducing several works on factors modeling and their comparisons. The framework is the one adopted by \textcite{hou-al-2018}, who systematically examine how seemingly different factor models are related among each other. In particular, their approach is focused on comparing their contributed q-factor models against an assorted set of emblematic models from various strains of the asset pricing literature, on both conceptual and empirical grounds.
+These benchmark (fundamental) factor models include "standard" ones as the Fama-French five-factor model \parencite{fama-french-2015} and the Fama-French six-factor model \parencite{fama-french-2018}, models methodologically divergent from the Fama-French approach such as \textcite{stambaugh-yuan-2017} and \textcite{daniel-hirshleifer-sun-2020}, and also the "hybrid" model of \textcite{barillas-shanken-2018}. At the time of writing, we are focusing on analyses involving q-factor models and "traditional" models, that is the Fama-French models. This given latter authors' pioneering work in the field and their models widespread use as the de facto benchmarks in the broader literature.
+In what follows we first of all introduce target models and their theoretical grounds, then proceed with spanning regressions for their statistical comparison and performance assessments.
 
 # Data and methodology
 Authors make available data for factors returns analyzed in their research at <http://global-q.org/index.html>. Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
@@ -40,18 +42,25 @@ data(list=c('FF5.monthly', 'FF6.monthly', 'Q4.monthly', 'Q5.monthly'))
 # Q-factor models
 
 ## q-factor model 
-In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. Their *q-factor model* is inspired by investment-based approach to the asset pricing theory and consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
+In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory and consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
 The factor regressions specification used to assess the q-factor model performance is 
 $$
 r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\epsilon}_{i,t}
 $$
 where, as usual, $r_{i,t} - r_{f, t}$ stands for the returns on excess of the risk-free rate.
-Authors find their model to largerly capture the cross section of average stock returns.
+Authors find their model to largely capture the cross section of average stock returns.
 
 ## $q^5$ factor model
 In this section we first of all summarize research and the model introduced by \textcite{hou-al-2020}, then aim at reproducing it. 
-This model is an extension of the previous four-factor q model and in addition it includes the *expected growth* factor, $EG$.
+This model is an extension of the previous four-factor q model in that it additionally includes the *expected growth* factor, $EG$.
 The factor regressions specification used to assess the $q^5$-factor model performance is then 
 $$
 r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\beta}_{EG,i}r_{EG,t} + {\epsilon}_{i,t}
 $$
+# Benchmark models
+
+## Fama-French five-factor model
+The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015}. 
+
+## Fama-French six-factor model
+The *Fama-French six-factor model* is by \textcite{fama-french-2018}. 
