@@ -60,7 +60,9 @@ $$
 # Benchmark models
 
 ## Fama-French five-factor model
-The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015}. 
+The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015}. In this model Fama and French include the RMW (Robust Minus Weak) and CMA (Conservative Minus Aggressive) to their standard \textcite{fama-french-1993} three-factor model. Factors are constructed using the six value-weight portfolios formed on size, the six value-weight portfolios formed on size and operating profitability, and the six value-weight portfolios formed on size and investment.
 
 ## Fama-French six-factor model
-The *Fama-French six-factor model* is by \textcite{fama-french-2018}. 
+The *Fama-French six-factor model* is by \textcite{fama-french-2018}. It builds on the just discussed *Fama-French five-factor model* and adds the MOM momentum factor, which is also commonly referred to as Up Minus Down (UMD).
+At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
+
