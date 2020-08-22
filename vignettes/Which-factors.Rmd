@@ -33,16 +33,20 @@ These benchmark (fundamental) factor models include "standard" ones as the Fama-
 In what follows we first of all introduce target models and their theoretical grounds, then proceed with spanning regressions for their statistical comparison and performance assessments.
 
 # Data and methodology
-Authors make available data for factors returns analyzed in their research at <http://global-q.org/index.html>. Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
+Authors make available data for factors returns analyzed in their research at [global-q.org](http://global-q.org/index.html). Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
 
 ```{r Load data sets}
 data(list=c('FF5.monthly', 'FF6.monthly', 'Q4.monthly', 'Q5.monthly'))
 ```
 
+It should be noted that there exist small nuances between the risk-free interest rates (one month T-Bill, `RF`) downloadable from French's website and those one can obtain from [global-q.org](http://global-q.org/index.html). These differences do not seem to be due to import conversions or numerical rounding, they may come directly from the source. 
+In our context, they propagate to the market proxy factor (`MKT.RF`).
+
 # Q-factor models
+Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory.
 
 ## q-factor model 
-In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory and consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
+In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. It consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
 The factor regressions specification used to assess the q-factor model performance is 
 $$
 r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\epsilon}_{i,t}
@@ -66,3 +70,5 @@ The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015
 The *Fama-French six-factor model* is by \textcite{fama-french-2018}. It builds on the just discussed *Fama-French five-factor model* and adds the MOM momentum factor, which is also commonly referred to as Up Minus Down (UMD).
 At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
 
+# Models empirical comparisons
+In this section, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmarks model considered.
