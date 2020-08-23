@@ -40,7 +40,7 @@ data(list=c('FF5.monthly', 'FF6.monthly', 'Q4.monthly', 'Q5.monthly'))
 ```
 
 It should be noted that there exist small nuances between the risk-free interest rates (one month T-Bill, `RF`) downloadable from French's website and those one can obtain from [global-q.org](http://global-q.org/index.html). These differences do not seem to be due to import conversions or numerical rounding, they may come directly from the source. 
-In our context, they propagate to the market proxy factor (`MKT.RF`).
+In our context, they propagate to the market proxy factor (`MKT.RF`) and thus if anything we are forced to keep the two separate although they shall be conceptually the same depending on the assets universe considered.
 
 # Q-factor models
 Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory.
@@ -72,3 +72,25 @@ At this time we are unable to study the "alternative Fama-French six-factor mode
 
 # Models empirical comparisons
 In this section, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmarks model considered.
+
+```{r SpanningRegressions utility function}
+SpanningRegressions <- function(Y, X, ...) {
+  Yn <- rep(Y, each=length(X)) 
+  X <- rep(X, length(Y))
+  out <- mapply(
+    function(y, x) {
+      mod <- formula(
+        paste(y, paste(x, collapse='+'), sep='~')
+      )
+      fit <- lm(mod, ...)
+      return(fit)
+    },
+    as.list(Yn), X,
+    SIMPLIFY=FALSE
+  )
+  # Naming by regressand
+  # TODO: names overlap, workaround or longer names
+  names(out) <- paste(Yn, 'reg', sep='.')
+  return(out)
+}
+```
