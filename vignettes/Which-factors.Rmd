@@ -94,3 +94,20 @@ SpanningRegressions <- function(Y, X, ...) {
   return(out)
 }
 ```
+
+```{r Table 1 Q factors vs Fama French}
+q4.vars <- c('MKT.RF.1', 'ME', 'IA', 'ROE')
+q5.vars <- c(q4.vars, 'EG')
+ff5.vars <- c('MKT.RF', 'SMB', 'HML', 'RMW', 'CMA')
+ff6.vars <- c(ff5.vars, 'MOM')
+data.qff <- merge(FF6.monthly, Q5.monthly)
+data.qff <- data.qff[complete.cases(data.qff), c(ff6.vars, q5.vars)]
+
+# Panel A: Explaining q and q5 factors
+q.on.ff <- SpanningRegressions(q5.vars, list(ff5.vars, ff6.vars), data=data.qff)
+lapply(q.on.ff, summary)
+
+# Panel B: Explaining Fama–French factors
+ff.on.q <- SpanningRegressions(ff6.vars, list(q4.vars, q5.vars), data=data.qff)
+lapply(ff.on.q, summary)
+```
