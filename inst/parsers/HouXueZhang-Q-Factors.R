@@ -9,8 +9,7 @@
 Q5.monthly <- ExpectedReturns::GetFactors('Q5', 'HXZ', freq='monthly')
 
 ## Q4 model data
-Q5.monthly$EG <- NULL
-Q4.monthly <- Q5.monthly
+Q4.monthly <- Q5.monthly[, -ncol(Q5.monthly)]
 
 # Save data sets
 # NOTE: save to sandbox if needed

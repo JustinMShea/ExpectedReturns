@@ -16,7 +16,7 @@
 #'
 #' * __Frequency__: Monthly.
 #' * __Date Range__: 1967-01 to 2019-12.
-#' * __Data updated__: 2020-08-20 19:19:20 CEST.
+#' * __Data updated__: 2020-08-23 11:57:39 CEST.
 #' * __RF__: A numeric. The risk-free rate on 1-month U.S. T-Bill. See 'RF variable' section below.
 #' * __MKT.RF__: A numeric. The market portfolio proxy return net of risk-free rate factor. See 'MKT.RF factor' section below.
 #' * __ME__: A numeric. The size factor. See 'ME factor' section below.
