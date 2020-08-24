@@ -77,7 +77,8 @@ In this section, closely following authors, we run spanning regressions in order
 SpanningRegressions <- function(Y, X, ...) {
   Yn <- rep(Y, each=length(X)) 
   X <- rep(X, length(Y))
-  out <- mapply(
+  # Models regressions
+  fits <- mapply(
     function(y, x) {
       mod <- formula(
         paste(y, paste(x, collapse='+'), sep='~')
@@ -88,10 +89,15 @@ SpanningRegressions <- function(Y, X, ...) {
     as.list(Yn), X,
     SIMPLIFY=FALSE
   )
-  # Naming by regressand
+  # Newey-West t-statistics
+  nwts <- lapply(fits, function(x) {
+    lmtest::coeftest(x, vcov.=sandwich::NeweyWest(x, ...), ...)
+  })
   # TODO: names overlap, workaround or longer names
-  names(out) <- paste(Yn, 'reg', sep='.')
-  return(out)
+  # Naming by regressand
+  # names(fits) <- paste(Yn, 'reg', sep='.')
+  # names(nwts) <- paste(Yn, 'nwts', sep='.')
+  return(list(fits=fits, nwts=nwts))
 }
 ```
 
@@ -105,9 +111,9 @@ data.qff <- data.qff[complete.cases(data.qff), c(ff6.vars, q5.vars)]
 
 # Panel A: Explaining q and q5 factors
 q.on.ff <- SpanningRegressions(q5.vars, list(ff5.vars, ff6.vars), data=data.qff)
-lapply(q.on.ff, summary)
+lapply(q.on.ff$fits, summary)
 
 # Panel B: Explaining Fama–French factors
 ff.on.q <- SpanningRegressions(ff6.vars, list(q4.vars, q5.vars), data=data.qff)
-lapply(ff.on.q, summary)
+lapply(ff.on.q$fits, summary)
 ```
