@@ -36,7 +36,13 @@ In what follows we first of all introduce target models and their theoretical gr
 Authors make available data for factors returns analyzed in their research at [global-q.org](http://global-q.org/index.html). Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
 
 ```{r Load data sets}
-data(list=c('FF5.monthly', 'FF6.monthly', 'Q4.monthly', 'Q5.monthly'))
+data(
+  list=c(
+    'FF5.monthly', 'FF6.monthly', 
+    'Q4.monthly', 'Q5.monthly', 
+    'SY4.monthly'
+  )
+)
 ```
 
 It should be noted that there exist small nuances between the risk-free interest rates (one month T-Bill, `RF`) downloadable from French's website and those one can obtain from [global-q.org](http://global-q.org/index.html). These differences do not seem to be due to import conversions or numerical rounding, they may come directly from the source. 
@@ -116,4 +122,18 @@ lapply(q.on.ff$fits, summary)
 # Panel B: Explaining Fama–French factors
 ff.on.q <- SpanningRegressions(ff6.vars, list(q4.vars, q5.vars), data=data.qff)
 lapply(ff.on.q$fits, summary)
+```
+
+```{r Table 2 Q factors vs Stambaugh Yuan 4 Factors}
+sy4.vars <- c('MKT.RF', 'SMB', 'MGMT', 'PERF')
+data.qsy <- merge(SY4.monthly, Q5.monthly)
+data.qsy <- data.qsy[complete.cases(data.qsy), c(q5.vars, sy4.vars)]
+
+# Panel A: Explaining q and q5 factors
+q.on.sy <- SpanningRegressions(q5.vars, list(sy4.vars), data=data.qsy)
+lapply(q.on.sy$fits, summary)
+
+# Panel B: Explaining the Stambaugh–Yuan factors
+sy.on.q <- SpanningRegressions(sy4.vars, list(q4.vars, q5.vars), data=data.qsy)
+lapply(sy.on.q$fits, summary)
 ```
