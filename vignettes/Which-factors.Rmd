@@ -176,3 +176,16 @@ dhs.on.q <- SpanningRegressions(dhs3.vars, list(q4.vars, q5.vars), data=data.qdh
 lapply(dhs.on.q$fits, summary)
 ```
 
+```{r Table 4 Q factors vs Barillas Shanken 6 Factors}
+bs6.vars <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
+data.qbs <- merge(BS6.monthly, Q5.monthly)
+data.qbs <- data.qbs[complete.cases(data.qbs), unique(c(q5.vars, bs6.vars))]
+
+# Panel A: Regressing non-overlapping q5 factors on Barillas–Shanken factors
+q5.on.bs <- SpanningRegressions(c('ME', 'EG'), list(bs6.vars), data=data.qbs)
+lapply(q5.on.bs$fits, summary)
+
+# Panel B: Regressing Asness–Frazzini HML factor on the q-factor and q5 models
+hmldev.on.q <- SpanningRegressions(c('HML.DEV'), list(q4.vars, q5.vars), data=data.qbs)
+lapply(hmldev.on.q$fits, summary)
+```
