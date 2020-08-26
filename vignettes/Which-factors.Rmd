@@ -44,6 +44,29 @@ data(
     'DHS3.monthly'
   )
 )
+
+# No out-of-the-box replication data set found for Barillas-Shanken (2018)'s 6-factor model
+# We assemble it from several sources (as they apparently do)
+## Fama-French's MKT.RF and SMB factors
+bs.mktrf <- FF5.monthly$MKT.RF
+bs.smb <- FF5.monthly$SMB
+## Asness-Frazzini's HML.DEV and UMD (MOM) factors
+source(file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R'))
+bs.hml <- xts::xts(HML_Devil.HML.DEV$USA, HML_Devil.HML.DEV$DATE)
+bs.mom <- xts::xts(HML_Devil.UMD$USA, HML_Devil.UMD$DATE)
+rm(
+  HML_Devil.HML_FF, HML_Devil.ME_1, HML_Devil.RF, 
+  HML_Devil.MKT, HML_Devil.SMB, HML_Devil.HML.DEV, HML_Devil.UMD
+)
+## Hou-Xue-Zhang's IA and ROE factors
+bs.ia <- Q4.monthly$IA
+bs.roe <- Q4.monthly$ROE
+
+# Our Barillas-Shanken data set
+BS6.monthly <- merge(bs.mktrf, bs.smb, bs.hml, bs.mom, bs.ia, bs.roe)
+BS6.monthly <- BS6.monthly[complete.cases(BS6.monthly), ]
+colnames(BS6.monthly) <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
+rm(bs.mktrf, bs.smb, bs.hml, bs.mom, bs.ia, bs.roe)
 ```
 
 It should be noted that there exist small nuances between the risk-free interest rates (one month T-Bill, `RF`) downloadable from French's website and those one can obtain from [global-q.org](http://global-q.org/index.html). These differences do not seem to be due to import conversions or numerical rounding, they may come directly from the source. 
