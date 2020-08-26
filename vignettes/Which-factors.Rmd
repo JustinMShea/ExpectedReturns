@@ -40,7 +40,8 @@ data(
   list=c(
     'FF5.monthly', 'FF6.monthly', 
     'Q4.monthly', 'Q5.monthly', 
-    'SY4.monthly'
+    'SY4.monthly',
+    'DHS3.monthly'
   )
 )
 ```
@@ -137,3 +138,18 @@ lapply(q.on.sy$fits, summary)
 sy.on.q <- SpanningRegressions(sy4.vars, list(q4.vars, q5.vars), data=data.qsy)
 lapply(sy.on.q$fits, summary)
 ```
+
+```{r Table 3 Q factors vs Daniel Hirshleifer Sun 3 Factors}
+dhs3.vars <- c('MKT.RF', 'PEAD', 'FIN')
+data.qdhs <- merge(DHS3.monthly, Q5.monthly)
+data.qdhs <- data.qdhs[complete.cases(data.qdhs), c(q5.vars, dhs3.vars)]
+
+# Panel A: Explaining q and q5 factors
+q.on.dhs <- SpanningRegressions(q5.vars, list(dhs3.vars), data=data.qdhs)
+lapply(q.on.dhs$fits, summary)
+
+# Panel B: Explaining the Daniel-Hirshleifer-Sun factors
+dhs.on.q <- SpanningRegressions(dhs3.vars, list(q4.vars, q5.vars), data=data.qdhs)
+lapply(dhs.on.q$fits, summary)
+```
+
