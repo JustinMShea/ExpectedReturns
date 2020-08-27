@@ -101,7 +101,9 @@ The *Fama-French six-factor model* is by \textcite{fama-french-2018}. It builds 
 At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
 
 # Models empirical comparisons
-In this section, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmarks model considered.
+This section goal is twofold. First, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmark models considered and vice versa. Second, we compute a correlation matrix that includes the complete set of factors involved in all the models discussed.
+
+Let us begin with the spanning regressions.
 
 ```{r SpanningRegressions utility function}
 SpanningRegressions <- function(Y, X, ...) {
@@ -189,3 +191,30 @@ lapply(q5.on.bs$fits, summary)
 hmldev.on.q <- SpanningRegressions(c('HML.DEV'), list(q4.vars, q5.vars), data=data.qbs)
 lapply(hmldev.on.q$fits, summary)
 ```
+
+Next, the correlation matrix, computed with factors series from July 1972 to December 2016.
+
+```{r Table 5 Factors Correlation}
+vars <- unique(c(q5.vars, ff6.vars, sy4.vars, dhs3.vars, bs6.vars))
+data.all <- merge(FF6.monthly, Q5.monthly, SY4.monthly, DHS3.monthly, BS6.monthly)
+data.all <- data.all[complete.cases(data.all), vars]
+
+CorFactors <- function(data, ...) {
+  # Correlation matrix of the full set of factors
+  cor.estimates <- cor(data, ...)
+  # Correlation coefficient test
+  vars <- colnames(data)
+  nvars <- length(vars)
+  vars.pairs <- combn(vars, 2)
+  cor.pvalues <- apply(vars.pairs, 2, function(j) {
+    cor.test(data[, j[1]], data[, j[2]])$p.value
+  })
+  cor.pvalues <- matrix(cor.pvalues, nvars, nvars, byrow=TRUE)
+  rownames(cor.pvalues) <- colnames(cor.pvalues) <- vars
+  return(
+    list(estimates=cor.estimates, pvalues=cor.pvalues)
+  )
+}
+factors.correlation <- CorFactors(data.all)
+```
+
