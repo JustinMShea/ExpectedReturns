@@ -10,7 +10,7 @@ data set on U.S. Stock Market, and the risk-free rate on 1-month U.S. T-Bill.
 \itemize{
 \item \strong{Frequency}: Monthly.
 \item \strong{Date Range}: 1967-01 to 2019-12.
-\item \strong{Data updated}: 2020-08-20 19:19:20 CEST.
+\item \strong{Data updated}: 2020-08-23 11:57:39 CEST.
 \item \strong{RF}: A numeric. The risk-free rate on 1-month U.S. T-Bill. See 'RF variable' section below.
 \item \strong{MKT.RF}: A numeric. The market portfolio proxy return net of risk-free rate factor. See 'MKT.RF factor' section below.
 \item \strong{ME}: A numeric. The size factor. See 'ME factor' section below.

@@ -33,16 +33,50 @@ These benchmark (fundamental) factor models include "standard" ones as the Fama-
 In what follows we first of all introduce target models and their theoretical grounds, then proceed with spanning regressions for their statistical comparison and performance assessments.
 
 # Data and methodology
-Authors make available data for factors returns analyzed in their research at <http://global-q.org/index.html>. Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
+Authors make available data for factors returns analyzed in their research at [global-q.org](http://global-q.org/index.html). Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
 
 ```{r Load data sets}
-data(list=c('FF5.monthly', 'FF6.monthly', 'Q4.monthly', 'Q5.monthly'))
+data(
+  list=c(
+    'FF5.monthly', 'FF6.monthly', 
+    'Q4.monthly', 'Q5.monthly', 
+    'SY4.monthly',
+    'DHS3.monthly'
+  )
+)
+
+# No out-of-the-box replication data set found for Barillas-Shanken (2018)'s 6-factor model
+# We assemble it from several sources (as they apparently do)
+## Fama-French's MKT.RF and SMB factors
+bs.mktrf <- FF5.monthly$MKT.RF
+bs.smb <- FF5.monthly$SMB
+## Asness-Frazzini's HML.DEV and UMD (MOM) factors
+source(file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R'))
+bs.hml <- xts::xts(HML_Devil.HML.DEV$USA, HML_Devil.HML.DEV$DATE)
+bs.mom <- xts::xts(HML_Devil.UMD$USA, HML_Devil.UMD$DATE)
+rm(
+  HML_Devil.HML_FF, HML_Devil.ME_1, HML_Devil.RF, 
+  HML_Devil.MKT, HML_Devil.SMB, HML_Devil.HML.DEV, HML_Devil.UMD
+)
+## Hou-Xue-Zhang's IA and ROE factors
+bs.ia <- Q4.monthly$IA
+bs.roe <- Q4.monthly$ROE
+
+# Our Barillas-Shanken data set
+BS6.monthly <- merge(bs.mktrf, bs.smb, bs.hml, bs.mom, bs.ia, bs.roe)
+BS6.monthly <- BS6.monthly[complete.cases(BS6.monthly), ]
+colnames(BS6.monthly) <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
+rm(bs.mktrf, bs.smb, bs.hml, bs.mom, bs.ia, bs.roe)
 ```
 
+It should be noted that there exist small nuances between the risk-free interest rates (one month T-Bill, `RF`) downloadable from French's website and those one can obtain from [global-q.org](http://global-q.org/index.html). These differences do not seem to be due to import conversions or numerical rounding, they may come directly from the source. 
+In our context, they propagate to the market proxy factor (`MKT.RF`) and thus if anything we are forced to keep the two separate although they shall be conceptually the same depending on the assets universe considered.
+
 # Q-factor models
+Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory.
 
 ## q-factor model 
-In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory and consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
+In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. It consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
 The factor regressions specification used to assess the q-factor model performance is 
 $$
 r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\epsilon}_{i,t}
@@ -60,7 +94,127 @@ $$
 # Benchmark models
 
 ## Fama-French five-factor model
-The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015}. 
+The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015}. In this model Fama and French include the RMW (Robust Minus Weak) and CMA (Conservative Minus Aggressive) to their standard \textcite{fama-french-1993} three-factor model. Factors are constructed using the six value-weight portfolios formed on size, the six value-weight portfolios formed on size and operating profitability, and the six value-weight portfolios formed on size and investment.
 
 ## Fama-French six-factor model
-The *Fama-French six-factor model* is by \textcite{fama-french-2018}. 
+The *Fama-French six-factor model* is by \textcite{fama-french-2018}. It builds on the just discussed *Fama-French five-factor model* and adds the MOM momentum factor, which is also commonly referred to as Up Minus Down (UMD).
+At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
+
+# Models empirical comparisons
+This section goal is twofold. First, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmark models considered and vice versa. Second, we compute a correlation matrix that includes the complete set of factors involved in all the models discussed.
+
+Let us begin with the spanning regressions.
+
+```{r SpanningRegressions utility function}
+SpanningRegressions <- function(Y, X, ...) {
+  Yn <- rep(Y, each=length(X)) 
+  X <- rep(X, length(Y))
+  # Models regressions
+  fits <- mapply(
+    function(y, x) {
+      mod <- formula(
+        paste(y, paste(x, collapse='+'), sep='~')
+      )
+      fit <- lm(mod, ...)
+      return(fit)
+    },
+    as.list(Yn), X,
+    SIMPLIFY=FALSE
+  )
+  # Newey-West t-statistics
+  nwts <- lapply(fits, function(x) {
+    lmtest::coeftest(x, vcov.=sandwich::NeweyWest(x, ...), ...)
+  })
+  # TODO: names overlap, workaround or longer names
+  # Naming by regressand
+  # names(fits) <- paste(Yn, 'reg', sep='.')
+  # names(nwts) <- paste(Yn, 'nwts', sep='.')
+  return(list(fits=fits, nwts=nwts))
+}
+```
+
+```{r Table 1 Q factors vs Fama French}
+q4.vars <- c('MKT.RF.1', 'ME', 'IA', 'ROE')
+q5.vars <- c(q4.vars, 'EG')
+ff5.vars <- c('MKT.RF', 'SMB', 'HML', 'RMW', 'CMA')
+ff6.vars <- c(ff5.vars, 'MOM')
+data.qff <- merge(FF6.monthly, Q5.monthly)
+data.qff <- data.qff[complete.cases(data.qff), c(ff6.vars, q5.vars)]
+
+# Panel A: Explaining q and q5 factors
+q.on.ff <- SpanningRegressions(q5.vars, list(ff5.vars, ff6.vars), data=data.qff)
+lapply(q.on.ff$fits, summary)
+
+# Panel B: Explaining Fama–French factors
+ff.on.q <- SpanningRegressions(ff6.vars, list(q4.vars, q5.vars), data=data.qff)
+lapply(ff.on.q$fits, summary)
+```
+
+```{r Table 2 Q factors vs Stambaugh Yuan 4 Factors}
+sy4.vars <- c('MKT.RF', 'SMB', 'MGMT', 'PERF')
+data.qsy <- merge(SY4.monthly, Q5.monthly)
+data.qsy <- data.qsy[complete.cases(data.qsy), c(q5.vars, sy4.vars)]
+
+# Panel A: Explaining q and q5 factors
+q.on.sy <- SpanningRegressions(q5.vars, list(sy4.vars), data=data.qsy)
+lapply(q.on.sy$fits, summary)
+
+# Panel B: Explaining the Stambaugh–Yuan factors
+sy.on.q <- SpanningRegressions(sy4.vars, list(q4.vars, q5.vars), data=data.qsy)
+lapply(sy.on.q$fits, summary)
+```
+
+```{r Table 3 Q factors vs Daniel Hirshleifer Sun 3 Factors}
+dhs3.vars <- c('MKT.RF', 'PEAD', 'FIN')
+data.qdhs <- merge(DHS3.monthly, Q5.monthly)
+data.qdhs <- data.qdhs[complete.cases(data.qdhs), c(q5.vars, dhs3.vars)]
+
+# Panel A: Explaining q and q5 factors
+q.on.dhs <- SpanningRegressions(q5.vars, list(dhs3.vars), data=data.qdhs)
+lapply(q.on.dhs$fits, summary)
+
+# Panel B: Explaining the Daniel-Hirshleifer-Sun factors
+dhs.on.q <- SpanningRegressions(dhs3.vars, list(q4.vars, q5.vars), data=data.qdhs)
+lapply(dhs.on.q$fits, summary)
+```
+
+```{r Table 4 Q factors vs Barillas Shanken 6 Factors}
+bs6.vars <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
+data.qbs <- merge(BS6.monthly, Q5.monthly)
+data.qbs <- data.qbs[complete.cases(data.qbs), unique(c(q5.vars, bs6.vars))]
+
+# Panel A: Regressing non-overlapping q5 factors on Barillas–Shanken factors
+q5.on.bs <- SpanningRegressions(c('ME', 'EG'), list(bs6.vars), data=data.qbs)
+lapply(q5.on.bs$fits, summary)
+
+# Panel B: Regressing Asness–Frazzini HML factor on the q-factor and q5 models
+hmldev.on.q <- SpanningRegressions(c('HML.DEV'), list(q4.vars, q5.vars), data=data.qbs)
+lapply(hmldev.on.q$fits, summary)
+```
+
+Next, the correlation matrix, computed with factors series from July 1972 to December 2016.
+
+```{r Table 5 Factors Correlation}
+vars <- unique(c(q5.vars, ff6.vars, sy4.vars, dhs3.vars, bs6.vars))
+data.all <- merge(FF6.monthly, Q5.monthly, SY4.monthly, DHS3.monthly, BS6.monthly)
+data.all <- data.all[complete.cases(data.all), vars]
+
+CorFactors <- function(data, ...) {
+  # Correlation matrix of the full set of factors
+  cor.estimates <- cor(data, ...)
+  # Correlation coefficient test
+  vars <- colnames(data)
+  nvars <- length(vars)
+  vars.pairs <- combn(vars, 2)
+  cor.pvalues <- apply(vars.pairs, 2, function(j) {
+    cor.test(data[, j[1]], data[, j[2]])$p.value
+  })
+  cor.pvalues <- matrix(cor.pvalues, nvars, nvars, byrow=TRUE)
+  rownames(cor.pvalues) <- colnames(cor.pvalues) <- vars
+  return(
+    list(estimates=cor.estimates, pvalues=cor.pvalues)
+  )
+}
+factors.correlation <- CorFactors(data.all)
+```
+
