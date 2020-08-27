@@ -15,9 +15,6 @@ warnings_are_errors: true
 r_build_args: "--no-build-vignettes"
 r_check_args: "--no-build-vignettes --ignore-vignettes --as-cran"
 
-before_install:
-  - Rscript -e 'install.packages(c("robustbase"),lib="/home/travis/R-bin/lib/R/library/")'
-
 # System dependencies
 apt_packages:
  - libmpfr-dev
