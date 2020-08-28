@@ -100,6 +100,23 @@ The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015
 The *Fama-French six-factor model* is by \textcite{fama-french-2018}. It builds on the just discussed *Fama-French five-factor model* and adds the MOM momentum factor, which is also commonly referred to as Up Minus Down (UMD).
 At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
 
+## Stambaugh-Yuan four-factor model
+We provide a brief introduction to \textcite{stambaugh-yuan-2017} factors construction, focusing on their original contributed ones. In later sections the model is studied in comparison with the q-factor and q5 models, on a monthly basis. We share the factors monthly data set authors kindly made available on their website as an `.RData` object, further details can be found at `?SY4.monthly`.
+
+Stambaugh-Yuan analyze a set of 11 anomalies. They categorize these anomalies in two clusters:
+* _First cluster_: net stock issues, composite equity issues, accruals,
+net operating assets, asset growth, and investment to assets.
+* _Second cluster_: distress, O-score, momentum, gross profitability, and
+return on assets.
+
+Authors construct factors based on equally-weighted averages of stocks' anomaly rankings, in the perspective of having a less noisy mispricing measure for each stock across anomalies. In particular, stock's rankings are averaged with respect to the available anomaly measures within each of the two clusters. Thus, each month a stock has two composite mispricing measures, $P1$ and $P2$.
+*Mispricing factors* are then constructed by applying a $2 \times 3$ sorting procedure, similarly to \textcite{fama-french-2015}:
+* First, NYSE, AMEX, and NASDAQ stocks (excluding the ones with a price lower than 5\$) are sorted and split into two groups based on the NYSE median size breakpoint;
+* Second, stock's are sorted by both $P1$ and $P2$ independently, and assigned to three groups ("low", "middle", and "high") with the 20th and 80th percentiles of the NYSE/AMEX/NASDAQ as breakpoints (rather than the commonly used 30th and 70th percentiles of the NYSE). The motivation authors provide for this methodological choice on breakpoints is that relative mispricing in the cross-section is considered to be "more a property of the extremes than of the middle".
+* Finally, value-weighted returns of each of the four portfolios formed by the intersection of the two size categories with high and low categories of either $P1$ or $P2$ sorts are averaged and constitute their two mispricing factors, *MGMT* and *PERF*, respectively.
+
+The \textcite{fama-french-2015}'s market proxy and size factors complete the four-factor model.
+
 # Models empirical comparisons
 This section goal is twofold. First, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmark models considered and vice versa. Second, we compute a correlation matrix that includes the complete set of factors involved in all the models discussed.
 
