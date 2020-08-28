@@ -127,6 +127,11 @@ Simplifying, \textcite{daniel-hirshleifer-sun-2020} factors construction is the 
 
 The \textcite{fama-french-2015}'s market proxy factor completes the three-factor model.
 
+## Barillas-Shanken six-factor model
+We provide a brief introduction to \textcite{barillas-shanken-2018}. In later sections the model is studied in comparison with the q-factor and q5 models, on a monthly basis. To our knowledge there is not an out-of-the-box replication data set readily available for this model, but we rather assemble the model factors from other data sets available. At this time we are unable to share the complete data set as an `.RData` object to simply load into the environment.
+
+In brief, the model six factors are: \textcite{fama-french-2015}'s market proxy excess returns (MKT.RF) and size (SMB) factors, \textcite{asness-frazzini-2013}'s "HML devil" (HML.DEV) and momentum (MOM, or equivalently UMD) factors, and finally \textcite{hou-al-2015}'s investment (IS) and profitability (ROE) factors.
+
 # Models empirical comparisons
 This section goal is twofold. First, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmark models considered and vice versa. Second, we compute a correlation matrix that includes the complete set of factors involved in all the models discussed.
 
