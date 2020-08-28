@@ -195,10 +195,6 @@ lapply(hmldev.on.q$fits, summary)
 Next, the correlation matrix, computed with factors series from July 1972 to December 2016.
 
 ```{r Table 5 Factors Correlation}
-vars <- unique(c(q5.vars, ff6.vars, sy4.vars, dhs3.vars, bs6.vars))
-data.all <- merge(FF6.monthly, Q5.monthly, SY4.monthly, DHS3.monthly, BS6.monthly)
-data.all <- data.all[complete.cases(data.all), vars]
-
 CorFactors <- function(data, ...) {
   # Correlation matrix of the full set of factors
   cor.estimates <- cor(data, ...)
@@ -215,6 +211,10 @@ CorFactors <- function(data, ...) {
     list(estimates=cor.estimates, pvalues=cor.pvalues)
   )
 }
+
+vars <- unique(c(q5.vars, ff6.vars, sy4.vars, dhs3.vars, bs6.vars))
+data.all <- merge(FF6.monthly, Q5.monthly, SY4.monthly, DHS3.monthly, BS6.monthly)
+data.all <- data.all[complete.cases(data.all), vars]
 factors.correlation <- CorFactors(data.all)
 ```
 
