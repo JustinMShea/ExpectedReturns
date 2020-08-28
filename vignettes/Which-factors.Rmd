@@ -35,7 +35,8 @@ In what follows we first of all introduce target models and their theoretical gr
 # Data and methodology
 Authors make available data for factors returns analyzed in their research at [global-q.org](http://global-q.org/index.html). Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
 
-```{r Load data sets}
+```{r Get data sets}
+# Load data sets ready to use
 data(
   list=c(
     'FF5.monthly', 'FF6.monthly', 
@@ -45,8 +46,11 @@ data(
   )
 )
 
-# No out-of-the-box replication data set found for Barillas-Shanken (2018)'s 6-factor model
-# We assemble it from several sources (as they apparently do)
+# Assemble Barillas-Shanken (2018)'s 6-factor data set
+# 
+# No out-of-the-box replication data set found for Barillas-Shanken (2018)'s 6-factor 
+# model, we obtain data from several sources
+# 
 ## Fama-French's MKT.RF and SMB factors
 bs.mktrf <- FF5.monthly$MKT.RF
 bs.smb <- FF5.monthly$SMB
@@ -98,7 +102,7 @@ The *Fama-French five-factor model* was introduced by \textcite{fama-french-2015
 
 ## Fama-French six-factor model
 The *Fama-French six-factor model* is by \textcite{fama-french-2018}. It builds on the just discussed *Fama-French five-factor model* and adds the MOM momentum factor, which is also commonly referred to as Up Minus Down (UMD).
-At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
+At this time we are unable to study the "alternative Fama-French six-factor model", which has the RMWc cash-based factor in place of the RMW factor, because authors apparently dismissed its publication. Readers willing to study this model would thus need to construct it themselves.
 
 ## Stambaugh-Yuan four-factor model
 We provide a brief introduction to \textcite{stambaugh-yuan-2017} factors construction, focusing on their original contributed ones. In later sections the model is studied in comparison with the q-factor and q5 models, on a monthly basis. We share the factors monthly data set authors kindly made available on their website as an `.RData` object, further details can be found at `?SY4.monthly`.
