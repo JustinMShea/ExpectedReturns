@@ -80,13 +80,15 @@ In our context, they propagate to the market proxy factor (`MKT.RF`) and thus if
 Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory.
 
 ## q-factor model 
-In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. It consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($I/A$), and a profitability factor ($ROE$). 
+In this section we first of all summarize research and the model introduced by \textcite{hou-al-2015}, then aim at reproducing it. It consists of four factors: the market factor ($MKT$), a size factor ($ME$), an investment factor ($IA$), and a profitability factor ($ROE$). 
 The factor regressions specification used to assess the q-factor model performance is 
 $$
 r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\epsilon}_{i,t}
 $$
 where, as usual, $r_{i,t} - r_{f, t}$ stands for the returns on excess of the risk-free rate.
 Authors find their model to largely capture the cross section of average stock returns.
+
+We analyze and share a factors monthly data set authors kindly made available on their website as an `.RData` object, further details can be found at `?Q4.monthly`.
 
 ## $q^5$ factor model
 In this section we first of all summarize research and the model introduced by \textcite{hou-al-2020}, then aim at reproducing it. 
@@ -95,6 +97,9 @@ The factor regressions specification used to assess the $q^5$-factor model perfo
 $$
 r_{i,t} - r_{f, t} = {\alpha}_{i,q} + {\beta}_{MKT,i}{MKT}_{t} + {\beta}_{ME,i}r_{ME,t} + {\beta}_{I/A,i}r_{I/A,t} + {\beta}_{ROE,i}r_{ROE,t} + {\beta}_{EG,i}r_{EG,t} + {\epsilon}_{i,t}
 $$
+
+We analyze and share a factors monthly data set authors kindly made available on their website as an `.RData` object, further details can be found at `?Q5.monthly`.
+
 # Benchmark models
 
 ## Fama-French five-factor model
