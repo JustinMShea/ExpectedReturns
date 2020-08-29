@@ -182,6 +182,8 @@ ff5.vars <- c('MKT.RF', 'SMB', 'HML', 'RMW', 'CMA')
 ff6.vars <- c(ff5.vars, 'MOM')
 data.qff <- merge(FF6.monthly, Q5.monthly)
 data.qff <- data.qff[complete.cases(data.qff), c(ff6.vars, q5.vars)]
+# Sample period
+data.qff <- data.qff['1967-01/2016-12']
 
 # Panel A: Explaining q and q5 factors
 q.on.ff <- SpanningRegressions(q5.vars, list(ff5.vars, ff6.vars), data=data.qff)
@@ -198,6 +200,8 @@ lapply(ff.on.q$fits, summary)
 sy4.vars <- c('MKT.RF', 'SMB', 'MGMT', 'PERF')
 data.qsy <- merge(SY4.monthly, Q5.monthly)
 data.qsy <- data.qsy[complete.cases(data.qsy), c(q5.vars, sy4.vars)]
+# Sample period
+data.qsy <- data.qsy['1967-01/2016-12']
 
 # Panel A: Explaining q and q5 factors
 q.on.sy <- SpanningRegressions(q5.vars, list(sy4.vars), data=data.qsy)
@@ -215,6 +219,8 @@ Also, \textcite{hou-al-2018} raise some concerns on DHS factors construction, es
 dhs3.vars <- c('MKT.RF', 'PEAD', 'FIN')
 data.qdhs <- merge(DHS3.monthly, Q5.monthly)
 data.qdhs <- data.qdhs[complete.cases(data.qdhs), c(q5.vars, dhs3.vars)]
+# Sample period
+data.qdhs <- data.qdhs['1972-07/2016-12']
 
 # Panel A: Explaining q and q5 factors
 q.on.dhs <- SpanningRegressions(q5.vars, list(dhs3.vars), data=data.qdhs)
@@ -229,6 +235,8 @@ lapply(dhs.on.q$fits, summary)
 bs6.vars <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
 data.qbs <- merge(BS6.monthly, Q5.monthly)
 data.qbs <- data.qbs[complete.cases(data.qbs), unique(c(q5.vars, bs6.vars))]
+# Sample period
+data.qbs <- data.qbs['1967-01/2016-12']
 
 # Panel A: Regressing non-overlapping q5 factors on Barillas–Shanken factors
 q5.on.bs <- SpanningRegressions(c('ME', 'EG'), list(bs6.vars), data=data.qbs)
