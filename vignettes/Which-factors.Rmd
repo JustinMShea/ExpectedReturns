@@ -128,9 +128,9 @@ Authors construct factors based on equally-weighted averages of stocks' anomaly 
 The \textcite{fama-french-2015}'s market proxy and size factors complete the four-factor model.
 
 ## Daniel-Hirshleifer-Sun three-factor model
-We provide a brief introduction to \textcite{daniel-hirshleifer-sun-2020} factors construction, focusing on their original contributed ones. In later sections the model is studied in comparison with the q-factor and q5 models, on a monthly basis. We share the factors monthly data set authors kindly made available on their website as an `.RData` object, further details can be found at `?DHS3.monthly`.
+We provide a brief introduction to \textcite{daniel-hirshleifer-sun-2020} (DHS) factors construction, focusing on their original contributed ones. In later sections the model is studied in comparison with the q-factor and q5 models, on a monthly basis. We share the factors monthly data set authors kindly made available on their website as an `.RData` object, further details can be found at `?DHS3.monthly`.
 
-Simplifying, \textcite{daniel-hirshleifer-sun-2020} factors construction is the following procedure:
+Simplifying, DHS factors construction is the following procedure:
 * First, all NYSE, AMEX, and NASDAQ common stocks (CRSP 10 or 11 share codes, excluding financial firms and firms with negative book equity).
 * Second, at June end firms are assigned to one of two size groups ("small" and "big"), depending on their ME being below or above the NYSE median size breakpoint.
 * Finally, firms are also independently sorted into one of three financing groups ("low", "middle", "high") based on: either stocks' 1-year NSI and 5-year CSI financing measures rankings for the *FIN* factor, or the 4-day cumulative abnormal return around the most recent quarterly earnings announcement date (*CAR*) for the *PEAD* factor. Both sorts are with respect to NYSE 20th and 80th percentiles breakpoints.
@@ -145,7 +145,7 @@ In brief, six factors included in the model are: \textcite{fama-french-2015}'s m
 # Models empirical comparisons
 This section goal is twofold. First, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmark models considered and vice versa. Second, we compute a correlation matrix that includes the complete set of factors involved in all the models discussed.
 
-Let us begin with spanning regressions.
+Let us begin with spanning regressions. It is important to notice that more often than not \textcite{hou-al-2018} construct factors included in the models studied (or alternative versions), whereas we only use factors data sets disseminated by respective authors themselves. This may lead to slight deviations or lack of results (for unavailable alternative versions data).
 
 ```{r SpanningRegressions utility function}
 SpanningRegressions <- function(Y, X, ...) {
@@ -205,6 +205,9 @@ lapply(q.on.sy$fits, summary)
 sy.on.q <- SpanningRegressions(sy4.vars, list(q4.vars, q5.vars), data=data.qsy)
 lapply(sy.on.q$fits, summary)
 ```
+
+We have DHS series available on the 1972-07 to 2018-12 period at most, of course series can be cut off on the sample period \textcite{hou-al-2018} consider, i.e. 1972-07 to 2016-12.
+Also, \textcite{hou-al-2018} raise some concerns on DHS factors construction, especially when it deviates from the traditional approach. For this reason they construct and provide results for the DHS model obtained with the standard approach, on the 1967-01 to 2016-12 sample period. At this time we are not constructing factors and thus we are unable to include such additional set of results.
 
 ```{r Table 3 Q factors vs Daniel Hirshleifer Sun 3 Factors}
 dhs3.vars <- c('MKT.RF', 'PEAD', 'FIN')
