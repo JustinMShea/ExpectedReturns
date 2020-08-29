@@ -29,11 +29,12 @@ knitr::opts_chunk$set(
 
 # Introduction
 These notes aim at reproducing several works on factors modeling and their comparisons. The framework is the one adopted by \textcite{hou-al-2018}, who systematically examine how seemingly different factor models are related among each other. In particular, their approach is focused on comparing their contributed q-factor models against an assorted set of emblematic models from various strains of the asset pricing literature, on both conceptual and empirical grounds.
-These benchmark (fundamental) factor models include "standard" ones as the Fama-French five-factor model \parencite{fama-french-2015} and the Fama-French six-factor model \parencite{fama-french-2018}, models methodologically divergent from the Fama-French approach such as \textcite{stambaugh-yuan-2017} and \textcite{daniel-hirshleifer-sun-2020}, and also the "hybrid" model of \textcite{barillas-shanken-2018}. At the time of writing, we are focusing on analyses involving q-factor models and "traditional" models, that is the Fama-French models. This given latter authors' pioneering work in the field and their models widespread use as the de facto benchmarks in the broader literature.
+These benchmark (fundamental) factor models include "standard" ones as the Fama-French five-factor model \parencite{fama-french-2015} and the Fama-French six-factor model \parencite{fama-french-2018}, models methodologically divergent from the Fama-French approach such as \textcite{stambaugh-yuan-2017} and \textcite{daniel-hirshleifer-sun-2020}, and also the "hybrid" model of \textcite{barillas-shanken-2018}. Analyses involving q-factor models and "traditional" models, that is the Fama-French models, are of particular interest given latter authors' pioneering work in the field and thus the fact their models are the de facto benchmarks in the broader literature.
 In what follows we first of all introduce target models and their theoretical grounds, then proceed with spanning regressions for their statistical comparison and performance assessments.
+We can largely reproduce \textcite{hou-al-2018}'s empirical results, therefore confirming most of their findings.
 
 # Data and methodology
-Authors make available data for factors returns analyzed in their research at [global-q.org](http://global-q.org/index.html). Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual.
+Authors make available data for factors returns analyzed in their research at [global-q.org](http://global-q.org/index.html). Importantly, data sets are open-sourced and updated regularly. Similarly to the well known Fama-French academic library, data series they provide span several frequencies including daily, weekly (calendar, Friday close to Friday close), weekly (Wednesday-to-Wednesday, Wednesday close to Wednesday close), monthly, quarterly, and annual. In what follows we limit our attention to monthly data, likely the most common time series frequency adopted in the literature. 
 
 ```{r Get data sets}
 # Load data sets ready to use
@@ -74,7 +75,7 @@ rm(bs.mktrf, bs.smb, bs.hml, bs.mom, bs.ia, bs.roe)
 ```
 
 It should be noted that there exist small nuances between the risk-free interest rates (one month T-Bill, `RF`) downloadable from French's website and those one can obtain from [global-q.org](http://global-q.org/index.html). These differences do not seem to be due to import conversions or numerical rounding, they may come directly from the source. 
-In our context, they propagate to the market proxy factor (`MKT.RF`) and thus if anything we are forced to keep the two separate although they shall be conceptually the same depending on the assets universe considered.
+In our context, they propagate to the market proxy factor (`MKT.RF`) and thus if anything we are forced to keep the two separate although they shall be conceptually the same (depending on the assets universe considered).
 
 # Q-factor models
 Their *q-factor model* is inspired by the investment-based approach to the asset pricing theory.
@@ -139,12 +140,12 @@ The \textcite{fama-french-2015}'s market proxy factor completes the three-factor
 ## Barillas-Shanken six-factor model
 We provide a brief introduction to \textcite{barillas-shanken-2018}. In later sections the model is studied in comparison with the q-factor and q5 models, on a monthly basis. To our knowledge there is not an out-of-the-box replication data set readily available for this model, but we rather assemble the model factors from other data sets available. At this time we are unable to share the complete data set as an `.RData` object to simply load into the environment.
 
-In brief, the model six factors are: \textcite{fama-french-2015}'s market proxy excess returns (MKT.RF) and size (SMB) factors, \textcite{asness-frazzini-2013}'s "HML devil" (HML.DEV) and momentum (MOM, or equivalently UMD) factors, and finally \textcite{hou-al-2015}'s investment (IS) and profitability (ROE) factors.
+In brief, six factors included in the model are: \textcite{fama-french-2015}'s market proxy excess returns (MKT.RF) and size (SMB) factors, \textcite{asness-frazzini-2013}'s "HML devil" (HML.DEV) and momentum (MOM, or equivalently UMD) factors, and finally \textcite{hou-al-2015}'s investment (IA) and profitability (ROE) factors.
 
 # Models empirical comparisons
 This section goal is twofold. First, closely following authors, we run spanning regressions in order to compare the q-factor models across the set of benchmark models considered and vice versa. Second, we compute a correlation matrix that includes the complete set of factors involved in all the models discussed.
 
-Let us begin with the spanning regressions.
+Let us begin with spanning regressions.
 
 ```{r SpanningRegressions utility function}
 SpanningRegressions <- function(Y, X, ...) {
@@ -233,7 +234,7 @@ hmldev.on.q <- SpanningRegressions(c('HML.DEV'), list(q4.vars, q5.vars), data=da
 lapply(hmldev.on.q$fits, summary)
 ```
 
-Next, the correlation matrix, computed with factors series from July 1972 to December 2016.
+Next, the correlation matrix, computed with factors series from July 1972 to December 2016. Also, we run a correlation coefficient test at a 95% confidence level -- with the null hypothesis being a statistically indistinguishable from zero coefficient -- and report p-values obtained.
 
 ```{r Table 5 Factors Correlation}
 CorFactors <- function(data, ...) {
