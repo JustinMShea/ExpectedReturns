@@ -228,7 +228,7 @@ Lustig–Verdelhan (2010). See Kaya–Lee–Pornrojnangkool (2010) and Ang–Bek
 
 ## Student-developer
 
-[Vito Lestingi](https://github.com/vi-to), MSc Finance and Insurance - Quantitative Finance track, Sapienza University of Rome.
+[Vito Lestingi](https://it.linkedin.com/in/vito-lestingi), MSc Finance and Insurance - Quantitative Finance track, Sapienza University of Rome.
 
 ## References
 
