@@ -17,3 +17,8 @@ Effectively create an open source `Barra`.
 
 - Replicate factors from Doug Martin's **The fundamental law of active management: Redux** https://ideas.repec.org/a/eee/empfin/v43y2017icp91-114.html
 
+- Replicate **Buffett's Alpha** paper.
+ - https://www.tandfonline.com/doi/pdf/10.2469/faj.v74.n4.3?needAccess=true
+ - https://www.nber.org/papers/w19681.pdf
+
+
