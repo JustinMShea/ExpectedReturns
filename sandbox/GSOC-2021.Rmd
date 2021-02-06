@@ -1,6 +1,4 @@
-## Background
-
-## Background
+# Background
 
 A lack of portfolio diversification can severely impact the financial goals and 
 long term plans for individual investment accounts, retirement accounts, 
@@ -31,11 +29,18 @@ balancing historical returns with both theoretical considerations and current
 market conditions. Expected Returns provides extensive empirical evidence, 
 surveys of risk-based and behavioral theories, and practical insights.
 
+# Related work
+
 Your objective will be to reproduce key approaches suggested by the text and test 
 performance on current market conditions with `R`. You will use functions found
 in popular `R` in finance packages such as `FactorAnalytics`, 
 `PerformanceAnalytics` and `PortfolioAnalytics`. But you will also need to write 
-functions of your own to streamline workflows and implement solutions.
+functions of your own to streamline workflows and implement solutions. While
+these packages are excellent and widely used, there are gaps in the workflows
+involved in constructing portfolio management strategies we'd like to fill.
+
+# Details of the `ExpectedReturns` project & Impact
+
 
 Mentors will guide your understanding of the topic, support your use of best 
 practices in software development for quantitative finance using `R`, and 
@@ -99,79 +104,28 @@ maturity/duration-matched Treasuries.
 * Skim the text above
 * Get familiar with the [ExpectedReturns project](https://github.com/JustinMShea/ExpectedReturns/tree/master/vignettes).
 * Refactor, document, and unify existing functions, adding new ones as needed.
-* Refactor existing vignettes and unify them with `FactorAnalytics` R package 
-functions.
+* Refactor case studies in existing vignettes and unify them with the 
+`FactorAnalytics` R package functions.
+* Convert existing vignettes to static vignettes
 * Add Unit tests using the `tinytest` R package
-* Reproduce additional investment strategies as short vignettes, following 1 or 2 relevant 
-papers
+* Work with mentors to reproduce additional investment strategies as short 
+vignettes, following 1 or 2 relevant papers
 
 
-## Mentors
+# Mentors
 
 - EVALUATING MENTOR [Prof. Justin M. Shea](https://www.linkedin.com/in/justinmshea/)
-- [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/) is an expert in
-developing R packages for quantitative finance, and has previous GSOC experience with
-  R from 2008-2021.
+author of `neverhpfilter`, `wooldridge`, and `phoenixdown` R packages. Contributor
+to `PerformanceAnalytics` and `FactorAnalytics` packages. This will be his 3rd
+year mentoring at GSOC.
+- [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/) has 
+developed numerous popular R packages for quantitative finance, and has been a 
+GSOC administrator from 2008-2021.
 - [Erol Biceroglu, Senior Investment Policy Analyst](https://www.linkedin.com/in/erolbiceroglu/)
 - [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
 - [Soumya Kalra, Operations Analytics Manager](https://www.linkedin.com/in/soumyakalra/)
 
-## Student-developer
-
-
-
-## References
-
-[Ilmanen, Anti. 2011. “Expected Returns.” John Wiley & Sons Ltd. ISBN: 978-1-119-99072-7](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727)
-
-
-# FROM THE GSOC 2021 Template
-
-## Related work
-
-What other R packages with similar functionality already exist? Why
-aren't they good enough?
-
-## Details of your coding project
-
-What exactly do you want your student to code in the 3-month deadline?
-What functions? What do they do? Docs? Tests? Vignettes?
-
-## Expected impact
-
-Mentors, please explain how this project will produce a useful package
-for the R community.
-
-## Mentors
-
-MENTORS: fill in this part. each project needs 2 mentors. One should
-be an expert R programmer with previous package development
-experience, and the other can be a domain expert in some other field
-or application area (optimization, bioinformatics, machine learning,
-data viz, etc). Ideally one of the two mentors should have previous
-experience with GSOC (either as a student or mentor). Please provide
-contact info for each mentor, along with qualifications.
-
-IMPORTANT: you MUST write "EVALUATING" for one mentor, who will be
-required to do the three evaluations of the student during the
-summer. In previous years we have had issues with mentors who do not
-fill in evaluations, and when this happens R project is penalized
-(money is taken away), although students are not penalized (students
-are passed by default if no mentor eval is submitted). Therefore one
-mentor must take responsibility for doing the evaluations, and you
-must indicate that here, and your student must indicate that as well
-in the application. If it is not clear which mentor will be the
-EVALUATING mentor then your project will not be accepted. Example:
-
-Students, please contact mentors below after completing at least one
-of the tests below.
-
-- EVALUATING MENTOR: Toby Hocking <toby.hocking@r-project.org> is the
-  author of R packages X and Y.
-- Other Dev <other.dev@gmail.com> is an expert in machine learning,
-  and has previous GSOC experience with
-  NAME_OF_OPEN_SOURCE_ORGANIZATION in 2015-2016.
-
+# Student-developer
 
 ## Tests
 
@@ -202,3 +156,7 @@ Students, please post a link to your test results here.
 - EXAMPLE STUDENT 1 NAME, LINK TO GITHUB PROFILE, LINK TO TEST
   RESULTS.
 
+
+## References
+
+[Ilmanen, Anti. 2011. “Expected Returns.” John Wiley & Sons Ltd. ISBN: 978-1-119-99072-7](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727)
