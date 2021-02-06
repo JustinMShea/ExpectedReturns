@@ -1,0 +1,204 @@
+## Background
+
+## Background
+
+A lack of portfolio diversification can severely impact the financial goals and 
+long term plans for individual investment accounts, retirement accounts, 
+University Endowment funds, and Municipal Pension funds alike. And as recent 
+periods of financial market tumult has revealed, many investors are often not as 
+diversified as they initially believe. While advisors are adept at packaging 
+various financial products into "diversified portfolios", relationships among 
+asset classes can change suddenly, upending the very diversification an 
+otherwise meticulous crafted portfolio was built to provide. Why does 
+diversification fail for so many precisely when it's most needed and what can be 
+done? 
+
+In this project, you shall explore and implement several investment strategies
+that may enhance portfolio diversification with `R`, as discussed in one of the 
+best investment references on the topic 
+[Expected Returns: _An Investors Guide to Harvesting Market Rewards_](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727) by 
+[Antti Ilmanen](https://www.aqr.com/About-Us/OurFirm/Antti-Ilmanen).
+
+From the Description;
+
+> This comprehensive reference delivers a toolkit for harvesting market rewards 
+from a wide range of investments. Written by a world-renowned industry expert, 
+the reference discusses how to forecast returns under different parameters. 
+Expected returns of major asset classes, investment strategies, and the effects 
+of underlying risk factors such as growth, inflation, liquidity, and different 
+risk perspectives, are also explained. Judging expected returns requires 
+balancing historical returns with both theoretical considerations and current 
+market conditions. Expected Returns provides extensive empirical evidence, 
+surveys of risk-based and behavioral theories, and practical insights.
+
+Your objective will be to reproduce key approaches suggested by the text and test 
+performance on current market conditions with `R`. You will use functions found
+in popular `R` in finance packages such as `FactorAnalytics`, 
+`PerformanceAnalytics` and `PortfolioAnalytics`. But you will also need to write 
+functions of your own to streamline workflows and implement solutions.
+
+Mentors will guide your understanding of the topic, support your use of best 
+practices in software development for quantitative finance using `R`, and 
+provide market data for validating these approaches.
+
+Ultimately, this work will be organized into an open source `R` package. It will 
+complement the text and provide data, functions, and reproducible examples to 
+guide academics, practitioners, and hobbyists in the `R` community in applying 
+the work to their own research or portfolio management endeavors.
+
+Students engaged in this project will obtain a deeper understanding of:  
+i) Data Science applications in finance  
+ii) Quantitative Analysis of active portfolio management  
+
+## Areas of Interest
+
+We'll focus on one or two broad sections with specific subsections to explore
+
+- Approaches to Dynamic asset weighting
+  * Value-oriented equity selection
+  * Currency Carry
+  * Commodity Momentum and Trend following
+  
+- Return Factors and their risk premia  
+  * Inflation factor and inflation premium
+  * Liquidity factor and illiquidity premium
+  * Tail risks (volatility, correlation, skewness)
+  
+### Data
+
+Most underlying data series are extracted from Bloomberg, including MSCI Barra’s
+equity indices, Barclays Capital and other banks’ bond indices, and S&P GSCI
+commodity futures indices. 
+Other key sources include [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), [Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets).
+
+To create long data histories for major asset classes, the author concatenated 
+best quality recent data and best available older data series. Most exhibits 
+display total returns denominated in U.S. dollars; but some exhibits show real 
+(inflation-adjusted) returns or excess returns over cash or over 
+maturity/duration-matched Treasuries.
+
+### Approaches to Dynamic asset weighting
+
+**Value-oriented equity selection**, chapter 12.
+
+**Currency carry strategies**, Chapter 13.
+
+**Commodity Momentum and trend following**, Chapter 14.
+
+### Return Factors and their risk premia
+
+**Inflation factor and inflation premium**, Chapter 17
+
+**Liquidity factor and illiquidity premium**, Chatper 18.
+
+**Tail risks (volatility, correlation, skewness)**, Chapter 19
+
+
+### We envision the following steps for this project:
+
+* Skim the text above
+* Get familiar with the [ExpectedReturns project](https://github.com/JustinMShea/ExpectedReturns/tree/master/vignettes).
+* Refactor, document, and unify existing functions, adding new ones as needed.
+* Refactor existing vignettes and unify them with `FactorAnalytics` R package 
+functions.
+* Add Unit tests using the `tinytest` R package
+* Reproduce additional investment strategies as short vignettes, following 1 or 2 relevant 
+papers
+
+
+## Mentors
+
+- EVALUATING MENTOR [Prof. Justin M. Shea](https://www.linkedin.com/in/justinmshea/)
+- [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/) is an expert in
+developing R packages for quantitative finance, and has previous GSOC experience with
+  R from 2008-2021.
+- [Erol Biceroglu, Senior Investment Policy Analyst](https://www.linkedin.com/in/erolbiceroglu/)
+- [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
+- [Soumya Kalra, Operations Analytics Manager](https://www.linkedin.com/in/soumyakalra/)
+
+## Student-developer
+
+
+
+## References
+
+[Ilmanen, Anti. 2011. “Expected Returns.” John Wiley & Sons Ltd. ISBN: 978-1-119-99072-7](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727)
+
+
+# FROM THE GSOC 2021 Template
+
+## Related work
+
+What other R packages with similar functionality already exist? Why
+aren't they good enough?
+
+## Details of your coding project
+
+What exactly do you want your student to code in the 3-month deadline?
+What functions? What do they do? Docs? Tests? Vignettes?
+
+## Expected impact
+
+Mentors, please explain how this project will produce a useful package
+for the R community.
+
+## Mentors
+
+MENTORS: fill in this part. each project needs 2 mentors. One should
+be an expert R programmer with previous package development
+experience, and the other can be a domain expert in some other field
+or application area (optimization, bioinformatics, machine learning,
+data viz, etc). Ideally one of the two mentors should have previous
+experience with GSOC (either as a student or mentor). Please provide
+contact info for each mentor, along with qualifications.
+
+IMPORTANT: you MUST write "EVALUATING" for one mentor, who will be
+required to do the three evaluations of the student during the
+summer. In previous years we have had issues with mentors who do not
+fill in evaluations, and when this happens R project is penalized
+(money is taken away), although students are not penalized (students
+are passed by default if no mentor eval is submitted). Therefore one
+mentor must take responsibility for doing the evaluations, and you
+must indicate that here, and your student must indicate that as well
+in the application. If it is not clear which mentor will be the
+EVALUATING mentor then your project will not be accepted. Example:
+
+Students, please contact mentors below after completing at least one
+of the tests below.
+
+- EVALUATING MENTOR: Toby Hocking <toby.hocking@r-project.org> is the
+  author of R packages X and Y.
+- Other Dev <other.dev@gmail.com> is an expert in machine learning,
+  and has previous GSOC experience with
+  NAME_OF_OPEN_SOURCE_ORGANIZATION in 2015-2016.
+
+
+## Tests
+
+Students, please do one or more of the following tests before
+contacting the mentors above.
+
+MENTORS: write several tests that potential students can do to
+demonstrate their capabilities for this particular project.  Ask some
+hard questions that will give you insight about how the students write
+code to solve problems. You'll see that the harder the questions that
+you ask, the easier it will be for you to choose between the students
+that apply for your project!  Please modify the suggestions below to
+make them specific for your project.
+
+- Easy: something that any useR should be able to do, e.g. download
+  some existing package listed in the Related Work, and run it on some
+  example data.
+- Medium: something a bit more complicated. You can encourage students
+  to write a script or some functions that show their R coding
+  abilities.
+- Hard: Can the student write a package with Rd files, tests, and
+  vignettes? If your package interfaces with non-R code, can the
+  student write in that other language?
+
+## Solutions of tests
+
+Students, please post a link to your test results here.
+- EXAMPLE STUDENT 1 NAME, LINK TO GITHUB PROFILE, LINK TO TEST
+  RESULTS.
+
