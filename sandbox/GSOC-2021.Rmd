@@ -134,7 +134,7 @@ contacting the mentors above. We encourage work on Linux Debian-based
 distributions.
 
 1. **Easy:** Begin by downloading and building the `ExpectedReturns` and 
-`FactorAnalytics` packages locally. Work through, and list any build errors or issues you encounter on install.  
+`FactorAnalytics` packages locally. Work through, and list any build errors or issues you encounter on install.
 
 ```{r}
 library(remotes)
@@ -142,15 +142,17 @@ install_github("JustinMShea/ExpectedReturns")
 install_github("braverock/FactorAnalytics")
 ```
 
-2. **Intermediate:** Locate the `expected-returns-replications.Rmd` file in the `vignettes`
-directors. Refactor sections of this vignettes to replace functions using the `plm`
-package with the `fitFfm` or `fitFfmDT` functions from the `FactorAnalytics` package. This may include debugging upstream issues with merging data series, as well as formatting data to match requirements of the new functions.
+2. **Intermediate:** Locate the `expected-returns-replications.Rmd` file in the `vignettes` directory. Refactor sections of this vignettes to replace functions
+from the `plm` package with the `fitFfm` or `fitFfmDT` functions associated with
+the `FactorAnalytics` package. This may include debugging upstream issues with 
+merging data series, as well as reformatting data to match requirements of the 
+new function arguments.
 
-3. **Harder:** Reflect on the steps above. How do you interpret the results of the
-newly factored models? Was there any repetitious code that may be written as 
-a function for future use? If so please include it as an example.
-What data transformations or models might have benefited from writing unit tests?
-Please include examples for these as well.
+3. **Harder:** Reflect on the steps above. How do you interpret the results of
+the new functions? In addition, was there any repetitious code in the vignette 
+that may be written as a function for future use? If so please include it as an 
+example. What data transformations or models might have benefited from writing 
+unit tests? Please include examples for these as well.
 
 
 ## Solutions of tests
