@@ -66,7 +66,7 @@ We'll focus on one or two broad sections with specific subsections to explore
   
 - Return Factors and their risk premia  
   * Inflation factor and inflation premium
-  * Liquidity factor and illiquidity premium
+  * Liquidity factor and liquidity premium
   * Tail risks (volatility, correlation, skewness)
   
 ### Data
@@ -94,7 +94,7 @@ maturity/duration-matched Treasuries.
 
 **Inflation factor and inflation premium**, Chapter 17
 
-**Liquidity factor and illiquidity premium**, Chatper 18.
+**Liquidity factor and liquidity premium**, Chapter 18.
 
 **Tail risks (volatility, correlation, skewness)**, Chapter 19
 
@@ -130,31 +130,35 @@ GSOC administrator from 2008-2021.
 ## Tests
 
 Students, please do one or more of the following tests before
-contacting the mentors above.
+contacting the mentors above. We encourage work on Linux Debian-based 
+distributions.
 
-MENTORS: write several tests that potential students can do to
-demonstrate their capabilities for this particular project.  Ask some
-hard questions that will give you insight about how the students write
-code to solve problems. You'll see that the harder the questions that
-you ask, the easier it will be for you to choose between the students
-that apply for your project!  Please modify the suggestions below to
-make them specific for your project.
+1. **Easy:** Begin by downloading and building the `ExpectedReturns` and 
+`FactorAnalytics` packages locally. Work through, and list any build errors or issues you encounter on install.  
 
-- Easy: something that any useR should be able to do, e.g. download
-  some existing package listed in the Related Work, and run it on some
-  example data.
-- Medium: something a bit more complicated. You can encourage students
-  to write a script or some functions that show their R coding
-  abilities.
-- Hard: Can the student write a package with Rd files, tests, and
-  vignettes? If your package interfaces with non-R code, can the
-  student write in that other language?
+```{r}
+library(remotes)
+install_github("JustinMShea/ExpectedReturns")
+install_github("braverock/FactorAnalytics")
+```
+
+2. **Intermediate:** Locate the `expected-returns-replications.Rmd` file in the `vignettes`
+directors. Refactor sections of this vignettes to replace functions using the `plm`
+package with the `fitFfm` or `fitFfmDT` functions from the `FactorAnalytics` package. This may include debugging upstream issues with merging data series, as well as formatting data to match requirements of the new functions.
+
+3. **Harder:** Reflect on the steps above. How do you interpret the results of the
+newly factored models? Was there any repetitious code that may be written as 
+a function for future use? If so please include it as an example.
+What data transformations or models might have benefited from writing unit tests?
+Please include examples for these as well.
+
 
 ## Solutions of tests
 
 Students, please post a link to your test results here.
-- EXAMPLE STUDENT 1 NAME, LINK TO GITHUB PROFILE, LINK TO TEST
-  RESULTS.
+
+- EXAMPLE STUDENT 1 NAME, LINK TO GITHUB PROFILE. (Email your test results to 
+mentors)
 
 
 ## References
