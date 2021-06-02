@@ -40,7 +40,7 @@ r_github_packages:
 notifications:
   slack:
     rooms:
-      - gsoc20expecte-caf7264:cBk4HV5RtGS9S0AYiiQ4I3a8#general
+      - r-finance-gsoc:OZQuYlCU7iZVwVEApDtkqAY7#01-expected-returns-factor-analytics
     on_success: change # default: always
     on_failure: always # default: always
 
