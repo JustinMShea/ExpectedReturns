@@ -1,0 +1,168 @@
+# Background
+
+A lack of portfolio diversification can severely impact the financial goals and 
+long term plans for individual investment accounts, retirement accounts, 
+University Endowment funds, and Municipal Pension funds alike. And as recent 
+periods of financial market tumult has revealed, many investors are often not as 
+diversified as they initially believe. While advisors are adept at packaging 
+various financial products into "diversified portfolios", relationships among 
+asset classes can change suddenly, upending the very diversification an 
+otherwise meticulous crafted portfolio was built to provide. Why does 
+diversification fail for so many precisely when it's most needed and what can be 
+done? 
+
+In this project, you shall explore and implement several investment strategies
+that may enhance portfolio diversification with `R`, as discussed in one of the 
+best investment references on the topic 
+[Expected Returns: _An Investors Guide to Harvesting Market Rewards_](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727) by 
+[Antti Ilmanen](https://www.aqr.com/About-Us/OurFirm/Antti-Ilmanen).
+
+From the Description;
+
+> This comprehensive reference delivers a toolkit for harvesting market rewards 
+from a wide range of investments. Written by a world-renowned industry expert, 
+the reference discusses how to forecast returns under different parameters. 
+Expected returns of major asset classes, investment strategies, and the effects 
+of underlying risk factors such as growth, inflation, liquidity, and different 
+risk perspectives, are also explained. Judging expected returns requires 
+balancing historical returns with both theoretical considerations and current 
+market conditions. Expected Returns provides extensive empirical evidence, 
+surveys of risk-based and behavioral theories, and practical insights.
+
+# Related work
+
+Your objective will be to reproduce key approaches suggested by the text and test 
+performance on current market conditions with `R`. You will use functions found
+in popular `R` in finance packages such as `FactorAnalytics`, 
+`PerformanceAnalytics` and `PortfolioAnalytics`. But you will also need to write 
+functions of your own to streamline workflows and implement solutions. While
+these packages are excellent and widely used, there are gaps in the workflows
+involved in constructing portfolio management strategies we'd like to fill.
+
+# Details of the `ExpectedReturns` project & Impact
+
+
+Mentors will guide your understanding of the topic, support your use of best 
+practices in software development for quantitative finance using `R`, and 
+provide market data for validating these approaches.
+
+Ultimately, this work will be organized into an open source `R` package. It will 
+complement the text and provide data, functions, and reproducible examples to 
+guide academics, practitioners, and hobbyists in the `R` community in applying 
+the work to their own research or portfolio management endeavors.
+
+Students engaged in this project will obtain a deeper understanding of:  
+i) Data Science applications in finance  
+ii) Quantitative Analysis of active portfolio management  
+
+## Areas of Interest
+
+We'll focus on one or two broad sections with specific subsections to explore
+
+- Approaches to Dynamic asset weighting
+  * Value-oriented equity selection
+  * Currency Carry
+  * Commodity Momentum and Trend following
+  
+- Return Factors and their risk premia  
+  * Inflation factor and inflation premium
+  * Liquidity factor and liquidity premium
+  * Tail risks (volatility, correlation, skewness)
+  
+### Data
+
+Most underlying data series are extracted from Bloomberg, including MSCI Barra’s
+equity indices, Barclays Capital and other banks’ bond indices, and S&P GSCI
+commodity futures indices. 
+Other key sources include [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), [Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets).
+
+To create long data histories for major asset classes, the author concatenated 
+best quality recent data and best available older data series. Most exhibits 
+display total returns denominated in U.S. dollars; but some exhibits show real 
+(inflation-adjusted) returns or excess returns over cash or over 
+maturity/duration-matched Treasuries.
+
+### Approaches to Dynamic asset weighting
+
+**Value-oriented equity selection**, chapter 12.
+
+**Currency carry strategies**, Chapter 13.
+
+**Commodity Momentum and trend following**, Chapter 14.
+
+### Return Factors and their risk premia
+
+**Inflation factor and inflation premium**, Chapter 17
+
+**Liquidity factor and liquidity premium**, Chapter 18.
+
+**Tail risks (volatility, correlation, skewness)**, Chapter 19
+
+
+### We envision the following steps for this project:
+
+* Skim the text above
+* Get familiar with the [ExpectedReturns project](https://github.com/JustinMShea/ExpectedReturns/tree/master/vignettes).
+* Refactor, document, and unify existing functions, adding new ones as needed.
+* Refactor case studies in existing vignettes and unify them with the 
+`FactorAnalytics` R package functions.
+* Convert existing vignettes to static vignettes
+* Add Unit tests using the `tinytest` R package
+* Work with mentors to reproduce additional investment strategies as short 
+vignettes, following 1 or 2 relevant papers
+
+
+# Mentors
+
+- EVALUATING MENTOR [Prof. Justin M. Shea](https://www.linkedin.com/in/justinmshea/)
+author of `neverhpfilter`, `wooldridge`, and `phoenixdown` R packages. Contributor
+to `PerformanceAnalytics` and `FactorAnalytics` packages. This will be his 3rd
+year mentoring at GSOC.
+- [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/) has 
+developed numerous popular R packages for quantitative finance, and has been a 
+GSOC administrator from 2008-2021.
+- [Erol Biceroglu, Senior Investment Policy Analyst](https://www.linkedin.com/in/erolbiceroglu/)
+- [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
+- [Soumya Kalra, Operations Analytics Manager](https://www.linkedin.com/in/soumyakalra/)
+
+# Student-developer
+
+## Tests
+
+Students, please do one or more of the following tests before
+contacting the mentors above. We encourage work on Linux Debian-based 
+distributions.
+
+1. **Easy:** Begin by downloading and building the `ExpectedReturns` and 
+`FactorAnalytics` packages locally. Work through, and list any build errors or issues you encounter on install.
+
+```{r}
+library(remotes)
+install_github("JustinMShea/ExpectedReturns")
+install_github("braverock/FactorAnalytics")
+```
+
+2. **Intermediate:** Locate the `expected-returns-replications.Rmd` file in the `vignettes` directory. Refactor sections of this vignettes to replace functions
+from the `plm` package with the `fitFfm` or `fitFfmDT` functions associated with
+the `FactorAnalytics` package. This may include debugging upstream issues with 
+merging data series, as well as reformatting data to match requirements of the 
+new function arguments.
+
+3. **Harder:** Reflect on the steps above. How do you interpret the results of
+the new functions? In addition, was there any repetitious code in the vignette 
+that may be written as a function for future use? If so please include it as an 
+example. What data transformations or models might have benefited from writing 
+unit tests? Please include examples for these as well.
+
+
+## Solutions of tests
+
+Students, please post a link to your test results here.
+
+- EXAMPLE STUDENT 1 NAME, LINK TO GITHUB PROFILE. (Email your test results to 
+mentors)
+
+
+## References
+
+[Ilmanen, Anti. 2011. “Expected Returns.” John Wiley & Sons Ltd. ISBN: 978-1-119-99072-7](https://www.wiley.com/en-us/Expected+Returns%3A+An+Investor%27s+Guide+to+Harvesting+Market+Rewards-p-9781119990727)

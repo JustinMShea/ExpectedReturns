@@ -1,6 +1,6 @@
 Package: ExpectedReturns
 Type: Package
-Title: Reproduction of Key Functionality from Antti Ilmanen's Expected Returns
+Title: Reproduction of Investment Strategies disccusin in Antti Ilmanen's Expected Returns
 Version: 0.2-0
 Date: 2020-05-30
 Authors@R: c(
@@ -12,14 +12,13 @@ Authors@R: c(
   , person(given="Soumya",family="Kalra",role=c("ctb"))
   , person(given="Erol",family="Biceroglu",role=c("ctb"))
   )
-Description: Collection of tools to replicate key functionality from Antti Ilmanen's
-  Expected Returns. Users will find worked examples from the book, and code to 
-  parse, clean, and manipulate many of the data sets used in the book, as well as 
-  equivalent/similar but possibly more accessible alternative data sources. 
-  Additionally, the package provides general purpose functions such that users may 
-  use their own data to apply models similar to those described in the book and 
-  evaluate these models in current market conditions or in different markets than
-  those utilized for the text.
+Description: Collection of tools to replicate investment strategies discussed in,
+  and inspired by, Antti Ilmanen's Expected Returns text. Users will find worked 
+  examples and code to parse, clean, and manipulate data associated with these 
+  strategies. Additionally, the package provides general purpose functions and 
+  apply models similar to those described in the book and evaluate these models 
+  in current market conditions or in different markets than those utilized for 
+  the text.
 Depends:
   R (>= 3.5),
   FactorAnalytics (>= 2.0.36)
