@@ -6,7 +6,7 @@
 #--------------------------------------------------------------------------------###
 
 #Define Import Function
-importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankRow = TRUE, dateFormat = "%m/%d/%Y"){
+importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankRow = TRUE, dateFormat = "%Y-%m-%d"){
 
   #download.file(url = path, destfile = tmp, mode="wb")
   #import data
@@ -23,12 +23,7 @@ importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankR
   #remove column/variable names from dataset
   rawImportData <- rawImportData[-1,]
 
-  # head(rawImportData)
-
-  #format date
-  #if(class(rawImportData$X1) != "Date") {
-  #rawImportData$DATE <- as.Date(rawImportData$DATE, format = dateFormat)
-  #}
+  rawImportData$DATE <- as.Date(rawImportData$DATE, format = dateFormat)
 
   #format all other values as numeric
   rawImportData[,-1] <-  switch(
@@ -45,7 +40,6 @@ importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankR
 }
 
 ## Load Libraries
-#library(rio)
 library(openxlsx)
 
 ## Download to Sandbox
