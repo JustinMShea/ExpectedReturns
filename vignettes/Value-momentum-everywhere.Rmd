@@ -51,10 +51,10 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 source(parser.path)
 
 # Subset AQR GAP data points 
-from <- first(which(!is.na(HML_Devil.MKT$Global)))
-to <- length(HML_Devil.MKT$Global)
-MKT.GLOBAL <- xts(HML_Devil.MKT$Global[from:to], HML_Devil.MKT$DATE[from:to])
+MKT.GLOBAL <- xts(HML_Devil.MKT$Global, HML_Devil.MKT$DATE)
 colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
+# delete leading NAs
+MKT.GLOBAL <- na.trim(MKT.GLOBAL)
 
 # Correlation methods to pass to cor()
 cor.methods <- c('pearson', 'spearman')
