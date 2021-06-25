@@ -19,27 +19,26 @@ CFP[, -1] <- apply(CFP[, -1], 2, as.numeric)
 CFP$Date <- as.Date.character(CFP$Date, '%Y-%m-%d')
 CFP <- xts::xts(CFP[, -1], order.by=CFP$Date)
 
-## Rename variables
-tmp <- gsub('-', '', colnames(CFP))
+tmp <- colnames(CFP)
 # Rename asset classes
-tmp <- gsub('Equity indices', 'EQ', tmp)
-tmp <- gsub('Fixed income', 'FI', tmp)
+tmp <- gsub('Equity.indices', 'EQ', tmp)
+tmp <- gsub('Fixed.income', 'FI', tmp)
 tmp <- gsub('Commodities', 'CM', tmp)
 tmp <- gsub('Currencies', 'FX', tmp)
-tmp <- gsub('All asset classes', 'ALL', tmp)
-tmp <- gsub('All Macro', 'AM', tmp)
+tmp <- gsub('All.asset.classes', 'ALL', tmp)
+tmp <- gsub('All.Macro', 'AM', tmp)
 # Rename countries/regions
-tmp <- gsub('US Stock Selection', 'US', tmp)
-tmp <- gsub('Intl Stock Selection', 'INTL', tmp)
-tmp <- gsub('All Stock Selection', 'GLOBAL', tmp)
+tmp <- gsub('US.Stock.Selection', 'US', tmp)
+tmp <- gsub('Intl.Stock.Selection', 'INTL', tmp)
+tmp <- gsub('All.Stock.Selection', 'GLOBAL', tmp)
 # Rename Factors/Styles
 tmp <- gsub('Value', 'VAL', tmp)
 tmp <- gsub('Momentum', 'MOM', tmp)
 tmp <- gsub('Carry', 'CARRY', tmp)
 tmp <- gsub('Multistyle', 'MULTI', tmp)
-# Remove spaces and capitalize
-tmp <- gsub(' ', '.', tmp)
+# capitalize
 tmp <- toupper(tmp)
+
 # Give sort of names schema <style.(country | ...)>
 variables.split <- strsplit(tmp[1:40], '\\.') # all except '*.MARKET'
 variables.swapped <- sapply(variables.split, function(x) {
