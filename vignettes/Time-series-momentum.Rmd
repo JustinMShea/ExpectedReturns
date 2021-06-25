@@ -1,7 +1,7 @@
 ---
-title: '"Time Series Momentum"'
+title: '"Time Series Momentum, a replication"'
 subtitle: "(draft)"
-author: "Vito Lestingi"
+author: "Vito Lestingi, Justin M Shea"
 date: "`r Sys.Date()`"
 abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
 output:
@@ -80,8 +80,7 @@ FI.MARKET <- CFP[, 'FI.MARKET']
 # VME
 parser.path <- file.path('inst', 'parsers', 'VME-Factors.R')
 source(parser.path)
-VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
-VME.FACTORS <- xts::xts(VME.FACTORS[, -1], order.by=VME.FACTORS$DATE)
+VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
 # FFC factors
 FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
@@ -233,9 +232,9 @@ Follow authors, in this section we compare time series momentum and the cross-se
 
 ```{r TSM Table 5 Panel A}
 # Time series and Cross-sectional Momentum data
-XSMOM <- VME.Factors[, c('DATE', 'MOM.AA', 'MOMLS.VME.COM', 'MOMLS.VME.EQ', 'MOMLS.VME.FI', 'MOMLS.VME.FX', 'MOMLS.VME.US90')]
-colnames(XSMOM) <- c('DATE', 'XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'XSMOM.US') # naming consistency
-XSMOM <- xts::xts(XSMOM[, -1], order.by=XSMOM$DATE)
+XSMOM <- VME.Factors[, c('MOM.AA', 'MOMLS.VME.COM', 'MOMLS.VME.EQ', 'MOMLS.VME.FI', 'MOMLS.VME.FX', 'MOMLS.VME.US90')]
+colnames(XSMOM) <- c('XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'XSMOM.US') # naming consistency
+#XSMOM <- xts::xts(XSMOM[, -1], order.by=XSMOM$DATE)
 mom.data <- merge(TSM, XSMOM)
 mom.data <- zoo::na.locf(mom.data)
 mom.data <- mom.data[xts::endpoints(mom.data), ]
