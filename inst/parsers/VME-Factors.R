@@ -12,10 +12,6 @@ AQR.VME.Factors.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Da
 VME.Factors <- openxlsx::read.xlsx(AQR.VME.Factors.url, sheet=1, startRow=22, colNames=TRUE, detectDates = TRUE)
 
 ## Clean up
-header.row <- 21
-data.begin.row <- header.row + 1
-VME.Factors <- VME.Factors.raw[data.begin.row:nrow(VME.Factors.raw), ]
-VME.Factors <- na.trim(VME.Factors)
 
 variable.names <- colnames(VME.Factors)
 variable.names <- gsub('\\^', '.', variable.names)
@@ -35,12 +31,8 @@ VME.Factors <- na.trim(VME.Factors)
 # convert to xts
 VME.Factors <- xts(VME.Factors[,-1], order.by = VME.Factors$DATE)
 
-
 ## Remove unused variables
-rm(
-  AQR.VME.Factors.url,
-  header.row,
-  data.begin.row,
+rm(AQR.VME.Factors.url,
   variable.names,
   VME.Factors.vars
 )
