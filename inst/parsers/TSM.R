@@ -29,9 +29,6 @@ TSM <- na.trim(TSM)
 rm(
   AQR.TSM.url
   , TSM.raw
-  , header.row
-  , data.begin.row
   , variable.names
   , TSM.vars
-  , data.end.row
 )
