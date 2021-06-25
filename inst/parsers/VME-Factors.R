@@ -9,19 +9,15 @@
 
 ## Download in R environment
 AQR.VME.Factors.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Factors-Monthly.xlsx"
-# path <- "sandbox/data/AQR.VME.Factors.xlsx"
-# download.file(AQR.VME.Factors.url, path)
-# VME.Factors <- openxlsx::read.xlsx(path, sheet=1, startRow=23, colNames=FALSE)
-VME.Factors.raw <- suppressMessages(
-  rio::import(AQR.VME.Factors.url, format='xlsx')
-)
+VME.Factors <- openxlsx::read.xlsx(AQR.VME.Factors.url, sheet=1, startRow=22, colNames=TRUE, detectDates = TRUE)
 
 ## Clean up
 header.row <- 21
 data.begin.row <- header.row + 1
 VME.Factors <- VME.Factors.raw[data.begin.row:nrow(VME.Factors.raw), ]
+VME.Factors <- na.trim(VME.Factors)
 
-variable.names <- as.character(VME.Factors.raw[header.row, ])
+variable.names <- colnames(VME.Factors)
 variable.names <- gsub('\\^', '.', variable.names)
 variable.names <- gsub('_', '.', variable.names)
 variable.names <- sub("^VAL$", replacement="VAL.EVR", variable.names)
@@ -31,19 +27,20 @@ colnames(VME.Factors) <- variable.names
 # Convert variables to "numeric" and dates to "Date"
 VME.Factors.vars <- colnames(VME.Factors) != 'DATE'
 VME.Factors[, VME.Factors.vars] <- apply(VME.Factors[, VME.Factors.vars], 2, as.numeric)
-VME.Factors$DATE <- as.Date.character(VME.Factors$DATE, '%m/%d/%Y')
+VME.Factors$DATE <- as.Date.character(VME.Factors$DATE, '%Y-%m-%d')
 
 # Remove empty cells
-row.names(VME.Factors) <- NULL
-data.end.row <- max(which(!is.na(VME.Factors$DATE)))
-VME.Factors <- VME.Factors[1:data.end.row, ]
+VME.Factors <- na.trim(VME.Factors)
+
+# convert to xts
+VME.Factors <- xts(VME.Factors[,-1], order.by = VME.Factors$DATE)
+
 
 ## Remove unused variables
 rm(
-  AQR.VME.Factors.url
-  , VME.Factors.raw
-  , header.row
-  , variable.names
-  , VME.Factors.vars
-  , data.end.row
+  AQR.VME.Factors.url,
+  header.row,
+  data.begin.row,
+  variable.names,
+  VME.Factors.vars
 )
