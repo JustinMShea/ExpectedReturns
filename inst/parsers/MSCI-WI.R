@@ -5,7 +5,7 @@
 # Markets (DM) countries. With 1,637 constituents, the index covers approximately
 # 85% of the free float-adjusted market capitalization in each country."
 #
-# Period: 1969-12-31 to 2020-05-29
+# Period: 1969-12-31 to 2021-06-29
 #
 # Currency: USD
 #
@@ -13,7 +13,6 @@
 #
 # Copyright holder: (c) MSCI Inc.
 
-# WARNING: rio::import(), as other direct download methods, failed
 #
 # Parser relies on the following steps on your side:
 # 1. Manually download the file from 'Source' link
@@ -22,10 +21,17 @@
 # NOTE: DO NOT push the data file to the repository. We are already gitignoring the whole folder.
 
 path.file <- file.path('sandbox', 'data', 'MSCI_WI.xls')
-MSCI.WI.raw <- xlsx::read.xlsx(path.file, sheetIndex=1, startRow=7, endRow=613, header=TRUE)
+MSCI.WI.raw <- readxl::read_xls(path.file, sheet=1, skip=6, col_names =TRUE)
+colnames(MSCI.WI.raw) <- c("Date", "Price")
+
+# format
+MSCI.WI.raw$Price <- as.numeric(gsub(",","", MSCI.WI.raw$Price))
+MSCI.WI.raw$Date <- as.Date(MSCI.WI.raw$Date, format = "%b %d, %Y")
+MSCI.WI.raw <- na.trim(MSCI.WI.raw)
+
 # NOTE: returns in decimal unit
-MSCI.WI <- as.xts(MSCI.WI.raw[, 2], order.by=MSCI.WI.raw[, 1])
-colnames(MSCI.WI) <- c('PRICE')
+MSCI.WI <- as.xts(MSCI.WI.raw$Price, order.by=MSCI.WI.raw$Date)
+colnames(MSCI.WI) <- 'PRICE'
 MSCI.WI$RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'discrete')
 MSCI.WI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'log')
 
