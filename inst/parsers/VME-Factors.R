@@ -26,10 +26,10 @@ VME.Factors[, VME.Factors.vars] <- apply(VME.Factors[, VME.Factors.vars], 2, as.
 VME.Factors$DATE <- as.Date.character(VME.Factors$DATE, '%Y-%m-%d')
 
 # Remove empty cells
-VME.Factors <- na.trim(VME.Factors)
+VME.Factors <- zoo::na.trim(VME.Factors)
 
 # convert to xts
-VME.Factors <- xts(VME.Factors[,-1], order.by = VME.Factors$DATE)
+VME.Factors <- xts::xts(VME.Factors[,-1], order.by = VME.Factors$DATE)
 
 ## Remove unused variables
 rm(AQR.VME.Factors.url,
