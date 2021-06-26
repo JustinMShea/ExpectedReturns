@@ -9,7 +9,7 @@
 
 ## Download in R environment
 AQR.VME.Portfolios.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Portfolios-Monthly.xlsx"
-VME.Portfolio.raw <- openxlsx::read.xlsx(AQR.VME.Portfolios.url, sheet=1, startRow=1,
+VME.Portfolios.raw <- openxlsx::read.xlsx(AQR.VME.Portfolios.url, sheet=1, startRow=1,
                                       colNames=TRUE, detectDates = TRUE)
 
 ## Clean up
@@ -27,6 +27,8 @@ VME.Portfolios.vars <- colnames(VME.Portfolios) != 'DATE'
 VME.Portfolios[, VME.Portfolios.vars] <- apply(VME.Portfolios[, VME.Portfolios.vars], 2, as.numeric)
 VME.Portfolios$DATE <- as.Date.character(VME.Portfolios$DATE, '%Y-%m-%d')
 
+# convert to xts
+VME.Portfolios <- xts::xts(VME.Portfolios[,-1], order.by = VME.Portfolios$DATE)
 ## Remove unused variables
 rm(
   AQR.VME.Portfolios.url
