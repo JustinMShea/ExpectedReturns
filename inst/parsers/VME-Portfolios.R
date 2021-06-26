@@ -9,12 +9,11 @@
 
 ## Download in R environment
 AQR.VME.Portfolios.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Portfolios-Monthly.xlsx"
-VME.Portfolios.raw <- suppressMessages(
-  rio::import(AQR.VME.Portfolios.url, format='xlsx')
-)
+VME.Portfolio.raw <- openxlsx::read.xlsx(AQR.VME.Portfolios.url, sheet=1, startRow=1,
+                                      colNames=TRUE, detectDates = TRUE)
 
 ## Clean up
-header.row <- 20
+header.row <- 15
 data.begin.row <- header.row + 1
 VME.Portfolios <- VME.Portfolios.raw[data.begin.row:nrow(VME.Portfolios.raw), ]
 rownames(VME.Portfolios) <- NULL
@@ -26,13 +25,14 @@ colnames(VME.Portfolios) <- toupper(variable.names)
 # Convert variables to "numeric" and dates to "Date"
 VME.Portfolios.vars <- colnames(VME.Portfolios) != 'DATE'
 VME.Portfolios[, VME.Portfolios.vars] <- apply(VME.Portfolios[, VME.Portfolios.vars], 2, as.numeric)
-VME.Portfolios$DATE <- as.Date.character(VME.Portfolios$DATE, '%m/%d/%Y')
+VME.Portfolios$DATE <- as.Date.character(VME.Portfolios$DATE, '%Y-%m-%d')
 
 ## Remove unused variables
 rm(
   AQR.VME.Portfolios.url
   , VME.Portfolios.raw
   , header.row
+  , data.begin.row
   , variable.names
   , VME.Portfolios.vars
 )
