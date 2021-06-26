@@ -191,12 +191,15 @@ path.parser <- file.path('inst', 'parsers', 'VME-Factors.R')
 source(path.parser)
 path.parser <- file.path('inst', 'parsers', 'VME-Portfolios.R')
 source(path.parser)
+
 # Bonds data
 path.parser <- file.path('inst', 'parsers', 'CRP.R')
 source(path.parser)
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
 CRP <- as.xts(coredata(CRP[, -1]), order.by=CRP[, 1])
+```
 
+```{r Get factors and portfolios data 2}
 ## Construct the data set
 # NOTE:
 # All series are considered relative to FF dates, which are month-end.
@@ -206,7 +209,7 @@ CRP <- as.xts(coredata(CRP[, -1]), order.by=CRP[, 1])
 # month-end, as those are dates most series we work with refer to.
 
 # Value and Momentum Everywhere Factors
-VME.FACTORS <- VME.Factors[, c('DATE', 'VAL.EVR', 'MOM.EVR')]
+VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
 
 # Get AMP Portfolios Returns and make them a panel
 VME.PORTF.DATE <- VME.Portfolios$DATE
@@ -224,7 +227,9 @@ VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
 VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
 # VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
 VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
+```
 
+```{r Get factors and portfolios data 3}
 ## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
 FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
@@ -233,7 +238,9 @@ max.tp <- min(last(index(FF3)), last(index(MOM)))
 # tp <- paste(min.tp, max.tp, sep='/')
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+```
 
+```{r Get factors and portfolios data 4}
 ## Merge Factors and Portfolios Data
 # Factors data
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
