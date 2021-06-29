@@ -1,7 +1,7 @@
 ---
-title: '"Value and Momentum Everywhere"'
-subtitle: (draft)
-author: "Vito Lestingi"
+title: '"Time Series Momentum, a replication"'
+subtitle: "(draft)"
+author: "Vito Lestingi, Justin M Shea"
 date: "`r Sys.Date()`"
 abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
 output:
@@ -9,23 +9,25 @@ output:
     citation_package: biblatex
 bibliography: references.bib
 vignette: >
-  %\VignetteIndexEntry{"Value and Momentum Everywhere"}
-  %\VignetteEncoding{UTF-8}
+  %\VignetteIndexEntry{"Time Series Momentum"}
   %\VignetteEngine{rmarkdown::render}
-editor_options: 
-  chunk_output_type: console
+  %\VignetteEncoding{UTF-8}
 ---
 
 ```{r setup, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>",
-  echo = TRUE
-)
 knitr::opts_knit$set(
   root.dir = normalizePath('..')
 )
 
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  echo = TRUE,
+  warning = FALSE,
+  error = FALSE
+)
+
+# Load libraries
 library(xts)
 library(plm)
 ```
@@ -35,401 +37,173 @@ library(plm)
 ```
 
 # Introduction
-In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP hereafter).
-The authors aim at providing a *global*, across both markets/asset classes and across countries, asset pricing approach. This is what "everywhere" in "Value and Momentum *Everywhere*" stands for.
+\textcite{moskowitz-ooi-pedersen-2012} (MOP hereafter) study an asset pricing anomaly they name *time series momentum*, which is related but different from the *momentum* effect in that the latter has a cross-sectional relative nature with respect to assets clusters while the former is directly linked with single assets returns. They find the anomaly consistent both across different asset classes and markets. Also, they confirm this effect to be robust among more illiquid instruments.
 
-## Data and Portfolio Construction
-Factors and portfolios are constructed from January 1972 through July 2011. All data series have a monthly frequency. AMP construct zero-cost long/short VME factors and long-only value and momentum portfolios, sorted into tertiles, for both value and momentum in eight markets/asset classes.
+# Data and methodology
+TODO: Present data series we used, compare with analogies and differences with respect to data authors used.
 
-Because of the *global* nature of their pricing approach, authors use as their $MKT$ factor an international portfolio proxy, represented by the MSCI *World Index*. The index has 1,637 large and mid cap constituents across 23 Developed Markets countries and, according to MSCI Inc., it "covers approximately 85% of the free float-adjusted market capitalization in each of them." We provide a comparison with the international global equity portfolio constructed by \textcite{asness-frazzini-2013}.
+# The cross-section of time series momentum
+The excess returns 
+$$
+\frac{r_t^s}{\sigma_{t-1}^s} = \alpha + \beta_h\frac{r_{t-h}^s}{\sigma_{t-h-1}^s} + \epsilon_t^s
+$$
 
-```{r AQR Global Aggregate Equity Portfolios vs MSCI Barra Indexes}
-# Source AQR's Global Aggregate Equity Portfolio ("AQR GAP")
-# NOTE: returns in decimal unit
-# source("vignettes/Value--Devil-in-HMLs-Details.R")
-parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
+where assets returns are scaled by their ex-ante volatility $\sigma_{t-1}^s$, with annualized variance being
+$$
+\sigma_t^2 = 261\sum_{i=0}^{\infty}(1 - \delta)\delta^i(r_{t-i-1} - \bar{r}_t)^2
+$$
+$\bar{r}_t$ returns exponentially weighted moving average (EWMA) and weight $\delta$ so that $\delta/(1 - \delta) = 60$ days.
+Returns of TSMOM trading strategies on the instrument $s$ at month $t$ are systematically obtained considering the excess returns sign of $s$ over the past $k$ months and then acquiring or selling the instrument during the subsequent $h$ months. These two parameters determine a family of TSMOM strategies and are called *lookback period* and *holding period*, respectively.  
+It follows that the strategy return at time $t$, defined $r_t^{\textrm{TSMOM}(k,h)}$, represents the average return across all instrument portfolios at that time, i.e. the return on the portfolio that was constructed in all observable past months. These returns are then average across all instruments include or within each asset class.
+
+To explain these returns and assess whether they held abnormal performance, \textcite{moskowitz-ooi-pedersen-2012} study the regression specification
+$$
+r_t^{\textrm{TSMOM}(k,h)} = \alpha + \beta_{1}MSCI_{t} + \beta_{2}GSCI_{t} + \beta_{3}BOND_{t} + \beta_{4}SMB_{t} + \beta_{5}HML_{t} + \beta_{6}UMD_{t} + \epsilon_{t}
+$$
+where $MSCI$ is the MSCI World Index, $GSCI$ the S&P Goldman Sachs Commodity Index, $BOND$ is Barclay's Aggregate Bond Index ([Bloomberg Barclays Global Aggregate Index](https://data.bloomberglp.com/indices/sites/2/2016/08/Factsheet-Global-Aggregate.pdf) at the time of writing) and $SMB$, $HML$, $UMD$ are the usual Fama-French-Carhart factors. In what follows, given data series availability from authors, we study the TSMOM strategy with a 12 months lookback period and holding period of a month, that is $r_t^{\textrm{TSMOM}(12,1)}$, for each asset class and in the all assets aggregate.
+
+```{r Load Factors and Portfolios Returns Data}
+# TSM portfolios
+parser.path <- file.path('inst', 'parsers', 'TSM.R')
 source(parser.path)
-
-# Subset AQR GAP data points 
-MKT.GLOBAL <- xts(HML_Devil.MKT$Global, HML_Devil.MKT$DATE)
-colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
-# delete leading NAs
-MKT.GLOBAL <- na.trim(MKT.GLOBAL)
-
-# Correlation methods to pass to cor()
-cor.methods <- c('pearson', 'spearman')
-```
-
-```{r AQR GAP vs MSCI WI}
-# NOTE: returns in decimal unit
-path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
-source(path.parser)
-
-# Merge and compute correlation(s)
-global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
-min.tp <- first(which(!is.na(global.proxies$MKT.GLOBAL))) + 1
-max.tp <- nrow(global.proxies)
-gap.wi.cor <- sapply(1:length(cor.methods), function(x) {
-  as.numeric(
-    cor(
-      global.proxies$MKT.GLOBAL[min.tp:max.tp],
-      global.proxies$COMP.RET[min.tp:max.tp],
-      use='na.or.complete',
-      method=cor.methods[x]
-    )
-  )
-})
-gap.wi.cor
-
-# Plot comparison
-# global.proxies.cont <- na.locf(global.proxies)
-global.proxies.cont <- na.fill(global.proxies, c(NA, 'extend', 'extend'))
-plot.global.proxies.cont <- function(x=global.proxies.cont) {
-  plot.xts(
-    x, 
-    main='AQR\'s Global MKT vs MSCI World Index',
-    screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95)
-  )
-  addLegend(
-    'bottomleft', 
-    legend.names = c(
-      'Global MKT', 'MSCI WI', 
-      expression(paste(rho[Pearson], ' = 0.9834098')),
-      expression(paste(rho[Spearman], ' = 0.9790861'))
-    ), 
-    cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
-  )
-}
-plot.global.proxies.cont()
-```
-
-Because AQR's "Global Aggregate Equity Portfolio" contains more securities then the MSCI WI, we also provide a comparison with the MSCI *All Countries World Index* (MSCI ACWI). The latter synthesizes 3,040 large and mid cap constituents across 23 Developed Markets and 26 Emerging Markets countries and, according to MSCI Inc., it "covers approximately 85% of the global investable equity opportunity set".
-
-```{r AQR GAP vs vs MSCI ACWI}
-# NOTE: returns in decimal unit
-path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
-source(path.parser)
-
-# Merge and compute correlation(s)
-global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
-min.tp <- first(which(!is.na(global.proxies$COMP.RET)))
-max.tp <- nrow(global.proxies)
-gap.acwi.cor <- sapply(1:length(cor.methods), function(x) {
-  as.numeric(
-    cor(
-      global.proxies$MKT.GLOBAL[min.tp:max.tp],
-      global.proxies$COMP.RET[min.tp:max.tp],
-      use='na.or.complete',
-      method=cor.methods[x]
-    )
-  )
-})
-gap.acwi.cor
-
-# Plot comparison
-# global.proxies.cont <- na.locf(global.proxies)
-global.proxies.cont <- na.fill(global.proxies, c(NA, 'extend', 'extend'))
-plot.global.proxies.cont <- function(x=global.proxies.cont) {
-  plot.xts(
-    x, 
-    main='AQR\'s Global MKT vs MSCI ACWI',
-    screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95)
-  )
-  addLegend(
-    'bottomleft', 
-    legend.names = c(
-      'Global MKT', 'MSCI ACWI', 
-      expression(paste(rho[Pearson], ' = 0.9887671')),
-      expression(paste(rho[Spearman], ' = 0.9840154'))
-    ), 
-    cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
-  )
-}
-plot.global.proxies.cont()
-```
-
-As shown by the high correlations among these global equity portfolios, in principle each one of them may serve as the market portfolio return proxy. However, in order to avoid any potentially undue discrepancy with AMP's methodology, in what follows we adopt the MSCI WI.
-
-As per the bonds factors, AMP report to use \textcite{fama-french-1992}'s bond factors, namely the $TERM$ and $DEF$ factors. In their seminal work, \textcite{fama-french-1992} introduced these factors to capture common risks between equities and fixed-income securities. They defined $TERM$ to proxy unexpected changes in interest rates and constructed it via two composite portfolios of government bonds covering maturities of 1 to 5 and 6 to 10 years in excess of T-Bill monthly rates. Whereas $DEF$ is a proxy of default risk and is obtained as the excess returns on a portfolio of long-term corporate bonds made of Moody's Aaa, Aa, A, Baa, and below (LG, low-grade bonds below Baa) with respect to corresponding T-Bonds. Furthermore, both of them were originally considered limiting attention to the US markets, which in principle does not naturally fit  many of the international \textcite{asness-moskowitz-pedersen-2013}'s analyses and hence may seem an undue questionable adoption at a first glance. Truth is, authors are aware of this limitation and unequivocally state "... since we do not have data to construct TERM and DEF internationally, we use the U.S. versions" (p. 956). In our experience we can confirm, lack of worldwide long series available is generally the case for corporate bonds for which there could be even unrecorded decades depending on the countries considered. Even widespread industry benchmarks such as the [FTSE WGBI](https://www.yieldbook.com/x/ixFactSheet/factsheet_monthly_wgbi.pdf) (formerly by Salomon Brothers, later by Citi, then LSEG), and the [S&P International Corporate Bond Index](https://us.spindices.com/indices/fixed-income/sp-international-corporate-bond-index#data), respectively, are the result of different methodologies in a number of relevant characteristics: underlying maturities, whether there has been currency hedging or inflation adjustment, and importantly securities' credit ratings and selection criteria. Also, sometimes underlings are not precisely the same securities, but broader forms of debt.
-
-In the face of these limitations, we temporarily use bonds factors US versions as authors themselves do. However, it is debatable whether we are using exactly the same series. We are adopting part of those constructed by \textcite{asvanunt-richardson-2017}, who follow a different method in some regards. As a matter of fact, slight nuances may potentially influence our numerical estimates, but are not expected to give rise to statistically significant differences.
-
-### Asset classes and countries
-<!--
-If I'll have time after coding, I'd make a detailed table here.
-- Vito
--->
-The markets/asset classes contemplated include four individual equity markets (stock selection) and four broad asset classes (asset allocation). The four stock selection markets are: U.S. equities (US), U.K. equities (UK), Continental Europe equities (EU), Japanese equities (JP). The four asset allocation classes are: global equity indices (EQ), currencies (FX), fixed income (FI), and commodity futures (CM).
-
-They are global individual stocks, global equity indices, currencies, global government bonds, commodity futures (27 types by different underlying),  
-
-While the countries are...
-
-### Value and momentum measures
-* **Value measure(s).** Differ by asset class as not every of them has a book value measure as stocks do, thus the book-to-market ratio cannot be derived in most classes.
-* **Momentum measure.** It is same for all asset classes, i.e. the common measure of the past 12-month cumulative raw return on the asset skipping the most recent month's return.
-
-## Relation to Macroeconomic and Liquidity Risk
-This section of \textcite{asness-moskowitz-pedersen-2013} blends very well with \textcite{ilmanen-2011}'s "Broader Themes", especially with what are commonly referred to as "macroeconomic factors" or simply "macros" in the financial industry jargon. Indeed, at a first sight it appears a more quantitative-oriented look at many ideas the former author already discussed.
-In particular, the authors study the underlying economic sources driving value and momentum returns: 
-* Long run consumption growth
-* MSCI world index ("market")
-* Recession dummy
-* GDP growth
-* Liquidity
-
-The *Liquidity Risk Exposure* is particularly interesting to study and deserves particular attention. In this context, it is so especially from the point of view of market-level traded liquidity, given the ubiquitous influence of the factor for the entire economic system. 
-It really has been in Economists' thoughts since far longer than the modern standard literature reminds us. Recently
-it has been linked with financial crises (see what happened in 1987), flash crashes (2010), and vice versa is very often in policy makers' decisions. See, for example, monetary policies actions Central Banks adopt worldwide in this regard.
-\textcite{asness-moskowitz-pedersen-2013} pay particular attention to global events and link them with liquidity shocks. Then, they investigate the relation between value and momentum returns and liquidity risk.
-
-## Comovement and Asset Pricing Tests
-```{r Get factors and portfolios data}
-## Import AQR data
-# VME data
-source(file.path('inst', 'parsers', 'VME-Factors.R'))
-source(file.path('inst', 'parsers', 'VME-Portfolios.R'))
-# Bonds data
-source(file.path('inst', 'parsers', 'CRP.R'))
-```
-
-```{r Get factors and portfolios data 2}
-## Construct the data set
-# NOTE:
-# All series are considered relative to FF dates, which are month-end.
-# Usually a dates mismatch of one day can exist around the month-end, for reasons 
-# among which publication date discrepancies or later corrections. 
-# When this happens we simply consider last available values with respect to the 
-# month-end, as those are dates most series we work with refer to.
-
-# Value and Momentum Everywhere Factors
+TSM <- xts::xts(TSM[, -1], order.by=TSM$DATE)
+# MSCI
+parser.path <- file.path('inst', 'parsers', 'MSCI-WI.R')
+source(parser.path)
+# NOTE: 
+# - in place of 'GSCI' we use 'CM.MARKET'
+# - in place of 'BOND' we use 'FI.MARKET'
+parser.path <- file.path('inst', 'parsers', 'CFP.R')
+source(parser.path)
+CM.MARKET <- CFP[, 'CM.MARKET']
+FI.MARKET <- CFP[, 'FI.MARKET']
+# VME
+parser.path <- file.path('inst', 'parsers', 'VME-Factors.R')
+source(parser.path)
 VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
-
-# Get AMP Portfolios Returns and make them a panel
-VME.PORTF.DATE <- index(VME.Portfolios)
-#indexVME.Portfolios$DATE <- NULL
-VME.PORTF.RET <- coredata(VME.Portfolios)
-portf.names <- colnames(VME.PORTF.RET)
-t <- nrow(VME.PORTF.RET)
-p <- ncol(VME.PORTF.RET)
-portf.names <- as.data.frame(matrix(portf.names, nrow=t, ncol=p, byrow=TRUE))
-VME.PORTF.RET <- asplit(VME.PORTF.RET, 2)
-portf.names <- asplit(portf.names, 2)
-VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
-VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
-VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
-VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
-# VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
-VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
-```
-
-```{r Get factors and portfolios data 3}
-## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
+# FFC factors
 FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
 min.tp <- max(first(index(FF3)), first(index(MOM)))
 max.tp <- min(last(index(FF3)), last(index(MOM)))
-# tp <- paste(min.tp, max.tp, sep='/')
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+# VIX Index
+parser.path <- file.path('inst', 'parsers', 'VIX-FRED.R')
+source(parser.path)
+VIX.RET <- VIX.cls.monthly$VIX.RET
+# VIX Index top ~20% extremes
+vix20idxs <- order(
+  abs(VIX.RET$VIX.RET), decreasing=TRUE
+)[1:round(nrow(VIX.RET) * 0.2)]
+VIX20 <- VIX.RET[vix20idxs, ]
+colnames(VIX20) <- 'VIX.TOP.20'
+# TED Spread
+parser.path <- file.path('inst', 'parsers', 'TED-Spread.R')
+source(parser.path)
+colnames(TED.SPREAD) <- 'TED'
+# TED Spread top ~20% extremes
+ted20idxs <- order(
+  abs(TED.SPREAD$TED), decreasing=TRUE
+)[1:round(nrow(TED.SPREAD) * 0.2)]
+TED20 <- TED.SPREAD[ted20idxs, ]
+colnames(TED20) <- 'TED.TOP.20'
 ```
 
-```{r Get factors and portfolios data 4}
-## Merge Factors and Portfolios Data
-# Factors data
+```{r Prepare data set}
+# FFC4 factors
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
-data <- merge(MSCI.WI, FFC4)
-# MSCI 
+# MSCI World Index
+data <- merge(MSCI.WI$RET, FFC4)
 data$MSCI.RET <- zoo::na.locf(data$RET)
 data$MSCI.RF <- data$MSCI.RET - data$RF
+data$RET <- NULL
+
 # Bonds factors data
-CRP <- CRP[, colnames(CRP) != 'SP500.XS']
-data <- merge(CRP, data)
-# Merge factors data
+# data <- merge(CRP, data)
+# data$GOVT.XS <- na.fill(data$GOVT.XS, c(NA, 'extend', NA))
+# data$CORP.XS <- na.fill(data$CORP.XS, c(NA, 'extend', NA))
+# Convert data set
+# data <- data.frame(
+#   DATE=ff.dates,
+#   data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
+#   row.names=NULL
+# )
+# tp <- 1:max(which(!is.na(data$CORP.XS)))
+# data <- data[tp, ]
+
+# Bonds factor
+data <- merge(data, FI.MARKET)
+# Commodities Market
+data <- merge(data, CM.MARKET)
+# VME factors
+data <- merge(data, VME.FACTORS)
+# VIX Index
+data <- merge(data, VIX.RET)
+# TED Spread
+data <- merge(data, TED.SPREAD)
+# TSMOM(12, 1) strategy returns
+data <- merge(data, TSM)
+
+# NOTE:
+# All series are considered relative to FF dates, which are at month-end.
+# Usually a dates mismatch of one day can exist around the month-end, for reasons 
+# among which publication date discrepancies or subsequent corrections. 
+# When this happens we simply consider last available values with respect to the 
+# month-end, as those are dates most series we work with refer to.
 data <- zoo::na.locf(data)
+# NOTE:
+# TED-Spread and VIX top ~20% series are used as they are constructed
+data <- merge(data, TED20, VIX20)
+
 data <- data.frame(
   DATE=ff.dates,
-  data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
+  data[ff.dates, ],
   row.names=NULL
 )
-tp <- 1:max(which(!is.na(data$CORP.XS)))
-data <- data[tp, ]
-
-# Merge VME Factors and VME Portfolios Returns
-data <- merge(data, VME.PORTF.RET, by='DATE')
-data <- merge(data, VME.FACTORS, by='DATE')
-# Calculate Portfolios excess returns
-data$EXC.RET <- data$RET - data$RF
 ```
 
-### Explaining Value/Momentum in One Market with Value/Momentum in Other Markets
-$$
-R_{i,t}^{p} - r_{f,t} = \alpha_{i}^{p} + \beta_{i}^{p}MKT_{t} + v_{i}^{p}\sum_{j \neq i}w_{j}VAL_{t}^{\textrm{everywhere}} + m_{i}^{p}\sum_{j \neq i}w_{j}MOM_{t}^{\textrm{everywhere}} + \epsilon_{i,t}^{p}
-$$
-where $w_{j}$ is the equal volatility weight for each asset class.
-
-### Global Three-Factor Model
-
-$$
-R_{i,t}^{p} - r_{f,t} = \alpha_{i}^{p} + \beta_{i}^{p}MKT_{t} + v_{i}^{p}VAL_{t}^{\textrm{everywhere}} + m_{i}^{p}MOM_{t}^{\textrm{everywhere}} + \epsilon_{i,t}^{p}
-$$
-$R_{i,t}^{p}$ is the time $t$ return to portfolio $p$ among the six high, middle, and low value and momentum portfolios in one of the eight asset markets $i$, for a total of 48 test assets. 
-Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are equal-volatility-weighted across asset-class value and momentum factors.
-
-```{r Global Three-Factor Model}
-## Prepare indexes to determine panel structure
-# 'DATE.ID', each date gets unique numeric id
-dates <- unique(data$DATE)
-dates.id <- 1:length(dates)
-dates.id <- data.frame('DATE'=dates, 'DATE.ID'=dates.id)
-data <- merge(data, dates.id, by='DATE')
-# 'PORTF.ID', each portfolio gets unique numeric id
-portf <- unique(data$PORTF)
-portf.id <- 1:length(portf)
-portf.id <- data.frame('PORTF'=portf, 'PORTF.ID'=portf.id)
-data <- merge(data, portf.id, by='PORTF')
-data <- data[order(data[, 'PORTF.ID'], data[, 'DATE.ID']), ]
-row.names(data) <- NULL
-
-
-# TODO: Only model for which data is readily available at the moment.
+```{r TSM Table 2 Time-series Regressions}
+# Indexes
+date.id <- matrix(1:nrow(data), dimnames=list(NULL, 'DATE.ID'))
+data <- cbind(data, date.id)
+# The period used in the paper for running the time series regression is Jan 1985 - Dec 2009
+# The AQR website TSMOM portfolios from which we sourced our data for this replication start # reporting data from that date, but keep the data up to date. For the purposes of
+# replicating the time period in the paper, we will need to truncate the 'data' object after # Dec 2009. The resulting t-stats of the alpha intercepts are more inline with the paper if
+# we do. For the updated alpha t-stats the user can comment this line of code. 
+data <- data[-((which(data$DATE=="2009-12-31")+1):nrow(data)),]
+# Regressions variables
+y <- colnames(TSM)
+X <- c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM')
 
 # Time-series regressions
-ts.reg <- plm::pmg(
-  EXC.RET ~ MSCI.RF + VAL.EVR + MOM.EVR,
-  data=data, index=c('PORTF.ID', 'DATE.ID')
-)
-## Estimates
-summary(ts.reg) # average coefficients
-betas <- t(ts.reg$indcoef) # all coefficients
-rownames(betas) <- portf
-colnames(betas) <- paste('BETA', colnames(betas), sep='.')
-betas
-
-# Cross-sectional regressions
-cs.data <- data[order(data[, 'DATE']), ]
-cs.data <- data.frame(
-  data[, c('DATE', 'EXC.RET', 'DATE.ID', 'PORTF.ID')], 
-  betas[, 2:ncol(betas)],
-  row.names=NULL
-)
-cs.reg <- plm::pmg(
-  EXC.RET ~ BETA.MSCI.RF + BETA.VAL.EVR + BETA.MOM.EVR, 
-  data=cs.data, index=c('DATE.ID', 'PORTF.ID')
-)
-## Estimates
-summary(cs.reg) # average coefficients
-gammas <- cs.reg$indcoef # all coefficients
-gammas <- t(gammas)
-gammas <- data.frame(dates, gammas, row.names=NULL)
-colnames(gammas) <- c('DATE', '(Intercept)', colnames(betas)[-1])
-gammas
-```
-
-```{r VME Table 6}
-## TABLE 6, Panel A
-## US
-us.factors.vars <- c('MKT.RF', 'SMB', 'HML', 'MOM', 'GOVT.XS', 'CORP.XS') 
-n.us.fv <- length(us.factors.vars)
-fv.seq <- 1:n.us.fv
-# US Models Time-series Regressions
-ts.reg.us <- lapply(fv.seq, function(x) {
+tsmom.ts.reg <- lapply(1:length(y), function(x) {
   model.formula <- formula(
-    paste0(
-      'EXC.RET ~ ',
-      paste(us.factors.vars[1:x], collapse='+')
+    paste(
+      y[x], paste(X, collapse='+'), 
+      sep='~'
     )
   )
-  plm::pmg(
-    model.formula, data=data, 
-    index=c('PORTF.ID', 'DATE.ID')
+  plm::plm(
+    model.formula, data=data,
+    model='pooling', index='DATE.ID'
   )
-})
-us.mods.summaries <- lapply(ts.reg.us, summary)
-us.mods.summaries
+}) 
+lapply(tsmom.ts.reg, summary)
 
-## Global
-global.factors.vars <- c('MSCI.RF', 'VAL.EVR', 'MOM.EVR', 'GOVT.XS', 'CORP.XS')
-nfv <- length(global.factors.vars)
-kk <- 2^nfv - 1
-fv.seq <- 1:nfv
-global.factors.combns <- matrix(NA, nfv, kk)
-comb.idxs <- cumsum(choose(nfv, 0:nfv))
-comb.idxs <- comb.idxs[-length(comb.idxs)]
-comb.idxs <- rev(comb.idxs)
-comb.idxs <- c(comb.idxs, 0)
-for (j in rev(fv.seq)) {
-  k <- setdiff(1:comb.idxs[j], 0:comb.idxs[j+1])
-  global.factors.combns[1:rev(j), k] <- combn(global.factors.vars, j)
-}
-# Global Models Time-series Regressions
-ts.reg.global <- lapply(1:kk, function(x) {
-  model.formula <- formula(
-    paste0(
-      'EXC.RET ~ ',
-      paste(na.omit(global.factors.combns[, x]), collapse='+')
-    )
-  )
-  plm::pmg(
-    model.formula, data=data, 
-    index=c('PORTF.ID', 'DATE.ID')
-  )
-})
-global.mods.summaries <- lapply(ts.reg.global, summary)
-global.mods.summaries
+# Refactor try by Jiarui
+test_using_origin_script<-plm::plm(
+    TSMOM.FX ~ MSCI.RF + CM.MARKET + FI.MARKET + SMB + HML + MOM, data=data,
+    model='pooling', index='DATE.ID'
+)
+coefficients(test_using_origin_script)
 
-## Models Stats
-stats <- c('Abs.Alpha', 'SE', 'p.value', 'R2')
-n.stats <- length(stats)
-ExtractModelStats <- function(mods, res) {
-  # @param mods Models fitting summaries
-  # @param res A matrix, object to write results to
-  mm <- length(mods)
-  for(m in 1:mm) {
-    mod <- mods[[m]]
-    mod.coefs <- mod$CoefTable
-    res[m, 1] <- abs(mod.coefs[1, 'Estimate'])
-    res[m, 2] <- mod.coefs[1, 'Std. Error']
-    res[m, 3] <- mod.coefs[1, 'Pr(>|z|)']
-    res[m, 4] <- mod$r.squared
-  }
-  return(res)
-}
-# Calls on models
-# US Models Results
-us.mods.names <- c('CAPM', 'MKT.RF_SMB', 'FF3', 'FFC4', 'FF5', 'FF6')
-n.us.mods <- length(us.mods.names)
-us.mods.res <- matrix(NA, n.us.mods, n.stats, dimnames=list(us.mods.names, stats))
-us.mods.res <- ExtractModelStats(us.mods.summaries, us.mods.res)
-us.mods.res
-# Global Models Results
-gmods.names <- apply(global.factors.combns, 2, function(x) paste(na.omit(x), collapse='_'))
-n.gmods <- length(gmods.names)
-global.mods.res <- matrix(NA, n.gmods, n.stats, dimnames=list(gmods.names, stats))
-global.mods.res <- ExtractModelStats(global.mods.summaries, global.mods.res)
-global.mods.res
-# All together
-rbind(global.mods.res, us.mods.res)
+#refactored
+data.test = data
+row.names(data.test) <-data.test$DATE
+data.test$DATE <- NULL
+test_using_new_script<-fitTsfm(asset.names=c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM'), factor.names=c('TSMOM.FX'), data = data.test)
+
+test_using_new_script.coefs <- cbind(test_using_new_script$alpha, test_using_new_script$beta)
+test_using_new_script.coefs
 ```
-
-```{r VME Figure 6 plots}
-### AMP Model Plot ###
-VME.Portfolios <- apply(VME.Portfolios, 2, as.numeric)
-amp.factors <- data[1:length(dates), c('MKT.RF', 'VAL.EVR', 'MOM.EVR')]
-amp.factors.avg <- colMeans(amp.factors, na.rm=TRUE)
-# Actual Average Returns 
-# TODO: Full series lengths differ. Should use only obs in regressions
-y <- colMeans(VME.Portfolios, na.rm=TRUE)
-y <- y[sort(names(y))]
-# Expected Returns
-x <- betas %*% c(1, amp.factors.avg)
-x <- x[sort(row.names(x)), ]
-# Plot
-plot(x=x, y=y, main='AMP Global Three-factor Model', 
-     xlab='Portfolio Expected Returns', ylab='Portfolio Realized Average Returns', 
-     pch=20, cex.lab=0.85)
-lines(par()$usr[1:2], par()$usr[3:4], col='gray75')
-text(x=x, y=y, names(x), cex=0.5, pos=4)
-grid()
-```
-
