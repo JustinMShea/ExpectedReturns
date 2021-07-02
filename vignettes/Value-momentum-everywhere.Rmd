@@ -30,6 +30,7 @@ knitr::opts_chunk$set(
 # Load libraries
 library(xts)
 library(plm)
+library(FactorAnalytics)
 ```
 
 ```{r, echo=FALSE}
@@ -177,7 +178,7 @@ y <- colnames(TSM)
 X <- c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM')
 
 # Time-series regressions
-tsmom.ts.reg <- lapply(1:length(y), function(x) {
+tsmom.ts.reg <- lapply(1:length(y), function(x) { 
   model.formula <- formula(
     paste(
       y[x], paste(X, collapse='+'), 
@@ -192,18 +193,19 @@ tsmom.ts.reg <- lapply(1:length(y), function(x) {
 lapply(tsmom.ts.reg, summary)
 
 # Refactor try by Jiarui
-test_using_origin_script<-plm::plm(
-    TSMOM.FX ~ MSCI.RF + CM.MARKET + FI.MARKET + SMB + HML + MOM, data=data,
-    model='pooling', index='DATE.ID'
-)
-coefficients(test_using_origin_script)
-
-#refactored
 data.test = data
 row.names(data.test) <-data.test$DATE
 data.test$DATE <- NULL
-test_using_new_script<-fitTsfm(asset.names=c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM'), factor.names=c('TSMOM.FX'), data = data.test)
+tsmom.ts.reg.test <- lapply(1:length(y), function(x) {
+  model.formula <- formula(
+    paste(
+      y[x], paste(X, collapse='+'), 
+      sep='~'
+    )
+  )
+  fitTsfm(factor.names=X, asset.names=y[x], data = data.test)
+}) 
+lapply(tsmom.ts.reg.test, summary)
 
-test_using_new_script.coefs <- cbind(test_using_new_script$alpha, test_using_new_script$beta)
-test_using_new_script.coefs
+
 ```
