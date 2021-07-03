@@ -429,4 +429,3 @@ lines(par()$usr[1:2], par()$usr[3:4], col='gray75')
 text(x=x, y=y, names(x), cex=0.5, pos=4)
 grid()
 ```
-
