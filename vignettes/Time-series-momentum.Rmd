@@ -1,5 +1,5 @@
 ---
-title: '"Time Series Momentum, a replication"'
+title: 'Time Series Momentum, a replication'
 subtitle: "(draft)"
 author: "Vito Lestingi, Justin M Shea"
 date: "`r Sys.Date()`"
@@ -30,6 +30,7 @@ knitr::opts_chunk$set(
 # Load libraries
 library(xts)
 library(plm)
+library(FactorAnalytics)
 ```
 
 ```{r, echo=FALSE}
@@ -325,6 +326,7 @@ mom.tsxs.reg.test
 ```
 
 Next, we try to gain insights on what factors better explain time-series momentum.
+
 ```{r Table 5 Panel C}
 ## Panel C
 # NOTE: 'DJCS MF' and 'DJCS MACRO' data missing
@@ -343,15 +345,24 @@ tsmom.div.all <- lapply(Y, function(y) {
     data=data, model='pooling', index='DATE.ID'
   )
 })
-lapply(tsmom.div.all, summary)
-tsmom.div.all
 
-#refactored by jiarui
-data.test <- data 
-row.names(data.test) <-data.test$DATE 
-data.test$DATE <- NULL
-tsmom.div.all.test <- lapply(Y, function(y) {
-  fitTsfm(factor.names='TSMOM' , asset.names=y, data = data.test) 
+lapply(tsmom.div.all, summary)
+
+tsmom.div.all
+```
+
+Now let's compare with `FactorAnalytics`.
+
+```{r Table 5 Panel C FA}
+#refactored by jiarui & justin 
+attr(data, "row.names") <- as.character(data$DATE)
+data$DATE <- NULL
+
+tsmom.div.all.FA <- lapply(Y, function(y) {
+  fitTsfm(factor.names = 'TSMOM' , asset.names = y, data = data)
 })
-tsmom.div.all.test
+
+lapply(tsmom.div.all.FA, summary)
+
+tsmom.div.all.FA
 ```
