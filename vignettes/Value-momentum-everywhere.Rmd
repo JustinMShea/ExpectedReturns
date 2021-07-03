@@ -227,33 +227,30 @@ VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 ## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
 FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
 MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
-min.tp <- max(first(index(FF3)), first(index(MOM)))
-max.tp <- min(last(index(FF3)), last(index(MOM)))
-# tp <- paste(min.tp, max.tp, sep='/')
-days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
-ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+#min.tp <- max(first(index(FF3)), first(index(MOM)))
+#max.tp <- min(last(index(FF3)), last(index(MOM)))
+#tp <- paste(min.tp, max.tp, sep='/')
+#days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+# ff.dates <- c(min.tp, min.tp + #cumsum(as.numeric(days.diff)))
 ```
 
 ```{r Get factors and portfolios data 4}
 ## Merge Factors and Portfolios Data
 # Factors data
-FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
-data <- merge(MSCI.WI, FFC4)
+# FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
+FFC4 <- merge(FF3, MOM)
+data <- merge(FFC4, MSCI.WI)
 # MSCI 
 data$MSCI.RET <- zoo::na.locf(data$RET)
 data$MSCI.RF <- data$MSCI.RET - data$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
-data <- merge(CRP, data)
+data <- merge(data, CRP)
 # Merge factors data
-data <- zoo::na.locf(data)
-data <- data.frame(
-  DATE=ff.dates,
-  data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
-  row.names=NULL
-)
-tp <- 1:max(which(!is.na(data$CORP.XS)))
-data <- data[tp, ]
+test <- zoo::na.locf(data)
+data <- data[c(colnames(CRP), 
+               'MSCI.RF',
+                colnames(FFC4))]
 
 # Merge VME Factors and VME Portfolios Returns
 data <- merge(data, VME.PORTF.RET, by='DATE')
