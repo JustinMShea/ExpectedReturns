@@ -189,6 +189,22 @@ tsmom.ts.reg <- lapply(1:length(y), function(x) {
   )
 })
 lapply(tsmom.ts.reg, summary)
+
+#refactored
+data.test = data
+row.names(data.test) <-data.test$DATE
+data.test$DATE <- NULL
+tsmom.ts.reg.test <- lapply(1:length(y), function(x) {
+  model.formula <- formula(
+    paste(
+      y[x], paste(X, collapse='+'), 
+      sep='~'
+    )
+  )
+  fitTsfm(factor.names=X, asset.names=y[x], data = data.test)
+}) 
+lapply(tsmom.ts.reg.test, summary)
+
 ```
 
 ```{r TSM Table 3 Time-series Regressions}
@@ -211,13 +227,35 @@ tsmom.div.ts.reg <- lapply(X, function(x) {
       y, paste(x, collapse='+'), 
       sep='~'
     )
-  )
+  )  
+  
   plm::plm(
     model.formula, data=data,
     model='pooling', index='DATE.ID'
   )
 })
 lapply(tsmom.div.ts.reg, summary)
+
+#refactored by Jiarui
+data.test = data
+row.names(data.test) <-data.test$DATE
+data.test$DATE <- NULL
+data.test['MSCI.RF.square']<-data.test$MSCI.RF^2 
+X <- list(    
+  ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'MOM')
+  , amp3=c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
+  , msci=c('MSCI.RF', 'MSCI.RF.square')
+  , ted=c('TED')
+  , ted20=c('TED.TOP.20')
+  , vix=c('VIX.RET')
+  , vix20=c('VIX.TOP.20')
+) 
+tsmom.div.ts.reg.test <- lapply(X, function(x) { 
+  fitTsfm(factor.names=x, asset.names='TSMOM', data = data.test) 
+}) 
+lapply(tsmom.div.ts.reg.test, summary)
+
+ 
 ```
 
 # Time series momentum factor
@@ -265,6 +303,25 @@ mom.tsxs.reg <- lapply(1:length(Y), function(x) {
 mom.tsxs.reg <- lapply(mom.tsxs.reg, summary)
 names(mom.tsxs.reg) <- Y
 mom.tsxs.reg
+
+
+#refactored by Jiarui
+mom.data.test = mom.data
+row.names(mom.data.test) <-mom.data.test$DATE 
+mom.data.test$DATE <- NULL
+mom.tsxs.reg.test <-lapply(1:length(Y), function(x) {
+  fitTsfm(factor.names=X[[x]], asset.names=Y[x], data = mom.data.test) 
+}) 
+lapply(mom.tsxs.reg.test, summary)
+
+ 
+mom.tsxs.reg.test <- lapply(mom.tsxs.reg.test, summary)
+
+
+
+
+names(mom.tsxs.reg.test) <- Y
+mom.tsxs.reg.test
 ```
 
 Next, we try to gain insights on what factors better explain time-series momentum.
@@ -287,4 +344,14 @@ tsmom.div.all <- lapply(Y, function(y) {
   )
 })
 lapply(tsmom.div.all, summary)
+tsmom.div.all
+
+#refactored by jiarui
+data.test <- data 
+row.names(data.test) <-data.test$DATE 
+data.test$DATE <- NULL
+tsmom.div.all.test <- lapply(Y, function(y) {
+  fitTsfm(factor.names='TSMOM' , asset.names=y, data = data.test) 
+})
+tsmom.div.all.test
 ```
