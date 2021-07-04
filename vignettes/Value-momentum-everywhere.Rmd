@@ -65,6 +65,8 @@ cor.methods <- c('pearson', 'spearman')
 path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
 source(path.parser)
 
+#change date to end-of-month
+index(MSCI.WI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.WI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$MKT.GLOBAL))) + 1
