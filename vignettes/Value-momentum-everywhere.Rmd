@@ -51,7 +51,7 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 source(parser.path)
 
 # Subset AQR GAP data points 
-MKT.GLOBAL <- xts::xts(x = HML_Devil.MKT$Global, order.by = index(HML_Devil.MKT))
+MKT.GLOBAL <- xts(HML_Devil.MKT$Global, HML_Devil.MKT$DATE)
 colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
 # delete leading NAs
 MKT.GLOBAL <- na.trim(MKT.GLOBAL)
