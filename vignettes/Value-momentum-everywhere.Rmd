@@ -112,8 +112,6 @@ Because AQR's "Global Aggregate Equity Portfolio" contains more securities then 
 path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
 source(path.parser)
 
-#change date to end-of-month
-index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$COMP.RET)))
