@@ -248,6 +248,9 @@ data$MSCI.RET <- zoo::na.locf(data$RET)
 data$MSCI.RF <- data$MSCI.RET - data$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
+
+#change date to end-of-month
+index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
 data <- merge(CRP, data)
 # Merge factors data
 data <- zoo::na.locf(data)
