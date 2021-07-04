@@ -361,8 +361,25 @@ ts.regs.hml <- lapply(1:n.hml, function(i) {
     model='pooling', index='DATE.ID'
   )
 })
+
 ## Beta estimates
 lapply(ts.regs.hml, summary)
+ts.regs.hml
+
+
+
+#refactor by jiarui
+ts.regs.hml <- lapply(1:n.hml, function(i) {
+  data.test <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE')]
+  y <- colnames(data.test)[1]
+  X <- hml.regrs[i, ]
+
+  row.names(data.test) <-data.test$DATE
+  data.test$DATE <- NULL
+  fitTsfm(factor.names=X, asset.names=y, data = data.test)
+})
+ts.regs.hml
+
 betas.hml <- lapply(ts.regs.hml, coef)
 betas.hml <- Reduce(rbind, betas.hml)
 colnames(betas.hml) <- c(

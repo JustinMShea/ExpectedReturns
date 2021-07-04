@@ -32,3 +32,4 @@ vignettes/*.html
 .Rhistory
 .RData
 .Ruserdata
+vignettes/Refactored-Time-series-momentum.Rmd
