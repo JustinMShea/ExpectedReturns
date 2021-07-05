@@ -253,12 +253,13 @@ CRP <- CRP[, colnames(CRP) != 'SP500.XS']
 index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
 data <- merge(CRP, data)
 # Merge factors data
-data <- zoo::na.locf(data)
-data <- data.frame(
-  DATE=ff.dates,
-  data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
-  row.names=NULL
-)
+# data <- zoo::na.locf(data)
+# data <- data.frame(
+#   DATE=ff.dates,
+#   data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
+#   row.names=NULL
+# )
+data <- data[ff.dates,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
 tp <- 1:max(which(!is.na(data$CORP.XS)))
 data <- data[tp, ]
 
