@@ -369,16 +369,16 @@ ts.regs.hml
 
 
 #refactor by jiarui
-ts.regs.hml <- lapply(1:n.hml, function(i) {
-  data.test <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE')]
-  y <- colnames(data.test)[1]
-  X <- hml.regrs[i, ]
-
-  row.names(data.test) <-data.test$DATE
-  data.test$DATE <- NULL
-  fitTsfm(factor.names=X, asset.names=y, data = data.test)
-})
-ts.regs.hml
+# ts.regs.hml.test <- lapply(1:n.hml, function(i) {
+#   data.test <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE')]
+#   y <- colnames(data.test)[1]
+#   X <- hml.regrs[i, ]
+# 
+#   row.names(data.test) <-data.test$DATE
+#   data.test$DATE <- NULL
+#   fitTsfm(factor.names=X, asset.names=y, data = data.test)
+# })
+# ts.regs.hml.test
 
 betas.hml <- lapply(ts.regs.hml, coef)
 betas.hml <- Reduce(rbind, betas.hml)
@@ -399,6 +399,18 @@ ts.regs.hml.dev <- lapply(1:n.hml.d, function(i) {
     model='pooling', index='DATE.ID'
   )
 })
+ts.regs.hml.dev
+#refactor by Jiarui
+# ts.regs.hml.dev.test <- lapply(1:n.hml.d, function(i) {
+#   data.test <- factors.data[, c(regrds[i, 2], hml.dev.regrs[i, ], 'DATE')]
+#   y <- colnames(data.test)[1]
+#   X <- hml.dev.regrs[i, ]
+#   row.names(data.test) <-data.test$DATE
+#   data.test$DATE <- NULL
+#   fitTsfm(factor.names=X, asset.names=y, data = data.test)
+# })
+# ts.regs.hml.dev.test
+
 names(ts.regs.hml.dev) <- paste(tolower(regrds[, 2]), 'reg', sep='.')
 hml.dev.summaries <- lapply(ts.regs.hml.dev, summary)
 ## Beta estimates
