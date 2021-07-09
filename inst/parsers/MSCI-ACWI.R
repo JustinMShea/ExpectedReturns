@@ -23,10 +23,18 @@
 # NOTE: DO NOT push the data file to the repository. We are already gitignoring the whole folder.
 
 path.file <- file.path('sandbox', 'data', 'MSCI_ACWI.xls')
-MSCI.ACWI.raw <- xlsx::read.xlsx(path.file, sheetIndex=1, startRow=7, endRow=397, header=TRUE)
+MSCI.ACWI.raw <- readxl::read_xls(path.file, sheet=1, skip=6, n_max = 402,
+                                  col_names =TRUE)
+colnames(MSCI.ACWI.raw) <- c("Date", "Price")
+
+# format
+MSCI.ACWI.raw$Price <- as.numeric(gsub(",","", MSCI.ACWI.raw$Price))
+MSCI.ACWI.raw$Date <- as.Date(MSCI.ACWI.raw$Date, format = "%b %d, %Y")
+
 # NOTE: returns in decimal unit
-MSCI.ACWI <- as.xts(MSCI.ACWI.raw[, 2], order.by=MSCI.ACWI.raw[, 1])
+MSCI.ACWI <- as.xts(MSCI.ACWI.raw$Price, order.by=MSCI.ACWI.raw$Date)
 colnames(MSCI.ACWI) <- c('PRICE')
 MSCI.ACWI$RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'discrete')
 MSCI.ACWI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'log')
 
+rm(MSCI.ACWI.raw, path.file)

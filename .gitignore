@@ -32,6 +32,3 @@ vignettes/*.html
 .Rhistory
 .RData
 .Ruserdata
-# Data files
-sandbox/data/
-ExpectedReturns.Rproj
