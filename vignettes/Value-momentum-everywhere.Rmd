@@ -212,19 +212,20 @@ VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
 # Get AMP Portfolios Returns and make them a panel
 VME.PORTF.DATE <- index(VME.Portfolios)
 #indexVME.Portfolios$DATE <- NULL
-VME.PORTF.RET <- coredata(VME.Portfolios)
-portf.names <- colnames(VME.PORTF.RET)
-t <- nrow(VME.PORTF.RET)
-p <- ncol(VME.PORTF.RET)
-portf.names <- as.data.frame(matrix(portf.names, nrow=t, ncol=p, byrow=TRUE))
-VME.PORTF.RET <- asplit(VME.PORTF.RET, 2)
-portf.names <- asplit(portf.names, 2)
-VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
-VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
-VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
-VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
-# VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
-VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
+# VME.PORTF.RET <- coredata(VME.Portfolios)
+VME.PORTF.RET <- VME.Portfolios
+# portf.names <- colnames(VME.PORTF.RET)
+# t <- nrow(VME.PORTF.RET)
+# p <- ncol(VME.PORTF.RET)
+# portf.names <- as.data.frame(matrix(portf.names, nrow=t, ncol=p, byrow=TRUE))
+# VME.PORTF.RET <- asplit(VME.PORTF.RET, 2)
+# portf.names <- asplit(portf.names, 2)
+# VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
+# VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
+# VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
+# VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
+# # VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
+# VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 ```
 
 ```{r Get factors and portfolios data 3}
@@ -264,10 +265,29 @@ tp <- 1:max(which(!is.na(data$CORP.XS)))
 data <- data[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
-data <- merge(data, VME.PORTF.RET, by='DATE')
-data <- merge(data, VME.FACTORS, by='DATE')
+data <- merge(data, VME.PORTF.RET) #, by='DATE')
+data <- merge(data, VME.FACTORS) #, by='DATE')
 # Calculate Portfolios excess returns
 data$EXC.RET <- data$RET - data$RF
+dataDT <- data.table::data.table(Date = index(data), coredata(data))
+dataDT <- data.table::melt(data = dataDT, id.vars = c("Date"), value.name = "RET", variable.name = "PORTFNAME")
+data.table::setkey(dataDT,"Date","PORTFNAME")
+
+tmp <- dataDT[PORTFNAME == "RF"]
+tmp[,EXC.RET:=NA]
+nrow(dataDT)
+
+dataDT <- 
+data.table::merge.data.table(x = dataDT[PORTFNAME != "RF"]
+                  , y = dataDT[PORTFNAME == "RF"]
+                  , by = "Date"
+)[,.(Date, PORTFNAME=PORTFNAME.x, RET=RET.x, EXC.RET=RET.x - RET.y)]
+
+dataDT <- rbind(dataDT, tmp)
+rm(tmp)
+
+dataDT <- dataDT[!is.na(RET),]
+                  
 ```
 
 ### Explaining Value/Momentum in One Market with Value/Momentum in Other Markets
