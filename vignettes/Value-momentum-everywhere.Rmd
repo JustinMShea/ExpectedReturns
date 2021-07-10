@@ -268,7 +268,7 @@ data <- data[tp, ]
 data <- merge(data, VME.PORTF.RET) #, by='DATE')
 data <- merge(data, VME.FACTORS) #, by='DATE')
 # Calculate Portfolios excess returns
-data$EXC.RET <- data$RET - data$RF
+# data$EXC.RET <- data$RET - data$RF
 dataDT <- data.table::data.table(Date = index(data), coredata(data))
 dataDT <- data.table::melt(data = dataDT, id.vars = c("Date"), value.name = "RET", variable.name = "PORTFNAME")
 data.table::setkey(dataDT,"Date","PORTFNAME")
