@@ -35,6 +35,8 @@ importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankR
   #reset rownames
   rownames(rawImportData) <- NULL
 
+  rawImportData <- xts::xts(x = rawImportData[,-1], order.by = rawImportData$DATE)
+
   return(rawImportData)
 
 }
@@ -77,16 +79,3 @@ HML_Devil.RF <- importRemoteAQRxlsxFile(path = AQR_HML_Devil_file, sheet = "RF",
 
 ## Remove Import Function
 rm(importRemoteAQRxlsxFile)
-
-## Check
-# lapply(
-# ls()[sapply(sapply(ls(),function(x){gregexpr("HML_",x)}),`[`,1) == 1]
-# , function(variable){
-#   variable <- get(variable,envir = .GlobalEnv)
-#   sumVars <-
-#   switch(class(variable[,-1])
-#          , data.frame = apply(variable[,-1],2,sum,na.rm=TRUE)
-#          , sum(variable[,-1])
-#   )
-#   sumVars <- sum(sumVars)
-# })
