@@ -307,19 +307,21 @@ Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are
 ```{r Global Three-Factor Model}
 ## Prepare indexes to determine panel structure
 # 'DATE.ID', each date gets unique numeric id
-dates <- unique(portfolios$DATE)
+dates <- unique(portfoliosDT$Date)
 dates.id <- 1:length(dates)
-dates.id <- data.frame('DATE'=dates, 'DATE.ID'=dates.id)
-portfolios <- merge(portfolios, dates.id, by='DATE')
+dates.id <- data.frame('Date'=dates, 'DATE.ID'=dates.id)
+portfoliosDT <- merge(portfoliosDT, dates.id, by="Date")
 # 'PORTF.ID', each portfolio gets unique numeric id
-portf <- unique(portfolios$PORTF)
+portf <- unique(portfoliosDT$PORTFNAME)
 portf.id <- 1:length(portf)
-portf.id <- data.frame('PORTF'=portf, 'PORTF.ID'=portf.id)
-portfolios <- merge(portfolios, portf.id, by='PORTF')
-portfolios <- portfolios[order(portfolios[, 'PORTF.ID'], portfolios[, 'DATE.ID']), ]
-row.names(portfolios) <- NULL
+portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
+portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
+portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
+row.names(portfoliosDT) <- NULL
+```
 
 
+```{r Global Three-Factor Model 2}
 # TODO: Only model for which data is readily available at the moment.
 
 # Time-series regressions
