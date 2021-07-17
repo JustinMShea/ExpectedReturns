@@ -1,32 +1,10 @@
 library(tinytest)
 library(ExpectedReturns)
 library(FactorAnalytics)
+data <- read.csv("data-test-time-series-momentum.csv")
 
-# make 'ff3.data.monthly' and 'factorDataSetDjia5Yrs' compatible for testing
-data("factorDataSetDjia5Yrs")
-data("FF3.monthly")
-factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
-ff3.data.monthly.dates <- index(FF3.monthly)
-ff3.data.monthly <- as.data.frame(coredata(FF3.monthly))
-ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
-colnames(ff3.data.monthly)[1] <- 'DATE'
-factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
-test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
-test.data$EXC.RETURN <- test.data$RETURN - test.data$RF
-test.data$RF <- NULL
-test.data.plm <- test.data
-periods <- unique(factorDataSetDjia5Yrs$DATE)
-periods.id <- 1:length(periods)
-periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
-test.data.plm <- merge(test.data.plm, periods.id, by='DATE')
-tickers <- unique(factorDataSetDjia5Yrs$TICKER)
-assets.id <- 1:length(tickers)
-assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
-test.data.plm <- merge(test.data.plm, assets.id)
-test.data.plm <- test.data.plm[order(test.data.plm[, 'ASSET.ID'], test.data.plm[, 'PERIOD.ID']), ]
-row.names(test.data.plm) <- NULL
-test.data.input <- test.data.plm[, c("ASSET.ID", "PERIOD.ID", "DATE", "EXC.RETURN", "MKT.RF", "SMB", "HML")]
-
+test.data.input <- read.csv("test-expected-returns-replications-testdatainput.csv")
+test.data <- read.csv("test-expected-returns-replications-testdata.csv")
 
 
 # Time-series regressions using plm package
