@@ -245,7 +245,8 @@ ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 portfolios <- merge(MSCI.WI, FFC4)
 # MSCI 
-portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)
+# portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)  #This can't be right***
+portfolios$MSCI.RET <- portfolios$RET
 portfolios$MSCI.RF <- portfolios$MSCI.RET - portfolios$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
