@@ -257,7 +257,9 @@ data <- data[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
 data <- merge(data, VME.PORTF.RET, by='DATE')
-data <- merge(data, VME.FACTORS, by='DATE')
+VME.FACTORS_df <- as.data.frame(VME.FACTORS) # TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
+VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
+data <- merge(data, VME.FACTORS_df, by='DATE')
 # Calculate Portfolios excess returns
 data$EXC.RET <- data$RET - data$RF
 ```

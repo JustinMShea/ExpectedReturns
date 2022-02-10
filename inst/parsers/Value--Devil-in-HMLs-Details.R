@@ -6,7 +6,8 @@
 #--------------------------------------------------------------------------------###
 
 #Define Import Function
-importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankRow = TRUE, dateFormat = "%Y-%m-%d"){
+# importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankRow = TRUE, dateFormat = "%Y-%m-%d"){
+importRemoteAQRxlsxFile <- function(path, sheet = 1, startRow = 17, removeBlankRow = TRUE, dateFormat = "%m/%d/%Y"){
 
   #download.file(url = path, destfile = tmp, mode="wb")
   #import data
