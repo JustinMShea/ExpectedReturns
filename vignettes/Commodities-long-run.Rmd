@@ -106,6 +106,8 @@ CalcReturnMeasures(COMLR[, 1:8], periods=c('1877/2020', '1877/2015', '1877/1945'
 ```
 
 ```{r Figure 2, fig.cap="Equal-weighted Commodity Index Decomposition"}
+library(PerformanceAnalytics)
+
 chart.CumReturns(COMLR[,c("XRET.EW","SXRET.EW","CARRY.ADJ.EW")], legend.loc = "topleft", wealth.index = TRUE, geometric = FALSE, main = 'Excess Spot Return/Interest Rate-Adjusted Carry Return \n(cumulative returns %)')
 
 chart.CumReturns(COMLR[,c("XRET.EW","SRET.EW","CARRY.EW")], legend.loc = "topleft", wealth.index = TRUE, geometric = FALSE, main = 'Spot/Carry Return (cumulative returns %)')
@@ -165,8 +167,8 @@ LmHorizon <- function(Y, X, horizon, data) {
 ```{r Table 6 NBER paper}
 # Prepare data set
 data.macros <- merge(
-                     COMLR['1877/2015', c('XRET.EW', 'XRET.LS', 'PFC.STATE', 'INFL.STATE')],
-                     'USREC' = as.numeric(USREC['1877-02/2015'])
+                     COMLR['1878/2015', c('XRET.EW', 'XRET.LS', 'PFC.STATE', 'INFL.STATE')],
+                     'USREC' = as.numeric(USREC['1878/2015'])
 )
 
 # Regressions
@@ -178,6 +180,17 @@ macro.regs <- LmHorizon(
 )
 
 lapply(unlist(macro.regs, recursive=FALSE), summary)
+
+library(FactorAnalytics)
+
+data.macros_df <- data.frame('Date'=index(data.macros), coredata(data.macros))
+data.macros_df$PFC.STATE <- as.factor(data.macros_df$PFC.STATE)
+data.macros_df$INFL.STATE <- as.factor(data.macros_df$INFL.STATE)
+
+
+fitTsfm(asset.names = c("XRET.EW", "XRET.LS"),
+        factor.names = c('USREC', 'PFC.STATE', 'INFL.STATE'),
+        data=data.macros)
 ```
 
 ## Commodity portfolios and investment styles
