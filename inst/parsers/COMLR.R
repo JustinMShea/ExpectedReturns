@@ -37,7 +37,7 @@ COMLR[, 2:ncol(COMLR)] <- apply(COMLR[, 2:ncol(COMLR)], 2, as.numeric)
 #COMLR$PFC.STATE <- ifelse(COMLR$PFC.STATE==0, "Contango", "Backwardation")
 #COMLR$INFL.STATE <- ifelse(COMLR$INFL.STATE==0, "Inflation.Down", "Inflation.Up")
 
-COMLR <- xts::xts(COMLR[, -1], order.by = as.yearmon(COMLR$DATE))
+COMLR <- xts::xts(COMLR[, -1], order.by = zoo::as.yearmon(COMLR$DATE))
 
 ## Remove unused variables
 rm(

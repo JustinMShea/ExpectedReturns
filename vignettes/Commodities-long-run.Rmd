@@ -57,11 +57,13 @@ $$
 
 Let us begin with an exploratory analysis of these commodities portfolios returns. Summary statistics and graphical representations are presented.
 
-```{r Data sourcing}
+```{r Data sourcing, cache=TRUE}
+library(quantmod)
 parser.path <- file.path('inst', 'parsers', 'COMLR.R')
 source(parser.path)
-parser.path <- file.path('inst', 'parsers', 'Business-Cycle.R')
-source(parser.path)
+
+USREC <- quantmod::getSymbols.FRED('USREC', env=globalenv(), auto.assign=FALSE)
+index(USREC) <- zoo::as.yearmon(index(USREC))
 ```
 
 ```{r Table 2}
@@ -170,11 +172,11 @@ LmHorizon <- function(Y, X, horizon, data) {
 ```{r Table 6 NBER paper}
 # Prepare data set
 data.macros <- merge(
-  COMLR['1877/2015', c('XRET.EW', 'XRET.LS', 'PFC.STATE', 'INFL.STATE')]
-  , USREC
+                     COMLR['1877/2015', c('XRET.EW', 'XRET.LS', 'PFC.STATE', 'INFL.STATE')],
+                     as.numeric(USREC['1877-02/2015'])
 )
-data.macros[, -ncol(data.macros)] <- zoo::na.locf(data.macros[, -ncol(data.macros)])
-data.macros <- data.macros[complete.cases(data.macros), ]
+
+colnames(data.macros) <- c(colnames(data.macros)[-5], "USREC")
 
 # Regressions
 macro.regs <- LmHorizon(
@@ -183,6 +185,7 @@ macro.regs <- LmHorizon(
   horizon = c(0, 11, 59),
   data = data.macros 
 )
+
 lapply(unlist(macro.regs, recursive=FALSE), summary)
 ```
 
