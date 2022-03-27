@@ -59,11 +59,12 @@ Let us begin with an exploratory analysis of these commodities portfolios return
 
 ```{r Data sourcing, cache=TRUE}
 library(quantmod)
+
 parser.path <- file.path('inst', 'parsers', 'COMLR.R')
 source(parser.path)
 
-USREC <- quantmod::getSymbols.FRED('USREC', env=globalenv(), auto.assign=FALSE)
-index(USREC) <- zoo::as.yearmon(index(USREC))
+USREC <- getSymbols.FRED('USREC', auto.assign=FALSE)
+index(USREC) <- as.yearmon(index(USREC))
 ```
 
 ```{r Table 2}
@@ -105,18 +106,10 @@ CalcReturnMeasures(COMLR[, 1:8], periods=c('1877/2020', '1877/2015', '1877/1945'
 ```
 
 ```{r Figure 2, fig.cap="Equal-weighted Commodity Index Decomposition"}
-plot(
-  cbind(cumsum(COMLR$XRET.EW), cumsum(COMLR$SXRET.EW), cumsum(COMLR$CARRY.ADJ.EW)) * 100,
-  main='Excess Spot Return/Interest Rate-Adjusted Carry Return \n(cumulative returns %)',
-  screens=factor(1, 1, 1), col=c('black', 'blue', 'red'),
-  legend.loc='topleft', lty=c(1, 2, 2), lwd=rep(0.97, 3)
-)
-plot(
-  cbind(cumsum(COMLR$XRET.EW), cumsum(COMLR$SRET.EW), cumsum(COMLR$CARRY.EW)) * 100,
-  main='Spot/Carry Return (cumulative returns %)',
-  screens=factor(1, 1, 1), col=c('black', 'blue', 'red'),
-  legend.loc='topleft', lty=c(1, 2, 2), lwd=rep(0.97, 3)
-)
+chart.CumReturns(COMLR[,c("XRET.EW","SXRET.EW","CARRY.ADJ.EW")], legend.loc = "topleft", wealth.index = TRUE, geometric = FALSE, main = 'Excess Spot Return/Interest Rate-Adjusted Carry Return \n(cumulative returns %)')
+
+chart.CumReturns(COMLR[,c("XRET.EW","SRET.EW","CARRY.EW")], legend.loc = "topleft", wealth.index = TRUE, geometric = FALSE, main = 'Spot/Carry Return (cumulative returns %)')
+
 ```
 
 ## Commodity portfolios and macro indicators 
@@ -173,10 +166,8 @@ LmHorizon <- function(Y, X, horizon, data) {
 # Prepare data set
 data.macros <- merge(
                      COMLR['1877/2015', c('XRET.EW', 'XRET.LS', 'PFC.STATE', 'INFL.STATE')],
-                     as.numeric(USREC['1877-02/2015'])
+                     'USREC' = as.numeric(USREC['1877-02/2015'])
 )
-
-colnames(data.macros) <- c(colnames(data.macros)[-5], "USREC")
 
 # Regressions
 macro.regs <- LmHorizon(
