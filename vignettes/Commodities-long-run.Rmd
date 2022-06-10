@@ -6,13 +6,17 @@ date: "`r Sys.Date()`"
 abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
 output:
   rmarkdown::pdf_document:
-    citation_package: biblatex
+    # citation_package: biblatex
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{"Commodities for the Long Run"}
   %\VignetteEngine{rmarkdown::render}
   %\VignetteEncoding{UTF-8}
 ---
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
 
 ```{r setup, include = FALSE}
 knitr::opts_knit$set(
@@ -28,7 +32,7 @@ knitr::opts_chunk$set(
 ```
 
 # Introduction
-This vignette aims at reproducing \textcite{levine-al-2018}. Authors find that returns of commodity futures indexes are positive over the long run. Return premiums are associated with both carry and spot returns, and in different economic states vary mostly as a result of moves in the underlying spot price as opposed to the carry component. Economic states are examined as important drivers of commodity returns, even after conditioning on whether commodity markets are in backwardation or contango. Also, commodity returns predictability is analyzed through investment style measures. Each of these analyses is in turn repeated across different horizons for insights on the predictive power variables may exhibit with respect to commodities portfolios' returns. Lastly, to address whether investors should consider allocations in commodities portfolios, authors also tackle a performance and drawdown analysis in comparison with more popular stocks/bonds portfolios. Needless to say, these sort of comparisons are certainly of fundamental importance for investors, however we are more concerned assessing commodities portfolios performance themselves.
+This vignette aims at reproducing [@levine-al-2018]. Authors find that returns of commodity futures indexes are positive over the long run. Return premiums are associated with both carry and spot returns, and in different economic states vary mostly as a result of moves in the underlying spot price as opposed to the carry component. Economic states are examined as important drivers of commodity returns, even after conditioning on whether commodity markets are in backwardation or contango. Also, commodity returns predictability is analyzed through investment style measures. Each of these analyses is in turn repeated across different horizons for insights on the predictive power variables may exhibit with respect to commodities portfolios' returns. Lastly, to address whether investors should consider allocations in commodities portfolios, authors also tackle a performance and drawdown analysis in comparison with more popular stocks/bonds portfolios. Needless to say, these sort of comparisons are certainly of fundamental importance for investors, however we are more concerned assessing commodities portfolios performance themselves.
 
 First of all, let us introduce some definitions. By the cost of carry model, commodity futures prices are
 $$
@@ -53,7 +57,7 @@ R_{t,t+1}^{\textrm{ES}} = [(1 + R_{t,t+1}^{\textrm{S}})(1 + R_{t,t+1})] - 1
 $$
 
 # Commodity portfolios returns performance
-\textcite{levine-al-2018} construct two commodity futures portfolios, an *equal-weighted* portfolio to capture the average return across commodities securities and a *long-short* backwardation-based mimicking portfolio. Economic drivers and investment styles measures are investigated to explain their performance. Also, analyses extends with respect to different sampling periods (1877-2015, 1877-1945, and 1946-2015 as originally done in the paper, and 1877-2020 until the available updated data set permits) and with respect to different analysis horizons (monthly, one year, and five years) to provide some guidance on the predictive power such drivers may exhibit. 
+<!-- \textcite{levine-al-2018}  --> construct two commodity futures portfolios, an *equal-weighted* portfolio to capture the average return across commodities securities and a *long-short* backwardation-based mimicking portfolio. Economic drivers and investment styles measures are investigated to explain their performance. Also, analyses extends with respect to different sampling periods (1877-2015, 1877-1945, and 1946-2015 as originally done in the paper, and 1877-2020 until the available updated data set permits) and with respect to different analysis horizons (monthly, one year, and five years) to provide some guidance on the predictive power such drivers may exhibit. 
 
 Let us begin with an exploratory analysis of these commodities portfolios returns. Summary statistics and graphical representations are presented.
 
@@ -115,7 +119,7 @@ chart.CumReturns(COMLR[,c("XRET.EW","SRET.EW","CARRY.EW")], legend.loc = "toplef
 ```
 
 ## Commodity portfolios and macro indicators 
-In this section the three state variables adopted in \textcite{levine-al-2018} are introduced and studied.
+In this section the three state variables adopted in <!-- \textcite{levine-al-2018}  --> are introduced and studied.
 
 1. **Commodity futures market backwardation/contango state**  
 This ex-ante measure is whether the commodity futures market is in a state of backwardation or contango. Authors determine the state based on the so called *aggregate backwardation* (contango) as the average level of backwardation (contango) reflecting inventories and hedging demand level across commodities, that is
