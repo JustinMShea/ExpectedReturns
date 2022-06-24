@@ -254,6 +254,23 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 # )
 
 # Extract AQR Factors Data
+##############################################################################################
+##############################################################################################
+ # Bryan - experimenting with HML.DEV data to work through the error of no DATE column, non matching column names, respectively.
+##############################################################################################
+##############################################################################################
+# factors_date <- data.frame(DATE=index(HML_Devil.HML.DEV), coredata(HML_Devil.HML.DEV))
+# dataxts <- xts(factors_date, order.by = factors_date[,1])  
+  # as.data.table(HML_Devil.HML.DEV)
+HML_Devil.HML.DEV <- data.frame(DATE=index(HML_Devil.HML.DEV), coredata(HML_Devil.HML.DEV))
+HML_Devil.HML.DEV <- xts(HML_Devil.HML.DEV, order.by = HML_Devil.HML.DEV[,1])
+colnames(HML_Devil.HML.DEV)[27] <- "Global Ex USA"
+
+# HML_Devil.HML.DEV$DATE <- as.Date(HML_Devil.HML.DEV$DATE, format = "%Y/%m/%d") # may not work with xts zoo objects - come back to try and fix line 286 WARNING message. 
+#############################################################################################
+#############################################################################################
+
+
 FACTORS.DATE <- HML_Devil.HML.DEV$DATE
 regions.aqr <- c('USA', 'Global Ex USA', 'Global')
 regions <- c('US', 'INTL', 'GLOBAL')
@@ -261,14 +278,14 @@ factors.vars <- c('MKT.RF', 'SMB', 'HML', 'HML.DEV', 'UMD')
 nf <- length(factors.vars)
 nr <- length(regions)
 MKT.RF <- SMB <- HML <- HML.DEV <- UMD <- matrix(
-  NA, length(FACTORS.DATE), length(regions)
+ NA, length(FACTORS.DATE), length(regions)
 )
 MKT.RF  <- HML_Devil.MKT[, regions.aqr]
 SMB     <- HML_Devil.SMB[, regions.aqr]
 HML     <- HML_Devil.HML_FF[, regions.aqr]
 HML.DEV <- HML_Devil.HML.DEV[, regions.aqr]
-# UMD obs start at later date
-start.umd.idx <- min(which(FACTORS.DATE %in% HML_Devil.UMD$DATE))
+# UMD obs start at later date #### Bryan - I'm not sure they do. 
+start.umd.idx <- min(FACTORS.DATE$DATE)
 UMD[start.umd.idx:length(FACTORS.DATE), ] <- as.matrix(HML_Devil.UMD[, regions.aqr])
 UMD <- as.data.frame(UMD)
 colnames(UMD) <- regions.aqr
