@@ -289,15 +289,15 @@ MKT.RF  <- HML_Devil.MKT[, regions.aqr]
 SMB     <- HML_Devil.SMB[, regions.aqr]
 HML     <- HML_Devil.HML_FF[, regions.aqr]
 HML.DEV <- HML_Devil.HML.DEV[, regions.aqr]
-# UMD obs start at later date #### Bryan - I'm not sure they do anymore. 
-start.umd.idx <- min(which(FACTORS.DATE %in% HML_Devil.UMD$DATE))
+# UMD obs start at later date. 
+start.umd.idx <- min(which(FACTORS.DATE %in% index(HML_Devil.UMD)))
 UMD[start.umd.idx:length(FACTORS.DATE), ] <- as.matrix(HML_Devil.UMD[, regions.aqr])
 UMD <- as.data.frame(UMD)
 colnames(UMD) <- regions.aqr
 
-# Bryan - Convert UMD to an xts object and add a date index
+#Convert UMD to an xts object and add a date index
 
-UMD <- xts(UMD, order.by = index(HML_Devil.UMD))
+UMD <- xts(UMD, order.by = FACTORS.DATE)
 
 
 
