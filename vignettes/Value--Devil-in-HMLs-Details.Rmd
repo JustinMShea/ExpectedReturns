@@ -308,7 +308,7 @@ factors.by.region <- matrix(NA, nf, nr)
 for (f in 1:nf) {
   factors.by.region[f, ] <- paste(factors.vars[f], regions, sep='.')
   colnames(factors[[f]]) <- factors.by.region[f, ]
-  factors[[f]] <- cbind(factors[[f]], 'DATE.ID'=as.numeric(dimnames(factors[[f]])[[1]]))
+  factors[[f]] <- cbind(factors[[f]], 'DATE.ID'=dimnames(factors[[f]])[[1]])
   factors.data[[f]] <- factors[[f]]
 }
 names(factors.data) <- factors.vars
@@ -318,6 +318,8 @@ factors.data <- Reduce(function(...) {
 factors.data <- data.frame(
   DATE=FACTORS.DATE,
   factors.data
+
+factors.data <- #remove by columns    
 )
 ```
 
