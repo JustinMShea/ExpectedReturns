@@ -318,9 +318,10 @@ factors.data <- Reduce(function(...) {
 factors.data <- data.frame(
   DATE=FACTORS.DATE,
   factors.data
-
-factors.data <- #remove by columns    
 )
+
+factors.data = subset(factors.data, select = -c(by, by.1, by.2, by.3))
+
 ```
 
 ```{r Get assets data}
@@ -382,13 +383,13 @@ n.hml.d <- nrow(hml.dev.regrs)
 
 # Run HML^{a,c} time-series regressions
 ts.regs.hml <- lapply(1:n.hml, function(i) {
-  data <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE.ID')]
+  data <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE')]
   y <- colnames(data)[1]
   X <- paste(hml.regrs[i, ], collapse='+')
   model.formula <- formula(paste(y, X, sep='~'))
   plm::plm(
     model.formula, data=data,
-    model='pooling', index='DATE.ID'
+    model='pooling', index='DATE'
   )
 })
 ## Beta estimates
@@ -403,13 +404,13 @@ knitr::kable(t(betas.hml))
 
 # Run HML^{Devil}, i.e. HML^{m,c}, time-series regressions
 ts.regs.hml.dev <- lapply(1:n.hml.d, function(i) {
-  data <- factors.data[, c(regrds[i, 2], hml.dev.regrs[i, ], 'DATE.ID')]
+  data <- factors.data[, c(regrds[i, 2], hml.dev.regrs[i, ], 'DATE')]
   y <- colnames(data)[1]
   X <- paste(hml.dev.regrs[i, ], collapse='+')
   model.formula <- formula(paste(y, X, sep='~'))
   plm::plm(
     model.formula, data=data,
-    model='pooling', index='DATE.ID'
+    model='pooling', index='DATE'
   )
 })
 names(ts.regs.hml.dev) <- paste(tolower(regrds[, 2]), 'reg', sep='.')
