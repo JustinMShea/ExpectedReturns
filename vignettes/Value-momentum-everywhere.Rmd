@@ -269,8 +269,15 @@ tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
 portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
-portfolios <- merge(portfolios, VME.PORTF.RET) #, by='DATE')
-portfolios <- merge(portfolios, VME.FACTORS) #, by='DATE')
+# TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
+data <- merge(data, VME.PORTF.RET, by='DATE')
+VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
+VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
+data <- merge(data, VME.FACTORS_df, by='DATE')
+## old merge code...
+## portfolios <- merge(portfolios, VME.PORTF.RET) #, by='DATE')
+## portfolios <- merge(portfolios, VME.FACTORS) #, by='DATE')
+
 # Calculate Portfolios excess returns
 portfolios$EXC.RET <- portfolios$RET - portfolios$RF
 portfoliosDT <- data.table::data.table(Date = index(portfolios), coredata(portfolios))
@@ -320,6 +327,7 @@ portf <- unique(portfoliosDT$PORTFNAME)
 portf.id <- 1:length(portf)
 portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
 portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
+
 # portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
  portfoliosDT[order(PORTF.ID, DATE.ID)] #I have no idea what the point of this is
 portfoliosDT <- portfoliosDT[order(PORTFNAME,Date)]

@@ -23,7 +23,7 @@ colnames(VME.Factors) <- variable.names
 # Convert variables to "numeric" and dates to "Date"
 VME.Factors.vars <- colnames(VME.Factors) != 'DATE'
 VME.Factors[, VME.Factors.vars] <- apply(VME.Factors[, VME.Factors.vars], 2, as.numeric)
-VME.Factors$DATE <- as.Date.character(VME.Factors$DATE, '%Y-%m-%d')
+VME.Factors$DATE <- as.Date.character(VME.Factors$DATE, "%m/%d/%Y")
 
 # Remove empty cells
 VME.Factors <- zoo::na.trim(VME.Factors)

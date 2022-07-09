@@ -221,16 +221,18 @@ GetFactors <- function(x
                 # Returns and variables are as of end of month
                 yrs <- as.numeric(substr(ff.data.monthly[, 1], 1, 4))
                 mos <- as.numeric(substr(ff.data.monthly[, 1], 5, 7))
-                monthly.dates <- as.Date.character(
-                  paste(yrs, mos + 1, '01', sep='-'),
-                  '%Y-%m-%d'
-                )
-                monthly.dates <- monthly.dates - 1
-                artificial.thirteenth.idxs <- which(is.na(monthly.dates))
-                monthly.dates[artificial.thirteenth.idxs] <- as.Date.character(
-                  paste(yrs[yrs != last(yrs)], '12', '31', sep='-'),
-                  '%Y-%m-%d'
-                )[artificial.thirteenth.idxs]
+                # monthly.dates <- as.Date.character(
+                #   paste(yrs, mos + 1, '01', sep='-'),
+                #   '%Y-%m-%d'
+                # )
+                # monthly.dates <- as.Date.yearmon(as.yearmon(paste(yrs, mos, sep = "-")), frac = 1)
+                monthly.dates <- as.Date.yearmon(as.yearmon(ff.data.monthly$X, format = "%Y%m"), frac = 1)
+                # monthly.dates <- monthly.dates - 1
+                # artificial.thirteenth.idxs <- which(is.na(monthly.dates))
+                # monthly.dates[artificial.thirteenth.idxs] <- as.Date.character(
+                #   paste(yrs[yrs != last(yrs)], '12', '31', sep='-'),
+                #   "%m/%d/%Y"
+                # )[artificial.thirteenth.idxs]
                 ff.data.monthly.xts <- as.xts(as.matrix(ff.data.monthly[, -1]), order.by=monthly.dates)
                 storage.mode(ff.data.monthly.xts) <- 'numeric'
                 # Convert to decimal values
