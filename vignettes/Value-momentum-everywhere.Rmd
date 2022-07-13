@@ -329,7 +329,7 @@ portf.id <- 1:length(portf)
 portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
 portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
 portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID']), ]
-portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'DATE.ID']), ]
+# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'DATE.ID']), ]
 row.names(portfoliosDT) <- NULL
 ```
 
