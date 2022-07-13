@@ -13,7 +13,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{rmarkdown::render}
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, include = FALSE}
@@ -245,8 +245,7 @@ ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 portfolios <- merge(MSCI.WI, FFC4)
 # MSCI 
-# portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)  #This can't be right***
-portfolios$MSCI.RET <- portfolios$RET
+portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)
 portfolios$MSCI.RF <- portfolios$MSCI.RET - portfolios$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
@@ -261,10 +260,7 @@ portfolios <- merge(CRP, portfolios)
 #   portfolios[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
 #   row.names=NULL
 # )
-
-# portfolios <- portfolios[ff.dates,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
-portfolios <- portfolios[ff.dates,c(colnames(CRP), 'MSCI.RF','RET', colnames(FFC4))]
-
+portfolios <- portfolios[ff.dates,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
 tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
 portfolios <- portfolios[tp, ]
 
@@ -279,23 +275,23 @@ data <- merge(data, VME.FACTORS_df, by='DATE')
 ## portfolios <- merge(portfolios, VME.FACTORS) #, by='DATE')
 
 # Calculate Portfolios excess returns
-portfolios$EXC.RET <- portfolios$RET - portfolios$RF
+# portfolios$EXC.RET <- portfolios$RET - portfolios$RF
 portfoliosDT <- data.table::data.table(Date = index(portfolios), coredata(portfolios))
 portfoliosDT <- data.table::melt(data = portfoliosDT, id.vars = c("Date"), value.name = "RET", variable.name = "PORTFNAME")
 data.table::setkey(portfoliosDT,"Date","PORTFNAME")
 
-# tmp <- portfoliosDT[PORTFNAME == "RF"]
-# # tmp[,EXC.RET:=NA]
-# nrow(portfoliosDT)
-# 
-# portfoliosDT <- 
-# data.table::merge.data.table(x = portfoliosDT[PORTFNAME != "RF"]
-#                   , y = portfoliosDT[PORTFNAME == "RF"]
-#                   , by = "Date"
-# )[,.(Date, PORTFNAME=PORTFNAME.x, RET=RET.x)]#, EXC.RET=RET.x - RET.y)]
-# 
-# portfoliosDT <- rbind(portfoliosDT, tmp)
-# rm(tmp)
+tmp <- portfoliosDT[PORTFNAME == "RF"]
+tmp[,EXC.RET:=NA]
+nrow(portfoliosDT)
+
+portfoliosDT <- 
+data.table::merge.data.table(x = portfoliosDT[PORTFNAME != "RF"]
+                  , y = portfoliosDT[PORTFNAME == "RF"]
+                  , by = "Date"
+)[,.(Date, PORTFNAME=PORTFNAME.x, RET=RET.x, EXC.RET=RET.x - RET.y)]
+
+portfoliosDT <- rbind(portfoliosDT, tmp)
+rm(tmp)
 
 portfoliosDT <- portfoliosDT[!is.na(RET),]
                   
@@ -327,10 +323,7 @@ portf <- unique(portfoliosDT$PORTFNAME)
 portf.id <- 1:length(portf)
 portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
 portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
-
-# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
- portfoliosDT[order(PORTF.ID, DATE.ID)] #I have no idea what the point of this is
-portfoliosDT <- portfoliosDT[order(PORTFNAME,Date)]
+portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID.x'], portfoliosDT[, 'DATE.ID.x']), ]
 row.names(portfoliosDT) <- NULL
 ```
 
