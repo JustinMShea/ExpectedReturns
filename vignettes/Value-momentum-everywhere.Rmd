@@ -328,13 +328,12 @@ portf <- unique(portfoliosDT$PORTFNAME)
 portf.id <- 1:length(portf)
 portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
 portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
-<<<<<<< HEAD
-portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID.x'], portfoliosDT[, 'DATE.ID.x']), ]
-=======
+
+# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
+
 portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID']), ]
 # portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'DATE.ID']), ]
->>>>>>> fc84941b25f3a80b703c3dd1886904036c4c71c9
-row.names(portfoliosDT) <- NULL
+# row.names(portfoliosDT) <- NULL
 ```
 
 
