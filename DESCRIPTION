@@ -20,12 +20,12 @@ Description: Collection of tools to replicate investment strategies discussed in
   in current market conditions or in different markets than those utilized for 
   the text.
 Depends:
-  R (>= 3.5),
-  FactorAnalytics (>= 2.0.36)
+  R (>= 3.5)
 Imports:
-  PerformanceAnalytics,
+  FactorAnalytics (>= 2.0.36),
   lmtest,
   openxlsx,
+  PerformanceAnalytics,
   sandwich,
   xts,
   XML,
