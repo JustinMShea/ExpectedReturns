@@ -13,7 +13,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{rmarkdown::render}
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, include = FALSE}
@@ -266,10 +266,15 @@ portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
 # TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
-data <- merge(data, VME.PORTF.RET, by='DATE')
+data <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
 VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
+data_df <- as.data.frame(data)
+data_df$DATE <- index(data)
+
+
 VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
-data <- merge(data, VME.FACTORS_df, by='DATE')
+## may not need these lines of code below
+# data <- merge(data, VME.FACTORS_df, by='DATE')
 ## old merge code...
 ## portfolios <- merge(portfolios, VME.PORTF.RET) #, by='DATE')
 ## portfolios <- merge(portfolios, VME.FACTORS) #, by='DATE')
@@ -323,8 +328,12 @@ portf <- unique(portfoliosDT$PORTFNAME)
 portf.id <- 1:length(portf)
 portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
 portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
-portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
-row.names(portfoliosDT) <- NULL
+
+# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
+
+portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID']), ]
+# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'DATE.ID']), ]
+# row.names(portfoliosDT) <- NULL
 ```
 
 
