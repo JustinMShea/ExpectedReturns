@@ -22,6 +22,7 @@
 
 path.file <- file.path('sandbox', 'data', 'MSCI_WI.xls')
 MSCI.WI.raw <- readxl::read_xls(path.file, sheet=1, skip=6, col_names =TRUE)
+MSCI.WI.raw <- as.data.frame(MSCI.WI.raw)
 colnames(MSCI.WI.raw) <- c("Date", "Price")
 
 # format
@@ -30,7 +31,7 @@ MSCI.WI.raw$Date <- as.Date(MSCI.WI.raw$Date, format = "%b %d, %Y")
 MSCI.WI.raw <- na.trim(MSCI.WI.raw)
 
 # NOTE: returns in decimal unit
-MSCI.WI <- as.xts(MSCI.WI.raw$Price, order.by=MSCI.WI.raw$Date)
+MSCI.WI <- xts::xts(x = MSCI.WI.raw$Price, order.by = MSCI.WI.raw$Date)
 colnames(MSCI.WI) <- 'PRICE'
 MSCI.WI$RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'discrete')
 MSCI.WI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'log')

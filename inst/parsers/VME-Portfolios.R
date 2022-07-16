@@ -25,7 +25,7 @@ colnames(VME.Portfolios) <- toupper(variable.names)
 # Convert variables to "numeric" and dates to "Date"
 VME.Portfolios.vars <- colnames(VME.Portfolios) != 'DATE'
 VME.Portfolios[, VME.Portfolios.vars] <- apply(VME.Portfolios[, VME.Portfolios.vars], 2, as.numeric)
-VME.Portfolios$DATE <- as.Date.character(VME.Portfolios$DATE, '%Y-%m-%d')
+VME.Portfolios$DATE <- as.Date.character(VME.Portfolios$DATE, "%m/%d/%Y")
 
 # convert to xts
 VME.Portfolios <- xts::xts(VME.Portfolios[,-1], order.by = VME.Portfolios$DATE)

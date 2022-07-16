@@ -14,6 +14,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+
 ```{r setup, include = FALSE}
 knitr::opts_knit$set(
   root.dir = normalizePath('..')
@@ -30,6 +36,7 @@ knitr::opts_chunk$set(
 # Load libraries
 library(xts)
 library(plm)
+library(FactorAnalytics)
 ```
 
 ```{r, echo=FALSE}
@@ -348,7 +355,7 @@ lapply(tsmom.div.all, summary)
 tsmom.div.all
 #refactored by jiarui
 data.test <- data 
-row.names(data.test) <-data.test$DATE 
+row.names(data.test) <- data.test$DATE 
 data.test$DATE <- NULL
 tsmom.div.all.test <- lapply(Y, function(y) {
   fitTsfm(factor.names='TSMOM' , asset.names=y, data = data.test) 

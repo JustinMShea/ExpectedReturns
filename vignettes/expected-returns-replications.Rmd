@@ -59,6 +59,8 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 # install_github('FactorAnalytics')
 library(ExpectedReturns)
 library(FactorAnalytics)
+library(xts)
+
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
 ## Get and set data to pass to fitFfm()

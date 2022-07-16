@@ -13,7 +13,7 @@ vignette: >
   %\VignetteEncoding{UTF-8}
   %\VignetteEngine{rmarkdown::render}
 editor_options: 
-  chunk_output_type: console
+  chunk_output_type: inline
 ---
 
 ```{r setup, include = FALSE}
@@ -51,7 +51,7 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 source(parser.path)
 
 # Subset AQR GAP data points 
-MKT.GLOBAL <- xts(HML_Devil.MKT$Global, HML_Devil.MKT$DATE)
+MKT.GLOBAL <- xts::xts(x = HML_Devil.MKT$Global, order.by = index(HML_Devil.MKT))
 colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
 # delete leading NAs
 MKT.GLOBAL <- na.trim(MKT.GLOBAL)
@@ -65,6 +65,8 @@ cor.methods <- c('pearson', 'spearman')
 path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
 source(path.parser)
 
+#change date to end-of-month
+index(MSCI.WI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.WI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$MKT.GLOBAL))) + 1
@@ -110,6 +112,8 @@ Because AQR's "Global Aggregate Equity Portfolio" contains more securities then 
 path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
 source(path.parser)
 
+#change date to end-of-month
+index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$COMP.RET)))
@@ -208,19 +212,20 @@ VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
 # Get AMP Portfolios Returns and make them a panel
 VME.PORTF.DATE <- index(VME.Portfolios)
 #indexVME.Portfolios$DATE <- NULL
-VME.PORTF.RET <- coredata(VME.Portfolios)
-portf.names <- colnames(VME.PORTF.RET)
-t <- nrow(VME.PORTF.RET)
-p <- ncol(VME.PORTF.RET)
-portf.names <- as.data.frame(matrix(portf.names, nrow=t, ncol=p, byrow=TRUE))
-VME.PORTF.RET <- asplit(VME.PORTF.RET, 2)
-portf.names <- asplit(portf.names, 2)
-VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
-VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
-VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
-VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
-# VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
-VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
+# VME.PORTF.RET <- coredata(VME.Portfolios)
+VME.PORTF.RET <- VME.Portfolios
+# portf.names <- colnames(VME.PORTF.RET)
+# t <- nrow(VME.PORTF.RET)
+# p <- ncol(VME.PORTF.RET)
+# portf.names <- as.data.frame(matrix(portf.names, nrow=t, ncol=p, byrow=TRUE))
+# VME.PORTF.RET <- asplit(VME.PORTF.RET, 2)
+# portf.names <- asplit(portf.names, 2)
+# VME.PORTF.RET <- Map(cbind, portf.names, VME.PORTF.RET)
+# VME.PORTF.RET <- Reduce(rbind, VME.PORTF.RET)
+# VME.PORTF.RET <- data.frame(PORTF=VME.PORTF.RET[, 1], RET=VME.PORTF.RET[, 2])
+# VME.PORTF.RET <- cbind(DATE=rep(VME.PORTF.DATE, p), VME.PORTF.RET)
+# # VME.PORTF.RET$DATE <- as.Date(VME.PORTF.RET$DATE)
+# VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 ```
 
 ```{r Get factors and portfolios data 3}
@@ -238,28 +243,63 @@ ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 ## Merge Factors and Portfolios Data
 # Factors data
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
-data <- merge(MSCI.WI, FFC4)
+portfolios <- merge(MSCI.WI, FFC4)
 # MSCI 
-data$MSCI.RET <- zoo::na.locf(data$RET)
-data$MSCI.RF <- data$MSCI.RET - data$RF
+portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)
+portfolios$MSCI.RF <- portfolios$MSCI.RET - portfolios$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
-data <- merge(CRP, data)
+
+#change date to end-of-month
+index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
+portfolios <- merge(CRP, portfolios)
 # Merge factors data
-data <- zoo::na.locf(data)
-data <- data.frame(
-  DATE=ff.dates,
-  data[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
-  row.names=NULL
-)
-tp <- 1:max(which(!is.na(data$CORP.XS)))
-data <- data[tp, ]
+# portfolios <- zoo::na.locf(portfolios)
+# portfolios <- portfolios.frame(
+#   DATE=ff.dates,
+#   portfolios[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
+#   row.names=NULL
+# )
+portfolios <- portfolios[ff.dates,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
+tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
+portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
-data <- merge(data, VME.PORTF.RET, by='DATE')
-data <- merge(data, VME.FACTORS, by='DATE')
+# TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
+data <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
+VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
+data_df <- as.data.frame(data)
+data_df$DATE <- index(data)
+
+
+VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
+## may not need these lines of code below
+# data <- merge(data, VME.FACTORS_df, by='DATE')
+## old merge code...
+## portfolios <- merge(portfolios, VME.PORTF.RET) #, by='DATE')
+## portfolios <- merge(portfolios, VME.FACTORS) #, by='DATE')
+
 # Calculate Portfolios excess returns
-data$EXC.RET <- data$RET - data$RF
+# portfolios$EXC.RET <- portfolios$RET - portfolios$RF
+portfoliosDT <- data.table::data.table(Date = index(portfolios), coredata(portfolios))
+portfoliosDT <- data.table::melt(data = portfoliosDT, id.vars = c("Date"), value.name = "RET", variable.name = "PORTFNAME")
+data.table::setkey(portfoliosDT,"Date","PORTFNAME")
+
+tmp <- portfoliosDT[PORTFNAME == "RF"]
+tmp[,EXC.RET:=NA]
+nrow(portfoliosDT)
+
+portfoliosDT <- 
+data.table::merge.data.table(x = portfoliosDT[PORTFNAME != "RF"]
+                  , y = portfoliosDT[PORTFNAME == "RF"]
+                  , by = "Date"
+)[,.(Date, PORTFNAME=PORTFNAME.x, RET=RET.x, EXC.RET=RET.x - RET.y)]
+
+portfoliosDT <- rbind(portfoliosDT, tmp)
+rm(tmp)
+
+portfoliosDT <- portfoliosDT[!is.na(RET),]
+                  
 ```
 
 ### Explaining Value/Momentum in One Market with Value/Momentum in Other Markets
@@ -279,25 +319,31 @@ Whereas, $VAL_{t}^{\textrm{everywhere}}$ and $MOM_{t}^{\textrm{everywhere}}$ are
 ```{r Global Three-Factor Model}
 ## Prepare indexes to determine panel structure
 # 'DATE.ID', each date gets unique numeric id
-dates <- unique(data$DATE)
+dates <- unique(portfoliosDT$Date)
 dates.id <- 1:length(dates)
-dates.id <- data.frame('DATE'=dates, 'DATE.ID'=dates.id)
-data <- merge(data, dates.id, by='DATE')
+dates.id <- data.frame('Date'=dates, 'DATE.ID'=dates.id)
+portfoliosDT <- merge(portfoliosDT, dates.id, by="Date")
 # 'PORTF.ID', each portfolio gets unique numeric id
-portf <- unique(data$PORTF)
+portf <- unique(portfoliosDT$PORTFNAME)
 portf.id <- 1:length(portf)
-portf.id <- data.frame('PORTF'=portf, 'PORTF.ID'=portf.id)
-data <- merge(data, portf.id, by='PORTF')
-data <- data[order(data[, 'PORTF.ID'], data[, 'DATE.ID']), ]
-row.names(data) <- NULL
+portf.id <- data.frame('PORTFNAME'=portf, 'PORTF.ID'=portf.id)
+portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
+
+# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
+
+portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID']), ]
+# portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'DATE.ID']), ]
+# row.names(portfoliosDT) <- NULL
+```
 
 
+```{r Global Three-Factor Model 2}
 # TODO: Only model for which data is readily available at the moment.
 
 # Time-series regressions
 ts.reg <- plm::pmg(
   EXC.RET ~ MSCI.RF + VAL.EVR + MOM.EVR,
-  data=data, index=c('PORTF.ID', 'DATE.ID')
+  data=portfolios, index=c('PORTF.ID', 'DATE.ID')
 )
 ## Estimates
 summary(ts.reg) # average coefficients
@@ -307,15 +353,15 @@ colnames(betas) <- paste('BETA', colnames(betas), sep='.')
 betas
 
 # Cross-sectional regressions
-cs.data <- data[order(data[, 'DATE']), ]
-cs.data <- data.frame(
-  data[, c('DATE', 'EXC.RET', 'DATE.ID', 'PORTF.ID')], 
+cs.portfolios <- portfolios[order(portfolios[, 'DATE']), ]
+cs.portfolios <- data.frame(
+  portfolios[, c('DATE', 'EXC.RET', 'DATE.ID', 'PORTF.ID')], 
   betas[, 2:ncol(betas)],
   row.names=NULL
 )
 cs.reg <- plm::pmg(
   EXC.RET ~ BETA.MSCI.RF + BETA.VAL.EVR + BETA.MOM.EVR, 
-  data=cs.data, index=c('DATE.ID', 'PORTF.ID')
+  data=cs.portfolios, index=c('DATE.ID', 'PORTF.ID')
 )
 ## Estimates
 summary(cs.reg) # average coefficients
@@ -341,7 +387,7 @@ ts.reg.us <- lapply(fv.seq, function(x) {
     )
   )
   plm::pmg(
-    model.formula, data=data, 
+    model.formula, data=portfolios, 
     index=c('PORTF.ID', 'DATE.ID')
   )
 })
@@ -371,7 +417,7 @@ ts.reg.global <- lapply(1:kk, function(x) {
     )
   )
   plm::pmg(
-    model.formula, data=data, 
+    model.formula, data=portfolios, 
     index=c('PORTF.ID', 'DATE.ID')
   )
 })
@@ -415,7 +461,7 @@ rbind(global.mods.res, us.mods.res)
 ```{r VME Figure 6 plots}
 ### AMP Model Plot ###
 VME.Portfolios <- apply(VME.Portfolios, 2, as.numeric)
-amp.factors <- data[1:length(dates), c('MKT.RF', 'VAL.EVR', 'MOM.EVR')]
+amp.factors <- portfolios[1:length(dates), c('MKT.RF', 'VAL.EVR', 'MOM.EVR')]
 amp.factors.avg <- colMeans(amp.factors, na.rm=TRUE)
 # Actual Average Returns 
 # TODO: Full series lengths differ. Should use only obs in regressions
