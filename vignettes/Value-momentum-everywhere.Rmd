@@ -3,7 +3,7 @@ title: '"Value and Momentum Everywhere"'
 subtitle: (draft)
 author: "Vito Lestingi"
 date: "`r Sys.Date()`"
-abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+abstract: "This reproducible document includes material on some academic and practitioners' literature instrumental for the project."
 output:
   rmarkdown::pdf_document:
     citation_package: biblatex
@@ -28,10 +28,6 @@ knitr::opts_knit$set(
 
 library(xts)
 library(plm)
-```
-
-```{r, echo=FALSE}
-# Mentors, please feel free to add yourself to the authors' field if you wish.
 ```
 
 # Introduction
