@@ -7,7 +7,7 @@
 #' Stambaugh, R. F. and Yuan, Y. (2017). *Mispricing Factors*. The Review of Financial Studies.
 
 # Download replication data set
-SY.raw <- rio::import('http://finance.wharton.upenn.edu/~stambaug/M4.csv', format='csv')
+SY.raw <- read.csv('http://finance.wharton.upenn.edu/~stambaug/M4.csv')
 
 # Arrange data set
 colnames(SY.raw)[1:2] <- c('Date', 'MKT.RF')

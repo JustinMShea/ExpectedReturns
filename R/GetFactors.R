@@ -106,7 +106,6 @@
 #'
 #' } #end dontrun
 #'
-#' @importFrom rio import
 #' @importFrom utils download.file read.csv unzip
 #' @importFrom xts as.xts last
 #'
@@ -263,7 +262,7 @@ GetFactors <- function(x
                 )
                 freq.idx <- match(freq, freq.avail)
                 target.url <- hxz.factors.data.links[freq.idx]
-                hxz.data.raw <- import(paste0(base.url, target.url))
+                hxz.data.raw <- read.csv(paste0(base.url, target.url))
                 if (any(freq == c('daily', 'weekly', 'w2w'))) {
                   yrs <- substr(hxz.data.raw[, 1], 1, 4)
                   mos <- substr(hxz.data.raw[, 1], 5, 6)
