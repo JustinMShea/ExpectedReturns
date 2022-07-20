@@ -58,6 +58,8 @@ where $r_{p,t}$ is the excess return of the portfolio $p$ over the time period $
 
 # install_github('FactorAnalytics')
 library(ExpectedReturns)
+library(FactorAnalytics)
+library(xts)
 
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
@@ -154,9 +156,7 @@ avg.coefs
 # NOTE: 
 # same limitations stated in previous TODOs still hold.
 # Only concerning with the core mechanics so far.
-
 library(plm)             # to estimate model
-
 # match and merge FF3 factors data and stocks data
 test.data.plm <- test.data
 
@@ -208,5 +208,30 @@ gammas
 
 # (Check my Fama-MacBeth snippet vs. `plm` version)
 gammas == gamma.coefs
+
+
+#refactor by Jiarui
+
+#Use fitTsfm to do time series regression 
+test.data.third <- data.table::dcast(test.data, DATE ~ TICKER,  value.var = "EXC.RETURN")
+test.data.third <- merge(test.data.third, ff3.data.monthly[c('DATE', 'MKT.RF','SMB','HML')], by='DATE')
+row.names(test.data.third) <- test.data.third$DATE
+test.data.third$DATE <- NULL
+fit.test <- fitTsfm(asset.names = unique(factorDataSetDjia5Yrs$TICKER), factor.names = c('MKT.RF','SMB','HML'), data = test.data.third)
+fit.test.coefs <- cbind(fit.test$alpha, fit.test$beta) 
+fit.test.coefs == betas
+fit.test.coefs == beta.coefs
+
+
+#Use fitFfm to do cross sectional regression
+
+test.data.fourth  <-  data.frame(test.data[, c("DATE", "TICKER", "EXC.RETURN")], fit.test.coefs[, 2:4])
+exposure.vars <- c('MKT.RF', 'SMB', 'HML')
+fit.test.second <- fitFfm(data=test.data.fourth, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", exposure.vars=exposure.vars, addIntercept=TRUE, lagExposures = FALSE)
+fit.test.second.coefs <- data.frame(unique(test.data.fourth$DATE), fit.test.second$factor.returns)
+colnames(fit.test.second.coefs) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
+row.names(fit.test.second.coefs) <- NULL 
+fit.test.second.coefs == gammas
+fit.test.second.coefs == gamma.coefs
 ```
 

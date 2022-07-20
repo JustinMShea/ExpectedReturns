@@ -16,7 +16,7 @@ CFP <- na.trim(AQR.CFP.raw)
 
 # Convert variables
 CFP[, -1] <- apply(CFP[, -1], 2, as.numeric)
-CFP$Date <- as.Date.character(CFP$Date, '%Y-%m-%d')
+CFP$Date <- as.Date.character(CFP$X1, '%Y-%m-%d')
 CFP <- xts::xts(CFP[, -1], order.by=CFP$Date)
 
 tmp <- colnames(CFP)
@@ -44,7 +44,7 @@ variables.split <- strsplit(tmp[1:40], '\\.') # all except '*.MARKET'
 variables.swapped <- sapply(variables.split, function(x) {
   paste(rev(x), collapse = '.')
 })
-variable.names <- c(variables.swapped, tmp[41:44])
+variable.names <- c(variables.swapped, tmp[41:45])
 variable.names
 # Reassign names
 colnames(CFP) <- variable.names

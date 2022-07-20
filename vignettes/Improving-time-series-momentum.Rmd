@@ -504,7 +504,7 @@ AvgSignalSpeed <- function(X, signal, lookback) {
   for (b in 1:nlb) {
     for (s in 1:nsg) {
       mom.speed[, s, b] <- unlist(
-        MomSignal(X, lookback=lookback[b], signal=signal[s], speed=TRUE)$mom.speed
+        ExpectedReturns::MomSignal(X, lookback=lookback[b], signal=signal[s], speed=TRUE)$mom.speed
       )
     }
   }
@@ -726,7 +726,7 @@ Authors claim that momentum signals able to reduce long-short swings can reduce 
 ```{r Table 4 and 5}
 TSMOM <- function(X, signal, estimator, lookback, holding, ...) {
   # Momentum signals
-  mom.sig.inst <- MomSignal(X, lookback, signal)
+  mom.sig.inst <- ExpectedReturns::MomSignal(X, lookback, signal)
   mom.sig <- Reduce(cbind, mom.sig.inst)
   # Volatility 
   # TODO: are authors estimating volatility on daily data nevertheless?

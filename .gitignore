@@ -32,3 +32,6 @@ vignettes/*.html
 .Rhistory
 .RData
 .Ruserdata
+
+/sandbox/data/FuturesData/
+/sandbox/data/misc/

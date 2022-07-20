@@ -193,7 +193,7 @@ In the construction of their original "International sample" (or "Global ex US")
 ## Run Justin-Erol's parser for Asness-Frazzini (2013) replication data set
 #source("vignettes/Value--Devil-in-HMLs-Details.R")
 parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
- source(parser.path)
+source(parser.path)
 
 # NOTE: In the paper sample period is 1950-2011 for US, 1983-2011 for Intl. Sample
 # NOTE: MKT from AQR is already in excess of 1-month T-bill returns
@@ -254,24 +254,52 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 # )
 
 # Extract AQR Factors Data
-FACTORS.DATE <- HML_Devil.HML.DEV$DATE
+##############################################################################################
+##############################################################################################
+ # Bryan - experimenting with HML.DEV data to work through the error of no DATE column, non matching column names, respectively.
+##############################################################################################
+##############################################################################################
+# factors_date <- data.frame(DATE=index(HML_Devil.HML.DEV), coredata(HML_Devil.HML.DEV))
+# dataxts <- xts(factors_date, order.by = factors_date[,1])  
+  # as.data.table(HML_Devil.HML.DEV)
+# HML_Devil.HML.DEV <- data.frame(DATE=index(HML_Devil.HML.DEV), coredata(HML_Devil.HML.DEV))
+# HML_Devil.HML.DEV <- xts(HML_Devil.HML.DEV, order.by = HML_Devil.HML.DEV[,1])
+# colnames(HML_Devil.HML.DEV)[27] <- "Global Ex USA"
+
+# HML_Devil.UMD <- data.frame(DATE=index(HML_Devil.UMD), coredata(HML_Devil.UMD))
+# HML_Devil.UMD <- xts(HML_Devil.UMD, order.by = HML_Devil.UMD[,1])
+# colnames(HML_Devil.UMD)[27] <- "Global Ex USA"
+# NEED TO ADD DATE COLUMN SAME WAY I DID FOR HML.DEV ON LINE 290
+# HML_
+# HML_Devil.HML.DEV$DATE <- as.Date(HML_Devil.HML.DEV$DATE, format = "%Y/%m/%d") # may not work with xts zoo objects - come back to try and fix line 286 WARNING message. 
+#############################################################################################
+#############################################################################################
+
+
+FACTORS.DATE <- index(HML_Devil.HML.DEV)
 regions.aqr <- c('USA', 'Global Ex USA', 'Global')
 regions <- c('US', 'INTL', 'GLOBAL')
 factors.vars <- c('MKT.RF', 'SMB', 'HML', 'HML.DEV', 'UMD')
 nf <- length(factors.vars)
 nr <- length(regions)
 MKT.RF <- SMB <- HML <- HML.DEV <- UMD <- matrix(
-  NA, length(FACTORS.DATE), length(regions)
+ NA, length(FACTORS.DATE), length(regions)
 )
 MKT.RF  <- HML_Devil.MKT[, regions.aqr]
 SMB     <- HML_Devil.SMB[, regions.aqr]
 HML     <- HML_Devil.HML_FF[, regions.aqr]
 HML.DEV <- HML_Devil.HML.DEV[, regions.aqr]
-# UMD obs start at later date
-start.umd.idx <- min(which(FACTORS.DATE %in% HML_Devil.UMD$DATE))
+# UMD obs start at later date. 
+start.umd.idx <- min(which(FACTORS.DATE %in% index(HML_Devil.UMD)))
 UMD[start.umd.idx:length(FACTORS.DATE), ] <- as.matrix(HML_Devil.UMD[, regions.aqr])
 UMD <- as.data.frame(UMD)
 colnames(UMD) <- regions.aqr
+
+#Convert UMD to an xts object and add a date index
+
+UMD <- xts(UMD, order.by = FACTORS.DATE)
+
+
 
 # Merge Factors Data
 factors <- list(MKT.RF=MKT.RF, SMB=SMB, HML=HML, HML.DEV=HML.DEV, UMD=UMD)
@@ -280,7 +308,7 @@ factors.by.region <- matrix(NA, nf, nr)
 for (f in 1:nf) {
   factors.by.region[f, ] <- paste(factors.vars[f], regions, sep='.')
   colnames(factors[[f]]) <- factors.by.region[f, ]
-  factors[[f]] <- cbind(factors[[f]], 'DATE.ID'=as.numeric(dimnames(factors[[f]])[[1]]))
+  factors[[f]] <- cbind(factors[[f]], 'DATE.ID'=dimnames(factors[[f]])[[1]])
   factors.data[[f]] <- factors[[f]]
 }
 names(factors.data) <- factors.vars
@@ -291,6 +319,9 @@ factors.data <- data.frame(
   DATE=FACTORS.DATE,
   factors.data
 )
+
+factors.data = subset(factors.data, select = -c(by, by.1, by.2, by.3))
+
 ```
 
 ```{r Get assets data}
@@ -352,13 +383,13 @@ n.hml.d <- nrow(hml.dev.regrs)
 
 # Run HML^{a,c} time-series regressions
 ts.regs.hml <- lapply(1:n.hml, function(i) {
-  data <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE.ID')]
+  data <- factors.data[, c(regrds[i, 1], hml.regrs[i, ], 'DATE')]
   y <- colnames(data)[1]
   X <- paste(hml.regrs[i, ], collapse='+')
   model.formula <- formula(paste(y, X, sep='~'))
   plm::plm(
     model.formula, data=data,
-    model='pooling', index='DATE.ID'
+    model='pooling', index='DATE'
   )
 })
 ## Beta estimates
@@ -373,13 +404,13 @@ knitr::kable(t(betas.hml))
 
 # Run HML^{Devil}, i.e. HML^{m,c}, time-series regressions
 ts.regs.hml.dev <- lapply(1:n.hml.d, function(i) {
-  data <- factors.data[, c(regrds[i, 2], hml.dev.regrs[i, ], 'DATE.ID')]
+  data <- factors.data[, c(regrds[i, 2], hml.dev.regrs[i, ], 'DATE')]
   y <- colnames(data)[1]
   X <- paste(hml.dev.regrs[i, ], collapse='+')
   model.formula <- formula(paste(y, X, sep='~'))
   plm::plm(
     model.formula, data=data,
-    model='pooling', index='DATE.ID'
+    model='pooling', index='DATE'
   )
 })
 names(ts.regs.hml.dev) <- paste(tolower(regrds[, 2]), 'reg', sep='.')

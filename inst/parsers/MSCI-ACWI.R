@@ -14,7 +14,7 @@
 #
 # Copyright holder: (c) MSCI Inc.
 
-# WARNING: rio::import(), as other direct download methods, failed
+# WARNING: all other direct download methods, failed
 #
 # Parser relies on the following steps on your side:
 # 1. Manually download the file from 'Source' link
@@ -25,6 +25,7 @@
 path.file <- file.path('sandbox', 'data', 'MSCI_ACWI.xls')
 MSCI.ACWI.raw <- readxl::read_xls(path.file, sheet=1, skip=6, n_max = 402,
                                   col_names =TRUE)
+MSCI.ACWI.raw <- as.data.frame(MSCI.ACWI.raw)
 colnames(MSCI.ACWI.raw) <- c("Date", "Price")
 
 # format
@@ -32,7 +33,7 @@ MSCI.ACWI.raw$Price <- as.numeric(gsub(",","", MSCI.ACWI.raw$Price))
 MSCI.ACWI.raw$Date <- as.Date(MSCI.ACWI.raw$Date, format = "%b %d, %Y")
 
 # NOTE: returns in decimal unit
-MSCI.ACWI <- as.xts(MSCI.ACWI.raw$Price, order.by=MSCI.ACWI.raw$Date)
+MSCI.ACWI <- xts::xts(x = MSCI.ACWI.raw$Price, order.by = MSCI.ACWI.raw$Date)
 colnames(MSCI.ACWI) <- c('PRICE')
 MSCI.ACWI$RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'discrete')
 MSCI.ACWI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'log')

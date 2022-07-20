@@ -14,6 +14,12 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
+
+```{r, include=FALSE}
+options(tinytex.verbose = TRUE)
+```
+
+
 ```{r setup, include = FALSE}
 knitr::opts_knit$set(
   root.dir = normalizePath('..')
@@ -164,7 +170,7 @@ data <- data.frame(
 )
 ```
 
-```{r TSM Table 2 Time-series Regressions}
+```{r TSM_Table_2_Time-series_Regressions}
 # Indexes
 date.id <- matrix(1:nrow(data), dimnames=list(NULL, 'DATE.ID'))
 data <- cbind(data, date.id)
@@ -190,7 +196,9 @@ tsmom.ts.reg <- lapply(1:length(y), function(x) {
   )
 })
 lapply(tsmom.ts.reg, summary)
+```
 
+```{r TSM_Table_2_Time-series_Regressions_FA}
 #refactored
 data.test = data
 row.names(data.test) <-data.test$DATE
@@ -205,10 +213,9 @@ tsmom.ts.reg.test <- lapply(1:length(y), function(x) {
   fitTsfm(factor.names=X, asset.names=y[x], data = data.test)
 }) 
 lapply(tsmom.ts.reg.test, summary)
-
 ```
 
-```{r TSM Table 3 Time-series Regressions}
+```{r TSM_Table_3_Time-series_Regressions}
 # NOTE:
 # for the last three models we run regressions on monthly series as opposed to 
 # quarterly data.
@@ -229,14 +236,15 @@ tsmom.div.ts.reg <- lapply(X, function(x) {
       sep='~'
     )
   )  
-  
   plm::plm(
     model.formula, data=data,
     model='pooling', index='DATE.ID'
   )
 })
 lapply(tsmom.div.ts.reg, summary)
+```
 
+```{r TSM_Table_3_Time-series_Regressions_FA}
 #refactored by Jiarui
 data.test = data
 row.names(data.test) <-data.test$DATE
@@ -255,8 +263,6 @@ tsmom.div.ts.reg.test <- lapply(X, function(x) {
   fitTsfm(factor.names=x, asset.names='TSMOM', data = data.test) 
 }) 
 lapply(tsmom.div.ts.reg.test, summary)
-
- 
 ```
 
 # Time series momentum factor
@@ -269,7 +275,7 @@ with $S_t$ securities investable at time $t$ and a 40% constant annual volatilit
 # Time series momentum vs. cross-sectional momentum
 Follow authors, in this section we compare time series momentum and the cross-sectional momentum of \textcite{asness-moskowitz-pedersen-2013}. Over the comparable sample period, our results are close to the ones authors published. They differ in that often our estimates exhibit heavier loading in direct momentum time-series regressions. In particular, an empirical interpretation of small magnitude signs shifts may be that during the last two to three years sample period analyzed by authors financial markets were rather turbulent. A practical reason for differences is that data series corrections have occurred in authors' updated data sets we are working with. Notwithstanding, t-statistics and $R^2$ generally appear to be in line with authors' results and this may be confirmatory of the stable relation between the two momentum strategies both across asset classes and over time.
 
-```{r TSM Table 5 Panel A}
+```{r TSM_Table_5_Panel_A}
 # Time series and Cross-sectional Momentum data
 XSMOM <- VME.Factors[, c('MOM.AA', 'MOMLS.VME.COM', 'MOMLS.VME.EQ', 'MOMLS.VME.FI', 'MOMLS.VME.FX', 'MOMLS.VME.US90')]
 colnames(XSMOM) <- c('XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'XSMOM.US') # naming consistency
@@ -304,8 +310,9 @@ mom.tsxs.reg <- lapply(1:length(Y), function(x) {
 mom.tsxs.reg <- lapply(mom.tsxs.reg, summary)
 names(mom.tsxs.reg) <- Y
 mom.tsxs.reg
+```
 
-
+```{r TSM_Table_5_Panel_A_FA}
 #refactored by Jiarui
 mom.data.test = mom.data
 row.names(mom.data.test) <-mom.data.test$DATE 
@@ -314,20 +321,14 @@ mom.tsxs.reg.test <-lapply(1:length(Y), function(x) {
   fitTsfm(factor.names=X[[x]], asset.names=Y[x], data = mom.data.test) 
 }) 
 lapply(mom.tsxs.reg.test, summary)
-
  
 mom.tsxs.reg.test <- lapply(mom.tsxs.reg.test, summary)
-
-
-
-
 names(mom.tsxs.reg.test) <- Y
 mom.tsxs.reg.test
 ```
 
 Next, we try to gain insights on what factors better explain time-series momentum.
-
-```{r Table 5 Panel C}
+```{r Table_5_Panel_C}
 ## Panel C
 # NOTE: 'DJCS MF' and 'DJCS MACRO' data missing
 data <- merge(
@@ -345,24 +346,19 @@ tsmom.div.all <- lapply(Y, function(y) {
     data=data, model='pooling', index='DATE.ID'
   )
 })
-
 lapply(tsmom.div.all, summary)
-
-tsmom.div.all
 ```
 
-Now let's compare with `FactorAnalytics`.
+```{r Table_5_Panel_C_FA}
+## Panel C
 
-```{r Table 5 Panel C FA}
-#refactored by jiarui & justin 
-attr(data, "row.names") <- as.character(data$DATE)
-data$DATE <- NULL
-
-tsmom.div.all.FA <- lapply(Y, function(y) {
-  fitTsfm(factor.names = 'TSMOM' , asset.names = y, data = data)
+tsmom.div.all
+#refactored by jiarui
+data.test <- data 
+row.names(data.test) <- data.test$DATE 
+data.test$DATE <- NULL
+tsmom.div.all.test <- lapply(Y, function(y) {
+  fitTsfm(factor.names='TSMOM' , asset.names=y, data = data.test) 
 })
-
-lapply(tsmom.div.all.FA, summary)
-
-tsmom.div.all.FA
+tsmom.div.all.test
 ```

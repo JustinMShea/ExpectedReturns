@@ -1,6 +1,6 @@
 [![Travis build status](https://travis-ci.org/JustinMShea/ExpectedReturns.svg?branch=master)](https://travis-ci.org/JustinMShea/ExpectedReturns)
 
-# GSoC-2020-Expected-Returns-Ilmanen
+# GSoC-Expected-Returns-Ilmanen
 
 
 ## Background
@@ -24,22 +24,9 @@ From the Description;
 
 > This comprehensive reference delivers a toolkit for harvesting market rewards from a wide range of investments. Written by a world-renowned industry expert, the reference discusses how to forecast returns under different parameters. Expected returns of major asset classes, investment strategies, and the effects of underlying risk factors such as growth, inflation, liquidity, and different risk perspectives, are also explained. Judging expected returns requires balancing historical returns with both theoretical considerations and current market conditions. Expected Returns provides extensive empirical evidence, surveys of risk-based and behavioral theories, and practical insights.
 
-Your objective will be to reproduce key approaches suggested by the text and test 
-performance on current market conditions with `R`. You will use functions found
-in popular `R` in finance packages such as `PerformanceAnalytics` and `PortfolioAnalytics`, 
-but you will also need to write functions of your own to streamline workflows
-and implement solutions.
+The objective will be to reproduce key approaches suggested by the text and test performance on current market conditions with `R`. We will use functions found in popular `R` in finance packages such as `PerformanceAnalytics`, `FactorAnalytics`, and `PortfolioAnalytics`. 
+In some cases, we will also need to write additional functions to streamline workflows and implement solutions.
 
-Mentors will guide your understanding of the topic, support your use of best 
-practices in software development for quantitative finance using `R`, and 
-provide current professional grade market data for validating these approaches 
-in the midst of the current crisis.
-
-Ultimately, your work will be organized into an open source `R` package. It will complement the text and provide data, functions, and reproducible examples to guide academics, practitioners, and hobbyists in the `R` community in applying the work to their own research or portfolio management endeavors.
-
-Students engaged in this project will obtain a deep understanding of:  
-i) Data Science applications in finance  
-ii) Quantitative Analysis of active portfolio management  
 
 ## Areas of Interest
 
@@ -59,21 +46,7 @@ We'll focus on three broad sections with specific subsection to explore
   * Endogenous return and risk: Feedback effects on expected returns
   * Tactical return forecasting models
   * Cyclical variation in asset returns
-  
-### Data
 
-Most underlying data series are extracted from Bloomberg, including MSCI Barra’s
-equity indices, Barclays Capital and other banks’ bond indices, and S&P GSCI
-commodity futures indices. 
-Other key sources include [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), [Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets), as well as 
-Arnott–Bernstein (2002), Dimson–Marsh–Staunton (2002, 2010), and Ibbotson 
-Associates (now Morningstar) yearbooks.
-
-To create long data histories for major asset classes, the author concatenated 
-best quality recent data and best available older data series. Most exhibits 
-display total returns denominated in U.S. dollars; but some exhibits show real 
-(inflation-adjusted) returns or excess returns over cash or over 
-maturity/duration-matched Treasuries.
 
 ### Approaches to Dynamic asset weighting
 
@@ -205,30 +178,6 @@ For examples of similar business cycle analysis, see Naik–Devarajan (2009) and
 Lustig–Verdelhan (2010). See Kaya–Lee–Pornrojnangkool (2010) and Ang–Bekaert 
 (2002) for applications of regime-switching models. 
 
-
-### We envision the following steps for this project:
-
-* Get familiar with sections of the text above
-* Work with the GSoC mentor(s) to lay out the script for each section
-* Gather data related to the project, which your GSoC mentors can access.
-* Write `R` scripts to gather, format, and save public data used in the text from [Kenneth French’s](http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html), 
-[Robert Shiller’s](http://www.econ.yale.edu/�shiller/data.htm), and [AQR's websites](https://www.aqr.com/Insights/Datasets)
-* Reproduce key sections using existing `R` packages & write custom functions where needed
-* Organize your work as an `R` package, in collaboration with Mentors
-* Complete minimal function and data documentation using roxygen2 
-* Create short vignettes using `R` markdown to share your code and findings.
-
-## Mentors
-
-- EVALUATING MENTOR [Prof. Justin M. Shea](https://www.linkedin.com/in/justinmshea/)
-- [Prof. Brian Peterson](https://www.linkedin.com/in/briangpeterson/)
-- [Erol Biceroglu, Senior Investment Policy Analyst](https://www.linkedin.com/in/erolbiceroglu/)
-- [Peter Carl, Portfolio Manager](https://www.linkedin.com/in/peter-carl-59160/)
-- [Soumya Kalra, Senior Quantitative Risk Specialist](https://www.linkedin.com/in/soumyakalra/)
-
-## Student-developer
-
-[Vito Lestingi](https://it.linkedin.com/in/vito-lestingi), MSc Finance and Insurance - Quantitative Finance track, Sapienza University of Rome.
 
 ## References
 
