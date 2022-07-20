@@ -266,11 +266,14 @@ portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
 # TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
-data <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
+data1 <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
+
+
 VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
 data_df <- as.data.frame(data)
 data_df$DATE <- index(data)
 
+portfolios <- merge(VME.FACTORS, portfolios)
 
 VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
 ## may not need these lines of code below
@@ -343,7 +346,7 @@ portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID']), ]
 # Time-series regressions
 ts.reg <- plm::pmg(
   EXC.RET ~ MSCI.RF + VAL.EVR + MOM.EVR,
-  data=portfolios, index=c('PORTF.ID', 'DATE.ID')
+  data=portfoliosDT, index=c('PORTF.ID', 'DATE.ID')
 )
 ## Estimates
 summary(ts.reg) # average coefficients
