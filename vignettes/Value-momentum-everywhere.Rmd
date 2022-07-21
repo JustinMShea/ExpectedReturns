@@ -269,13 +269,13 @@ portfolios <- portfolios[tp, ]
 data1 <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
 
 
-VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
-data_df <- as.data.frame(data)
-data_df$DATE <- index(data)
+# VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
+# data_df <- as.data.frame(data)
+# data_df$DATE <- index(data)
 
 portfolios <- merge(VME.FACTORS, portfolios)
 
-VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
+# VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
 ## may not need these lines of code below
 # data <- merge(data, VME.FACTORS_df, by='DATE')
 ## old merge code...
