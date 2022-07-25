@@ -198,7 +198,7 @@ source(file.path('inst', 'parsers', 'CRP.R'))
 ```
 
 ```{r Replicate Table 1 pg.940 Performance of Value and Momentum Portfolios across Markets and Asset Classes}
-# function for computing annualized return, standard deviation, and sharpe
+# function for computing annualized return, standard deviation, and sharpe (need to still incorporate t-stats, P3-P1 column, 50/50 comb column, &  corresponding alphas)
 
 VME_table1 <- function(VME.Portfolios, geometric = FALSE) {
 
@@ -298,7 +298,7 @@ portfolios <- merge(VME.FACTORS, portfolios)
 portfolios2 <- portfolios
 
 portfolios2$EXC.RET.MISCI.RF <- portfolios2$MSCI.RF - portfolios2$RF
-portfolios2$EXC.RET.VAL.EVR <- porfolios2$VAL.EVR - porfolios2$RF
+portfolios2$EXC.RET.VAL.EVR <- portfolios2$VAL.EVR - portfolios2$RF
 portfolios2$EXC.RET.MOM.EVR <- portfolios2$MOM.EVR - portfolios2$RF
 
 
