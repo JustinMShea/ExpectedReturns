@@ -196,11 +196,11 @@ source(file.path('inst', 'parsers', 'CRP.R'))
 ```{r Replicate Table 1 pg.940 Performance of Value and Momentum Portfolios across Markets and Asset Classes}
 # function for computing annualized return, standard deviation, and sharpe (need to still incorporate t-stats, P3-P1 column, 50/50 comb column, &  corresponding alphas)
 
-VME_table1 <- function(VME.Portfolios, geometric = FALSE) {
+VME_table1 <- function(VME.Portfolios, ...) {
 
-return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, geometric = FALSE)
-SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, geometric = FALSE)
-sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, geometric = FALSE)
+return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, ...)
+SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, ...)
+sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, ...)
 
   return(rbind(return, SD, sharpe) )
 }
