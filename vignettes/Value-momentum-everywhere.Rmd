@@ -193,6 +193,22 @@ source(file.path('inst', 'parsers', 'VME-Portfolios.R'))
 source(file.path('inst', 'parsers', 'CRP.R'))
 ```
 
+```{r Replicate Table 1 pg.940 Performance of Value and Momentum Portfolios across Markets and Asset Classes}
+# function for computing annualized return, standard deviation, and sharpe (need to still incorporate t-stats, P3-P1 column, 50/50 comb column, &  corresponding alphas)
+
+VME_table1 <- function(VME.Portfolios, geometric = FALSE) {
+
+return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, geometric = FALSE)
+SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, geometric = FALSE)
+sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, geometric = FALSE)
+
+  return(rbind(return, SD, sharpe) )
+}
+
+VME_table1(VME.Portfolios, geometric = FALSE)
+
+```
+
 ```{r Get factors and portfolios data 2}
 ## Construct the data set
 # NOTE:
@@ -242,7 +258,9 @@ FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 portfolios <- merge(MSCI.WI, FFC4)
 # MSCI 
 portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)
-portfolios$MSCI.RF <- portfolios$MSCI.RET - portfolios$RF
+
+portfolios$MSCI.RF <- portfolios$MSCI.RET 
+# - portfolios$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
 
@@ -262,16 +280,27 @@ portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
 # TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
-data1 <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
+# data1 <- merge(VME.FACTORS, VME.PORTF.RET, by='DATE')
 
 
-VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
-data_df <- as.data.frame(data)
-data_df$DATE <- index(data)
+# VME.FACTORS_df <- as.data.frame(VME.FACTORS) # See above TODO
+# data_df <- as.data.frame(data)
+# data_df$DATE <- index(data)
 
 portfolios <- merge(VME.FACTORS, portfolios)
 
-VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
+## adding columns of excess returns from time series regression done in {r Global Three-Factor Model 2} chunk, (line ~348). Adding columns to 'portfolios' object will hopefully allow to use FactorAnalytics::FitTsfm and keep data as xts object. Will replicated data object 'portfolios2' to keep other code workable in case we decide to use plm to run regression instead. 
+
+portfolios2 <- portfolios
+
+portfolios2$EXC.RET.MISCI.RF <- portfolios2$MSCI.RF - portfolios2$RF
+portfolios2$EXC.RET.VAL.EVR <- portfolios2$VAL.EVR - portfolios2$RF
+portfolios2$EXC.RET.MOM.EVR <- portfolios2$MOM.EVR - portfolios2$RF
+
+
+
+
+# VME.FACTORS_df$DATE <- index(VME.FACTORS) # See above TODO...
 ## may not need these lines of code below
 # data <- merge(data, VME.FACTORS_df, by='DATE')
 ## old merge code...
