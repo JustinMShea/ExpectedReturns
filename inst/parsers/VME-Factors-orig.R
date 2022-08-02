@@ -12,13 +12,13 @@ VME.Factors.orig <- openxlsx::read.xlsx(AQR.VME.Factors.orig.url, sheet = 2, sta
 
 ## Clean up
 variable.names <- colnames((VME.Factors.orig))
-variable.names <- gsub('\\^', '.', variable.names)
+variable.names <- gsub('\\^', 'Factor', variable.names)
 variable.names <- sub("^VAL$", replacement = "VAL.EVR", variable.names)
 variable.names <- sub("^MOM$", replacement = "MOM.EVR", variable.names)
 colnames(VME.Factors.orig) <- variable.names
 
 ## Remove NA's
-VME.Factors.orig <- zoo::na.trim(VME.Factors.orig)
+# VME.Factors.orig <- zoo::na.trim(VME.Factors.orig)
 
 ## Convert to xts
 VME.Factors.orig <- xts::xts(VME.Factors.orig[,-1], order.by = VME.Factors.orig$DATE)
