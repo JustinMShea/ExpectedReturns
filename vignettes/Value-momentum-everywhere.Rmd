@@ -187,7 +187,7 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 ```{r Get factors and portfolios data}
 ## Import AQR data
 # VME data
-source(file.path('inst', 'parsers', 'VME-Factors.R'))
+source(file.path('inst', 'parsers', 'VME-Factors-orig.R'))
 source(file.path('inst', 'parsers', 'VME-Portfolios.R'))
 # Bonds data
 source(file.path('inst', 'parsers', 'CRP.R'))
@@ -219,7 +219,7 @@ VME_table1(VME.Portfolios, geometric = FALSE)
 # month-end, as those are dates most series we work with refer to.
 
 # Value and Momentum Everywhere Factors
-VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
+VME.FACTORS <- VME.Factors.orig[, c('VAL.EVR', 'MOM.EVR')]
 
 # Get AMP Portfolios Returns and make them a panel
 VME.PORTF.DATE <- index(VME.Portfolios)
@@ -256,10 +256,10 @@ MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
 # Factors data
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 portfolios <- merge(MSCI.WI, FFC4)
-# MSCI 
-portfolios$MSCI.RET <- zoo::na.locf(portfolios$RET)
+# MSCI  
+portfolios$MSCI.RF <- zoo::na.locf(portfolios$RET)
 
-portfolios$MSCI.RF <- portfolios$MSCI.RET 
+# portfolios$MSCI.RF <- portfolios$RET
 # - portfolios$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
@@ -290,13 +290,13 @@ portfolios <- portfolios[tp, ]
 portfolios <- merge(VME.FACTORS, portfolios)
 
 ## adding columns of excess returns from time series regression done in {r Global Three-Factor Model 2} chunk, (line ~348). Adding columns to 'portfolios' object will hopefully allow to use FactorAnalytics::FitTsfm and keep data as xts object. Will replicated data object 'portfolios2' to keep other code workable in case we decide to use plm to run regression instead. 
-
+# 
 portfolios2 <- portfolios
 
-portfolios2$EXC.RET.MISCI.RF <- portfolios2$MSCI.RF - portfolios2$RF
+
 portfolios2$EXC.RET.VAL.EVR <- portfolios2$VAL.EVR - portfolios2$RF
 portfolios2$EXC.RET.MOM.EVR <- portfolios2$MOM.EVR - portfolios2$RF
-
+portfolios2$EXC.RET.MSCI.RF <- portfolios2$MSCI.RF - portfolios2$RF
 
 
 
@@ -360,13 +360,22 @@ portfoliosDT <- merge(portfoliosDT, portf.id, by='PORTFNAME')
 # portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID'], portfoliosDT[, 'DATE.ID']), ]
 
 portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'PORTF.ID']), ]
+
+portfoliosDT$PORTFNAME <- as.character(portfoliosDT$PORTFNAME)
 # portfoliosDT <- portfoliosDT[order(portfoliosDT[, 'DATE.ID']), ]
-# row.names(portfoliosDT) <- NULL
+row.names(portfoliosDT) <- NULL
 ```
 
 
 ```{r Global Three-Factor Model 2}
 # TODO: Only model for which data is readily available at the moment.
+
+## attemptingg to reproduce regression below using fitTsfm instead
+
+ts.reg2 <- fitTsfm(asset.names = colnames(portfolios2[,(11:13)]),
+                   factor.names = colnames(portfolios2[,c("VAL.EVR", "MOM.EVR", "MSCI.RF")]),
+                   data = portfolios2)
+
 
 # Time-series regressions
 ts.reg <- plm::pmg(
@@ -432,7 +441,7 @@ comb.idxs <- cumsum(choose(nfv, 0:nfv))
 comb.idxs <- comb.idxs[-length(comb.idxs)]
 comb.idxs <- rev(comb.idxs)
 comb.idxs <- c(comb.idxs, 0)
-for (j in rev(fv.seq)) {
+for (j in rev                             (fv.seq)) {
   k <- setdiff(1:comb.idxs[j], 0:comb.idxs[j+1])
   global.factors.combns[1:rev(j), k] <- combn(global.factors.vars, j)
 }
