@@ -1,24 +1,24 @@
 Package: ExpectedReturns
 Type: Package
-Title: Reproduction of Investment Strategies disccusin in Antti Ilmanen's Expected Returns
-Version: 0.2-0
-Date: 2020-05-30
+Title: Reproduction of Investment Strategies presented in Antti Ilmanen's 
+Expected Returns & Investing Amid Low Expected Returns
+Version: 0.3-0
+Date: 2022-08-01
 Authors@R: c(
     person(given=c("Justin", "M."),family="Shea",role=c("cre","aut","cph"), email="justin.shea@gmail.com")   
+  , person(given="Vito",family="Lestingi",role=c("aut","cph"), email="lestingiv@gmail.com")
+  , person(given="Bryan",family="Rodriguez",role=c("aut","cph"), email="bryanrod182@gmail.com")
+  , person(given="Erol",family="Biceroglu",role=c("aut","cph"), email="erol.biceroglu@alumni.utoronto.ca"")
   , person(given=c("Brian","G."),family="Peterson",role=c("aut","cph"), email="brian@braverock.com")
-  , person(given="Vito",family="Lestingi",role=c("aut","cph"), email="lestingiv@gmail.com") 
-  , person(given="Peter",family="Carl",role=c("aut","cph"), email="peter@braverock.com")
+  , person(given="Peter",family="Carl",role=c("cph"), email="peter@braverock.com")
   , person(given="Jasen",family="Mackie",role=c("ctb"))
   , person(given="Soumya",family="Kalra",role=c("ctb"))
-  , person(given="Erol",family="Biceroglu",role=c("ctb"))
   )
-Description: Collection of tools to replicate investment strategies discussed in,
-  and inspired by, Antti Ilmanen's Expected Returns text. Users will find worked 
-  examples and code to parse, clean, and manipulate data associated with these 
-  strategies. Additionally, the package provides general purpose functions and 
-  apply models similar to those described in the book and evaluate these models 
-  in current market conditions or in different markets than those utilized for 
-  the text.
+Description: Collection of data and functions to replicate investment strategies 
+  discussed in Antti Ilmanen's Expected Returns & Investing Amid Low Expected 
+  Returns books, as well as the AQR website. Users will find examples replicating
+  or associated with these strategies. Additionally, the package provides general 
+  purpose functions and apply models similarly to those described in the book.
 Depends:
   R (>= 3.5)
 Imports:
@@ -27,8 +27,8 @@ Imports:
   openxlsx,
   PerformanceAnalytics,
   sandwich,
-  xts,
   XML,
+  xts,
   zoo
 Remotes:
     braverock/FactorAnalytics,
@@ -38,7 +38,6 @@ VignetteBuilder: knitr, rmarkdown
 Encoding: UTF-8
 LazyData: true
 URL: https://github.com/justinmshea/ExpectedReturns
-Copyright: (c) 2020
 RoxygenNote: 7.2.0
 Roxygen: list(markdown = TRUE)
 Suggests: knitr, plm, rmarkdown, tinytest
