@@ -349,16 +349,4 @@ tsmom.div.all <- lapply(Y, function(y) {
 lapply(tsmom.div.all, summary)
 ```
 
-```{r Table_5_Panel_C_FA}
-## Panel C
 
-tsmom.div.all
-#refactored by jiarui
-data.test <- data 
-row.names(data.test) <- data.test$DATE 
-data.test$DATE <- NULL
-tsmom.div.all.test <- lapply(Y, function(y) {
-  fitTsfm(factor.names='TSMOM' , asset.names=y, data = data.test) 
-})
-tsmom.div.all.test
-```
