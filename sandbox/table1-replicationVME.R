@@ -4,6 +4,7 @@
 val3index <- grep("VAL3", colnames(VME.Portfolios))
 val1index <- grep("VAL1", colnames(VME.Portfolios))
 
+
 val3xts <- VME.Portfolios[,val3index]
 val1xts <- VME.Portfolios[,val1index]
 
