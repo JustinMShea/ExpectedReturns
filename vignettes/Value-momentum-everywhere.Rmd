@@ -244,12 +244,23 @@ VME.PORTF.RET <- VME.Portfolios
 # VME.PORTF.RET$RET <- as.numeric(VME.PORTF.RET$RET)
 ```
 
+
+
 ```{r Get factors and portfolios data 3}
+source("~/R/expected-returns/inst/parsers/FFdownloads_factors_package.R")
+## Function to parse through 'ffdownloads' package available monthly data from "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" - Bryan
+FFfactors <- FFfactors_xts(x)
+## assigning same name as used in this and other scripts.
+FF3 <- FFfactors[["x_F-F_Research_Data_Factors"]]
+FF5 <- FFfactors[["x_F-F_Research_Data_5_Factors_2x3"]]
+MOM <- FFfactors[["x_F-F_Momentum_Factor"]]
 ## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
-FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
-MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
-min.tp <- max(first(index(FF3)), first(index(MOM)))
-max.tp <- min(last(index(FF3)), last(index(MOM)))
+#FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
+#MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
+
+## aded as.Date() wrap since date format in new data comes in as "%b %Y" (May 2022). Need to properly adjust FFfactors function so this is taken care of before.
+min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
+max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
 # tp <- paste(min.tp, max.tp, sep='/')
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
