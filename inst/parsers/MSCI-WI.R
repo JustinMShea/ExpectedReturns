@@ -31,7 +31,7 @@ MSCI.WI.raw$Date <- as.Date(MSCI.WI.raw$Date, format = "%b %d, %Y")
 MSCI.WI.raw <- na.trim(MSCI.WI.raw)
 
 # NOTE: returns in decimal unit
-MSCI.WI <- xts::xts(x = MSCI.WI.raw$Price, order.by = MSCI.WI.raw$Date)
+MSCI.WI <- xts::xts(x = MSCI.WI.raw$Price, order.by = yearmon(MSCI.WI.raw$Date))
 colnames(MSCI.WI) <- 'PRICE'
 MSCI.WI$RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'discrete')
 MSCI.WI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.WI[, 'PRICE'], 'log')
