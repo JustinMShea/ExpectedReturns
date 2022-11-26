@@ -57,8 +57,14 @@ bs.mktrf <- FF5.monthly$MKT.RF
 bs.smb <- FF5.monthly$SMB
 ## Asness-Frazzini's HML.DEV and UMD (MOM) factors
 source(file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R'))
-bs.hml <- xts::xts(HML_Devil.HML.DEV$USA, HML_Devil.HML.DEV$DATE)
-bs.mom <- xts::xts(HML_Devil.UMD$USA, HML_Devil.UMD$DATE)
+
+
+# not sure we need to call xts (was throwing error for "needing proper time based object and HML_Devil.HML.DEV$USA is already an xts object). Added code so 'bs.hml' end up being a subset by column "USA". Same change for 'bs.mom' object.
+
+#bs.hml <- xts::xts(HML_Devil.HML.DEV$USA, HML_Devil.HML.DEV$DATE)
+#bs.mom <- xts::xts(HML_Devil.UMD$USA, HML_Devil.UMD$DATE)
+bs.hml <- HML_Devil.HML.DEV$USA
+bs.mom <- HML_Devil.UMD$USA
 rm(
   HML_Devil.HML_FF, HML_Devil.ME_1, HML_Devil.RF, 
   HML_Devil.MKT, HML_Devil.SMB, HML_Devil.HML.DEV, HML_Devil.UMD

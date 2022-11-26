@@ -48,7 +48,6 @@ library(openxlsx)
 ## Download to Sandbox
 
 AQR_HML_Devil_file <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/The-Devil-in-HMLs-Details-Factors-Monthly.xlsx"
-
 ## Load data from Sandbox
 ### 1. Long/short High Minus Low Devil (HML Devil) factors
 
@@ -56,6 +55,7 @@ AQR_HML_Devil_file <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Dat
 #              If you already have your own code in place run:
 #              HML_Devil.ExcessReturns <- HML_Devil.HML.DEV
 HML_Devil.HML.DEV <- importRemoteAQRxlsxFile(path = AQR_HML_Devil_file, sheet = "HML Devil", startRow = 17)
+
 
 ### 2. Fama-French Factors
 # NOTE (Vito): Switched 'HML_Devil.Mkt' to 'HML_Devil.MKT' for consistency with previous code.
