@@ -128,33 +128,38 @@ LoadFuturesData <- function(symbols, path) {
   #' @details
   #' `symbols` must match corresponding `.RData` files names in `path` base directory.
   #' `path` needs not to be to a `symbols` unique directory (e.g., may keep contracts organized by type in separate folders). However, if several directories after in the relative `path` match `symbols` watch out for potential overwriting. If `path` is missing `sandbox/data/FuturesData/` will be used.
-  if (missing(path)) path <- file.path('sandbox', 'data', 'FuturesData')
-  symbols.files <- normalizePath(
-    list.files(
-      path, pattern='*.RData', recursive=TRUE, full.names=TRUE
-    )
-  )
-  symbols.files.avail <- unlist(
-    strsplit(
-      basename(symbols.files), split='.RData'
-    )
-  )
+  if (missing(path))
+    path <- file.path('sandbox', 'data', 'FuturesData')
+
+    symbols.files <- normalizePath(list.files(path,
+                                              pattern ='*.RData',
+                                              recursive = TRUE,
+                                              full.names = TRUE)
+                                   )
+  symbols.files.avail <- unlist(strsplit(basename(symbols.files), split='.RData'))
+
   sm <- match(symbols, symbols.files.avail)
-  for (symbol.file in symbols.files[sm]) {
-    load(symbol.file, envir=globalenv())
+
+  for (s in symbols.files[sm]) { load(s, envir = globalenv())
+
+    }
+
   }
-}
+
 symbols <- c('CC1', 'CL1', 'DX1', 'EC1', 'ED1', 'GC1', 'HG1', 'NG1', 'SP1', 'TY1', 'VG1', 'W 1')
-LoadFuturesData(symbols)
+path <- paste0(getwd(),"/sandbox/data/FuturesData/data/Balta-Kosowski")
+
+LoadFuturesData(symbols = symbols, path = path)
 ```
 
 ```{r Prepare data sets}
-# Convert to data.frame
+# Combine future data to list
 futures.data <- mget(symbols)
+
 symbols.vars <- c('Open', 'High', 'Low', 'Close', 'Volume', 'Open.Interest')
+
 futures.data <- lapply(futures.data, function(x) {
   # For all but equity indexes, 'Close' (closing price) is in reality 'Settle' (daily settlement price).
-  # For the majority of instruments we do not have closing prices readily available at this time. 
   # Renaming is chiefly due to computational and illustration convenience.
   colnames(x) <- symbols.vars[1:ncol(x)]
   # Drop incomplete cases
@@ -214,12 +219,16 @@ futures.summary <- lapply(futures.data.monthly, function(x) {
   )
   return(out)
 })
+
 futures.summary.tab <- t(Reduce(cbind, futures.summary))
+
 rownames(futures.summary.tab) <- names(futures.data.monthly)
+
 futures.summary.tab
 ```
 
 # Time-series Momentum Strategies
+
 Time-series momentum is defined analogously to \textcite{moskowitz-ooi-pedersen-2012}. Generally, *univariate time-series momentum* is the trading rule that imposes to take a long/short position on a given asset depending on a metric of its past performance. The rule is completely identified by two parameters, namely the *lookback period* $J$ over which such performance is taken into account and the *holding period* $K$ during which the asset is effectively held in the portfolio. Since the same holds in principle for every tradable assets, time-series momentum can and is also be aggregated at portfolio level. Adopting \textcite{baltas-kosowski-2012} symbols and notation for readability purposes, such quantity is expressed as
 $$
 R^{\textrm{TS}}(t,t+K) = \sum_{i=1}^{M} X_{i}(t-J, t) \frac{10\% / \sqrt{M}}{\sigma_{i}(t,D)} R_{i}(t,t+K)

@@ -9,7 +9,7 @@
 #' Daniel, K. and Hirshleifer, D. and Sun, L. (2020). *Short-and long-horizon behavioral factors*. The Review of Financial Studies.
 
 # Download replication data set
-DHS.raw <- rio::import('http://www.kentdaniel.net/data/DHS_factors.xlsx', format='xlsx')
+DHS.raw <- read.xlsx('http://www.kentdaniel.net/data/DHS_factors.xlsx')
 
 # Month-end dates
 yrs <- as.numeric(substr(DHS.raw$date, 1, 4))

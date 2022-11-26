@@ -30,6 +30,7 @@
 #' corresponding assets data `X` provided. Signals are \eqn{{-1, 0, 1}} for short,
 #' inactive, and long positions, respectively. `TREND` and `SMT` are the only
 #' signals that can result in inactive positions.
+#'
 #' With `speed`, additionally the chosen *momentum speed* for the given assets.
 #'
 #' @details
@@ -166,7 +167,7 @@ MomSignal <- function(X
       mom.signal <- lapply(X, function(x) {
         lind <- lookback:(nrow(x) - 1)
         # Ensemble Empirical Mode Decomposition
-        x.imfs <- eemd(x$Close, ...)
+        x.imfs <- Rlibeemd::eemd(x$Close, ...)
         # Extracted price trend
         x.trend <- x.imfs[, 'Residual']
         # Signal based on price trend extracted
