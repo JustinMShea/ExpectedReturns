@@ -247,7 +247,7 @@ VME.PORTF.RET <- VME.Portfolios
 
 
 ```{r Get factors and portfolios data 3}
-source("~/R/expected-returns/inst/parsers/FFdownloads_factors_package.R")
+source("~/R/ExpectedReturns/inst/parsers/FFdownloads_factors_package.R")
 ## Function to parse through 'ffdownloads' package available monthly data from "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" - Bryan
 FFfactors <- FFfactors_xts(x)
 ## assigning same name as used in this and other scripts.
@@ -259,17 +259,17 @@ MOM <- FFfactors[["x_F-F_Momentum_Factor"]]
 #MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
 
 ## aded as.Date() wrap since date format in new data comes in as "%b %Y" (May 2022). Need to properly adjust FFfactors function so this is taken care of before.
-min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
-max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
+# min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
+# max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
 # tp <- paste(min.tp, max.tp, sep='/')
-days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
-ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+# days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+# ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 ```
 
 ```{r Get factors and portfolios data 4}
 ## Merge Factors and Portfolios Data
 # Factors data
-FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
+FFC4 <- na.trim(merge(FF3, MOM))
 portfolios <- merge(MSCI.WI, FFC4)
 # MSCI  
 portfolios$MSCI.RF <- zoo::na.locf(portfolios$RET)
@@ -289,7 +289,7 @@ portfolios <- merge(CRP, portfolios)
 #   portfolios[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
 #   row.names=NULL
 # )
-portfolios <- portfolios[ff.dates,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
+portfolios <- portfolios[,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
 tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
 portfolios <- portfolios[tp, ]
 
@@ -384,7 +384,7 @@ row.names(portfoliosDT) <- NULL
 
 ```{r Global Three-Factor Model 2}
 # TODO: Only model for which data is readily available at the moment.
-
+library(FactorAnalytics)
 ## attemptingg to reproduce regression below using fitTsfm instead
 
 ts.reg2 <- fitTsfm(asset.names = colnames(portfolios2[,(11:13)]),
