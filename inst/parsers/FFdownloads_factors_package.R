@@ -1,4 +1,4 @@
-devtools::install_github("sstoeckl/ffdownload")
+# devtools::install_github("sstoeckl/ffdownload")
 require(FFdownload)
 
 ##########################################################
