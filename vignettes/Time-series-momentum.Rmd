@@ -1,5 +1,5 @@
 ---
-title: '"Time Series Momentum, a replication"'
+title: 'Time Series Momentum, a replication'
 subtitle: "(draft)"
 author: "Vito Lestingi, Justin M Shea"
 date: "`r Sys.Date()`"
@@ -244,7 +244,7 @@ tsmom.div.ts.reg <- lapply(X, function(x) {
       y, paste(x, collapse='+'), 
       sep='~'
     )
-  )
+  )  
   plm::plm(
     model.formula, data=data,
     model='pooling', index='DATE.ID'
@@ -358,16 +358,4 @@ tsmom.div.all <- lapply(Y, function(y) {
 lapply(tsmom.div.all, summary)
 ```
 
-```{r Table_5_Panel_C_FA}
-## Panel C
 
-tsmom.div.all
-#refactored by jiarui
-data.test <- data 
-row.names(data.test) <- data.test$DATE 
-data.test$DATE <- NULL
-tsmom.div.all.test <- lapply(Y, function(y) {
-  fitTsfm(factor.names='TSMOM' , asset.names=y, data = data.test) 
-})
-tsmom.div.all.test
-```

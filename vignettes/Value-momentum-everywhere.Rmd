@@ -3,7 +3,7 @@ title: '"Value and Momentum Everywhere"'
 subtitle: (draft)
 author: "Vito Lestingi"
 date: "`r Sys.Date()`"
-abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+abstract: "This reproducible document includes material on some academic and practitioners' literature instrumental for the project."
 output:
   rmarkdown::pdf_document:
     citation_package: biblatex
@@ -28,10 +28,6 @@ knitr::opts_knit$set(
 
 library(xts)
 library(plm)
-```
-
-```{r, echo=FALSE}
-# Mentors, please feel free to add yourself to the authors' field if you wish.
 ```
 
 # Introduction
@@ -200,11 +196,11 @@ source(file.path('inst', 'parsers', 'CRP.R'))
 ```{r Replicate Table 1 pg.940 Performance of Value and Momentum Portfolios across Markets and Asset Classes}
 # function for computing annualized return, standard deviation, and sharpe (need to still incorporate t-stats, P3-P1 column, 50/50 comb column, &  corresponding alphas)
 
-VME_table1 <- function(VME.Portfolios, geometric = FALSE) {
+VME_table1 <- function(VME.Portfolios, ...) {
 
-return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, geometric = FALSE)
-SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, geometric = FALSE)
-sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, geometric = FALSE)
+return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, ...)
+SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, ...)
+sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, ...)
 
   return(rbind(return, SD, sharpe) )
 }
@@ -530,4 +526,3 @@ lines(par()$usr[1:2], par()$usr[3:4], col='gray75')
 text(x=x, y=y, names(x), cex=0.5, pos=4)
 grid()
 ```
-

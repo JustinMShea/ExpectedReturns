@@ -11,7 +11,7 @@
 
 ## VIX 1990-01-02 to 2003-12-31 (old methodology)
 VIX1.raw <- suppressMessages(
-  rio::import('http://www.cboe.com/publish/scheduledtask/mktdata/datahouse/vixarchive.xls')
+  rio::import('https://cdn.cboe.com/resources/us/indices/vixarchive.xls')
 )
 # Clean up data
 header.row <- 1
@@ -31,18 +31,18 @@ VIX1 <- xts::xts(VIX1[, -1], order.by=vix.dates)
 
 ## VIX 2004-01-02 to date
 VIX2.raw <- suppressMessages(
-  rio::import('http://www.cboe.com/publish/scheduledtask/mktdata/datahouse/vixcurrent.csv')
+  rio::import('https://cdn.cboe.com/api/global/us_indices/daily_prices/VIX_History.csv')
 )
 # Clean up
-header.row <- 2
-data.begin.row <- header.row + 1
+# header.row <- 2
+#data.begin.row <- header.row + 1
 VIX2 <- VIX2.raw[data.begin.row:nrow(VIX2.raw), ]
-rownames(VIX2) <- NULL
-colnames(VIX2) <- as.character(VIX2.raw[header.row, ])
+#rownames(VIX2) <- NULL
+#colnames(VIX2) <- as.character(VIX2.raw[header.row, ])
 # Convert variables
+VIX2$DATE <- as.Date.character(VIX2$DATE, '%m/%d/%Y')
 VIX2[, -1] <- apply(VIX2[, -1], 2, as.numeric)
-VIX2$Date <- as.Date.character(VIX2$Date, '%m/%d/%Y')
-VIX2 <- xts::xts(VIX2[, -1], order.by=VIX2$Date)
+VIX2 <- xts::xts(VIX2[, -1], order.by=VIX2$DATE)
 
 ## VIX 1990-01-02 to date
 # VIX monthly

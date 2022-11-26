@@ -14,7 +14,7 @@
 #
 # Copyright holder: (c) MSCI Inc.
 
-# WARNING: rio::import(), as other direct download methods, failed
+# WARNING: all other direct download methods, failed
 #
 # Parser relies on the following steps on your side:
 # 1. Manually download the file from 'Source' link
