@@ -47,10 +47,11 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 source(parser.path)
 
 # Subset AQR GAP data points 
-MKT.GLOBAL <- xts::xts(x = HML_Devil.MKT$Global, order.by = index(HML_Devil.MKT))
+MKT.GLOBAL <- HML_Devil.MKT[,"Global"]
 colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
 # delete leading NAs
 MKT.GLOBAL <- na.trim(MKT.GLOBAL)
+#tclass(MKT.GLOBAL) <- "yearmon"
 
 # Correlation methods to pass to cor()
 cor.methods <- c('pearson', 'spearman')
@@ -62,7 +63,7 @@ path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
 source(path.parser)
 
 #change date to end-of-month
-index(MSCI.WI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.WI)))
+# tclass(MSCI.WI) <- yearmon(index(MSCI.WI))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$MKT.GLOBAL))) + 1
@@ -109,7 +110,7 @@ path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
 source(path.parser)
 
 #change date to end-of-month
-index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
+#index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$COMP.RET)))
@@ -265,7 +266,7 @@ MOM <- FFfactors[["x_F-F_Momentum_Factor"]]
 ```{r Get factors and portfolios data 4}
 ## Merge Factors and Portfolios Data
 # Factors data
-FFC4 <- na.trim(merge(FF3, MOM))
+FFC4 <- na.trim( merge(FF3, MOM) )
 portfolios <- merge(MSCI.WI, FFC4)
 # MSCI  
 portfolios$MSCI.RF <- zoo::na.locf(portfolios$RET)
@@ -276,7 +277,7 @@ portfolios$MSCI.RF <- zoo::na.locf(portfolios$RET)
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
 
 #change date to end-of-month
-index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
+#index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
 portfolios <- merge(CRP, portfolios)
 # Merge factors data
 # portfolios <- zoo::na.locf(portfolios)
@@ -285,9 +286,9 @@ portfolios <- merge(CRP, portfolios)
 #   portfolios[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
 #   row.names=NULL
 # )
-portfolios <- portfolios[,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
-tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
-portfolios <- portfolios[tp, ]
+#portfolios <- portfolios[,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
+#tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
+#portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
 # TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
