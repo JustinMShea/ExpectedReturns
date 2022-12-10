@@ -25,6 +25,10 @@ knitr::opts_chunk$set(
   warning = FALSE,
   error = FALSE
 )
+
+library(xts)
+library(quantmod)
+
 ```
 
 ```{r Utility functions}
@@ -105,9 +109,11 @@ SharpeRatioDownsideRisk <- function(r, rf=0, ...) {
   drsr <- mean(r.xs, na.rm=TRUE)/sqrt(2 * dwn.risk)
   return(drsr)
 }
+
 ```
 
 # Introduction
+
 These notes aim at reproducing \textcites{baltas-kosowski-2012, baltas-kosowski-2013}. The work has three fundamental aims:
 first of all, to document empirical time-series momentum patterns, second to examine the information content of traditional and new signals to capture assets' momentum and third, to investigate a family of volatility estimators and assess their efficiency from a momentum investing point of view.
 
@@ -286,6 +292,7 @@ $$
 
 ```{r Volatility estimators}
 vol.estimators <- c('close', 'parkinson', 'garman.klass', 'gk.yz', 'rogers.satchell', 'yang.zhang')
+
 EstimateVolatility <- function(X, estimator, ...) {
   #' @param X A list of `xts` objects storing assets data.
   #' @param estimator A character vector specifying volatility estimators. Any of those supported by `TTR::volatility()`.
@@ -293,12 +300,12 @@ EstimateVolatility <- function(X, estimator, ...) {
   vol.estm <- vol.bias <- vol.abrd <- vto <- vector('list', length(estimator))
   vol.calcs <- lapply(X, function(x) {
     # Get dates, normalized OHLC prices, and convert
-    x <- x[, 1:4]
+    x <- na.omit(x[, 1:4])
     # x <- x[, !vapply(x, is.character, FUN.VALUE=logical(1L))]
     # x <- xts::xts(x[, -1], order.by=x[, 1])
     for (v in 1:length(estimator)) {
       vol.estm[[v]] <- TTR::volatility(x, calc=estimator[v], ...) 
-      vol.bias[[v]] <- 1 / nrow(x) * sum(vol.estm[[1]] - vol.estm[[v]], na.rm=TRUE)
+        vol.bias[[v]] <- 1 / nrow(x) * sum(vol.estm[[1]] - vol.estm[[v]], na.rm=TRUE)
       vol.abrd[[v]] <- abs((1 / vol.estm[[v]]) - (1 / lag(vol.estm[[v]])))
       vto[[v]] <- 1 / (nrow(x) + 1) * sum(vol.abrd[[v]], na.rm=TRUE)
     }
@@ -311,7 +318,7 @@ EstimateVolatility <- function(X, estimator, ...) {
 
 # 30-days volatility estimates
 vol30 <- EstimateVolatility(
-  futures.data, estimator=vol.estimators,
+  futures.data, estimator = vol.estimators,
   n=30, N=261, type='continuous'
 )
 # 60-days volatility estimates
@@ -321,20 +328,24 @@ vol60 <- EstimateVolatility(
 )
 ```
 
-```{r Figure 1A, fig.cap="Futures closing prices"}
+```{r Figure 1A, fig.cap="Futures closing prices", eval=FALSE}
 # Futures closing prices plots (1st column)
 layout(matrix(1:length(symbols), 4, 3, byrow=TRUE))
+
 mapply(
   function(x, y) {
     plot(x$Close, main=y, yaxis.right=FALSE)
   }, 
   futures.data, symbols
 )
+
+
 ```
 ```{r Figure 1B, fig.cap="Annualized volatility estimates"}
 # Volatility YZ estimators plots (2nd column)
 vol60.by.est <- AggregateByType(vol60, vol.estimators, symbols=symbols, type='vol.est')
-layout(matrix(1:length(symbols), 4, 3, byrow=TRUE))
+
+#layout(matrix(1:length(symbols), 4, 3, byrow=TRUE))
 mapply(
   function(x, y) {
     plot(
@@ -375,7 +386,7 @@ tab2.panels[c('B', 'C')] <- panels.BC
 
 ```{r Figure 2, fig.cap="Annualized volatility estimates across instruments"}
 vol60.inst <- AggregateByInstrument(vol60, type='vol.est')
-layout(matrix(1:length(vol60.inst), 4, 3, byrow=TRUE))
+#layout(matrix(1:length(vol60.inst), 4, 3, byrow=FALSE))
 mapply(function(x, y) plot(x * sqrt(261), main=y, yaxis.right=FALSE), vol60.inst, symbols)
 ```
 
