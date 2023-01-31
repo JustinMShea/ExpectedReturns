@@ -8,7 +8,7 @@
 
 ## Download to Sandbox
 
-AQR_HML_Devil_file <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/The-Devil-in-HMLs-Details-Factors-Monthly.xlsx"
+AQR_HML_Devil_file <- "https://www.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/The-Devil-in-HMLs-Details-Factors-Monthly.xlsx"
 download.file(AQR_HML_Devil_file, destfile = "sandbox/data/AQR_HML_Devil.xlsx")
 
 ## Load data from Sandbox
