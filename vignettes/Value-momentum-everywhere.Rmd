@@ -43,7 +43,7 @@ Because of the *global* nature of their pricing approach, authors use as their $
 # Source AQR's Global Aggregate Equity Portfolio ("AQR GAP")
 # NOTE: returns in decimal unit
 # source("vignettes/Value--Devil-in-HMLs-Details.R")
-parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
+parser.path <- system.file('parsers', 'Value--Devil-in-HMLs-Details.R',package='ExpectedReturns')
 source(parser.path)
 
 # Subset AQR GAP data points 
@@ -58,7 +58,7 @@ cor.methods <- c('pearson', 'spearman')
 
 ```{r AQR GAP vs MSCI WI}
 # NOTE: returns in decimal unit
-path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
+path.parser <- system.file('parsers', 'MSCI-WI.R', package = 'ExpectedReturns')
 source(path.parser)
 
 #change date to end-of-month
@@ -105,7 +105,7 @@ Because AQR's "Global Aggregate Equity Portfolio" contains more securities then 
 
 ```{r AQR GAP vs vs MSCI ACWI}
 # NOTE: returns in decimal unit
-path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
+path.parser <- system.file('parsers', 'MSCI-ACWI.R', package='ExpectedReturns')
 source(path.parser)
 
 #change date to end-of-month
@@ -187,10 +187,10 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 ```{r Get factors and portfolios data}
 ## Import AQR data
 # VME data
-source(file.path('inst', 'parsers', 'VME-Factors-orig.R'))
-source(file.path('inst', 'parsers', 'VME-Portfolios.R'))
+source(system.file('parsers', 'VME-Factors.R',package='ExpectedReturns'))
+source(system.file('parsers', 'VME-Portfolios.R',package='ExpectedReturns'))
 # Bonds data
-source(file.path('inst', 'parsers', 'CRP.R'))
+source(system.file('parsers', 'CRP.R',package='ExpectedReturns'))
 ```
 
 ```{r Replicate Table 1 pg.940 Performance of Value and Momentum Portfolios across Markets and Asset Classes}
