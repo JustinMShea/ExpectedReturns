@@ -36,7 +36,7 @@ importRemoteAQRxlsxFile <- function(path, sheet, startRow = 19, removeBlankRow =
   #reset rownames
   rownames(rawImportData) <- NULL
 
-  rawImportData <- xts::xts(x = rawImportData[,-1], order.by = rawImportData$DATE)
+  rawImportData <- xts::xts(x = rawImportData[,-1], order.by = as.yearmon(rawImportData$DATE))
 
   return(rawImportData)
 
@@ -82,7 +82,7 @@ HML_Devil.ME_1 <- importRemoteAQRxlsxFile(path = AQR_HML_Devil_file, sheet = "ME
 
   rawImportData$DATE <- as.Date(rawImportData$DATE, format = "%m/%d/%Y")
 
-  HML_Devil.RF <- xts::xts(x = rawImportData[,-1], order.by = rawImportData$DATE)
+  HML_Devil.RF <- xts::xts(x = rawImportData[,-1], order.by = as.yearmon(rawImportData$DATE))
 
 
 

@@ -33,7 +33,7 @@ MSCI.ACWI.raw$Price <- as.numeric(gsub(",","", MSCI.ACWI.raw$Price))
 MSCI.ACWI.raw$Date <- as.Date(MSCI.ACWI.raw$Date, format = "%b %d, %Y")
 
 # NOTE: returns in decimal unit
-MSCI.ACWI <- xts::xts(x = MSCI.ACWI.raw$Price, order.by = MSCI.ACWI.raw$Date)
+MSCI.ACWI <- xts::xts(x = MSCI.ACWI.raw$Price, order.by = as.yearmon(MSCI.ACWI.raw$Date))
 colnames(MSCI.ACWI) <- c('PRICE')
 MSCI.ACWI$RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'discrete')
 MSCI.ACWI$COMP.RET <- PerformanceAnalytics::Return.calculate(MSCI.ACWI[, 'PRICE'], 'log')
