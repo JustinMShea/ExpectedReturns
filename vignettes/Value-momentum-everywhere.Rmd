@@ -243,7 +243,8 @@ VME.PORTF.RET <- VME.Portfolios
 ```{r Get factors and portfolios data 3}
 
 ## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
-source("../inst/parsers/FFdownloads_factors_package.R")
+source("./inst/parsers/FFdownloads_factors_package.R")
+
 
 ## Function to parse through 'ffdownloads' package available monthly data from "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" - Bryan
 FFfactors <- FFfactors_xts(x)

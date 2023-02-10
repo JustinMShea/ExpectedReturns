@@ -74,6 +74,10 @@ bs.ia <- Q4.monthly$IA
 bs.roe <- Q4.monthly$ROE
 
 # Our Barillas-Shanken data set
+index(bs.ia) <- as.yearmon(index(bs.ia))
+index(bs.mktrf) <- as.yearmon(index(bs.mktrf))
+index(bs.roe) <- as.yearmon(index(bs.roe))
+index(bs.smb) <- as.yearmon(index(bs.smb))
 BS6.monthly <- merge(bs.mktrf, bs.smb, bs.hml, bs.mom, bs.ia, bs.roe)
 BS6.monthly <- BS6.monthly[complete.cases(BS6.monthly), ]
 colnames(BS6.monthly) <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
@@ -239,6 +243,8 @@ lapply(dhs.on.q$fits, summary)
 
 ```{r Table 4 Q factors vs Barillas Shanken 6 Factors}
 bs6.vars <- c('MKT.RF', 'SMB', 'HML.DEV', 'MOM', 'IA', 'ROE')
+
+index(Q5.monthly) <- as.yearmon(index(Q5.monthly))
 data.qbs <- merge(BS6.monthly, Q5.monthly)
 data.qbs <- data.qbs[complete.cases(data.qbs), unique(c(q5.vars, bs6.vars))]
 # Sample period
@@ -274,6 +280,9 @@ CorFactors <- function(data, ...) {
 }
 
 vars <- unique(c(q5.vars, ff6.vars, sy4.vars, dhs3.vars, bs6.vars))
+index(FF6.monthly) <- as.yearmon(index(FF6.monthly))
+index(SY4.monthly) <- as.yearmon(index(SY4.monthly))
+index(DHS3.monthly) <- as.yearmon(index(DHS3.monthly))
 data.all <- merge(FF6.monthly, Q5.monthly, SY4.monthly, DHS3.monthly, BS6.monthly)
 data.all <- data.all[complete.cases(data.all), vars]
 factors.correlation <- CorFactors(data.all)

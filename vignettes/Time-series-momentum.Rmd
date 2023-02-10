@@ -102,7 +102,7 @@ min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
 max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
 # min.tp <- max(first(index(FF3)), first(index(MOM)))
 # max.tp <- min(last(index(FF3)), last(index(MOM)))
-days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 # VIX Index
 parser.path <- file.path('inst', 'parsers', 'VIX-FRED.R')
@@ -149,16 +149,21 @@ data$RET <- NULL
 # data <- data[tp, ]
 
 # Bonds factor
+index(FI.MARKET) <- as.yearmon(index(FI.MARKET))
 data <- merge(data, FI.MARKET)
 # Commodities Market
+index(CM.MARKET) <- as.yearmon(index(CM.MARKET))
 data <- merge(data, CM.MARKET)
 # VME factors
 data <- merge(data, VME.FACTORS)
 # VIX Index
+index(VIX.RET) <- as.yearmon(index(VIX.RET))
 data <- merge(data, VIX.RET)
 # TED Spread
+index(TED.SPREAD) <- as.yearmon(index(TED.SPREAD))
 data <- merge(data, TED.SPREAD)
 # TSMOM(12, 1) strategy returns
+index(TSM) <- as.yearmon(index(TSM))
 data <- merge(data, TSM)
 
 # NOTE:
@@ -170,11 +175,18 @@ data <- merge(data, TSM)
 data <- zoo::na.locf(data)
 # NOTE:
 # TED-Spread and VIX top ~20% series are used as they are constructed
+index(TED20) <- as.yearmon(index(TED20))
+index(VIX20) <- as.yearmon(index(VIX20))
+
+
 data <- merge(data, TED20, VIX20)
 
+ff.dates <- as.yearmon(ff.dates)
+
+
 data <- data.frame(
-  DATE=ff.dates,
-  data[ff.dates, ],
+  DATE=as.Date(index(data)),
+  coredata(data),
   row.names=NULL
 )
 ```
@@ -187,10 +199,10 @@ data <- cbind(data, date.id)
 # The AQR website TSMOM portfolios from which we sourced our data for this replication start # reporting data from that date, but keep the data up to date. For the purposes of
 # replicating the time period in the paper, we will need to truncate the 'data' object after # Dec 2009. The resulting t-stats of the alpha intercepts are more inline with the paper if
 # we do. For the updated alpha t-stats the user can comment this line of code. 
-data <- data[-((which(data$DATE=="2009-12-31")+1):nrow(data)),]
+data <- data[-((which(data$DATE=="2009-12-01")+1):nrow(data)),]
 # Regressions variables
 y <- colnames(TSM)
-X <- c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM')
+X <- c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'Mom')
 # Time-series regressions
 tsmom.ts.reg <- lapply(1:length(y), function(x) {
   model.formula <- formula(
@@ -230,7 +242,7 @@ lapply(tsmom.ts.reg.test, summary)
 # quarterly data.
 y <- 'TSMOM' # diversified TSMOM(12,1)
 X <- list(
-  ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'MOM')
+  ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'Mom')
   , amp3=c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
   , msci=c('MSCI.RF', 'I(MSCI.RF^2)')
   , ted=c('TED')
@@ -260,7 +272,7 @@ row.names(data.test) <-data.test$DATE
 data.test$DATE <- NULL
 data.test['MSCI.RF.square']<-data.test$MSCI.RF^2 
 X <- list(    
-  ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'MOM')
+  ffc4.msci=c('MSCI.RF', 'SMB', 'HML', 'Mom')
   , amp3=c('MSCI.RF', 'VAL.EVR', 'MOM.EVR')
   , msci=c('MSCI.RF', 'MSCI.RF.square')
   , ted=c('TED')
@@ -324,7 +336,7 @@ mom.tsxs.reg
 ```{r TSM_Table_5_Panel_A_FA}
 #refactored by Jiarui
 mom.data.test = mom.data
-row.names(mom.data.test) <-mom.data.test$DATE 
+row.names(mom.data.test) <-as.Date(mom.data$DATE) 
 mom.data.test$DATE <- NULL
 mom.tsxs.reg.test <-lapply(1:length(Y), function(x) {
   fitTsfm(factor.names=X[[x]], asset.names=Y[x], data = mom.data.test) 
@@ -348,7 +360,7 @@ data <- merge(
     row.names=NULL
   )
 )
-Y <- c('XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'SMB', 'HML', 'MOM')
+Y <- c('XSMOM.ALL', 'XSMOM.COM', 'XSMOM.EQ', 'XSMOM.FI', 'XSMOM.FX', 'SMB', 'HML', 'Mom')
 tsmom.div.all <- lapply(Y, function(y) {
   plm::plm(
     formula(paste(y, 'TSMOM', sep='~')), 
