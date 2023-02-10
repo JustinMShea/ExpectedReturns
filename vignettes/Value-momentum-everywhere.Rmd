@@ -298,7 +298,6 @@ portfolios <- merge(VME.FACTORS, portfolios)
 # 
 portfolios2 <- portfolios
 
-
 portfolios2$EXC.RET.VAL.EVR <- portfolios2$VAL.EVR - portfolios2$RF
 portfolios2$EXC.RET.MOM.EVR <- portfolios2$MOM.EVR - portfolios2$RF
 portfolios2$EXC.RET.MSCI.RF <- portfolios2$MSCI.RF - portfolios2$RF
@@ -375,21 +374,28 @@ row.names(portfoliosDT) <- NULL
 ```{r Global Three-Factor Model 2}
 # TODO: Only model for which data is readily available at the moment.
 library(FactorAnalytics)
-## attemptingg to reproduce regression below using fitTsfm instead
+
+## attempting to reproduce regression below using fitTsfm instead
 
 ts.reg2 <- fitTsfm(asset.names = colnames(portfolios2[,(11:13)]),
-                   factor.names = colnames(portfolios2[,c("VAL.EVR", "MOM.EVR", "MSCI.RF")]),
+                   factor.names = colnames(portfolios2[,c("VAL.EVR", 
+                                                          "MOM.EVR", 
+                                                          "MSCI.RF")]),
                    data = portfolios2)
 
+## Estimates
+summary(ts.reg2) # average coefficients
+coef(ts.reg2)
 
 # Time-series regressions
-ts.reg <- plm::pmg(
-  EXC.RET ~ MSCI.RF + VAL.EVR + MOM.EVR,
-  data=portfoliosDT, index=c('PORTF.ID', 'DATE.ID')
-)
+ts.reg <- plm::pmg(EXC.RET ~ MSCI.RF + VAL.EVR + MOM.EVR,
+                   data=portfoliosDT, 
+                   index=c('PORTF.ID', 'DATE.ID')
+                   )
+
 ## Estimates
 summary(ts.reg) # average coefficients
-betas <- t(ts.reg$indcoef) # all coefficients
+betas <- t(ts.reg2$indcoef) # all coefficients
 rownames(betas) <- portf
 colnames(betas) <- paste('BETA', colnames(betas), sep='.')
 betas
