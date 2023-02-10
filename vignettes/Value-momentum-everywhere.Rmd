@@ -43,62 +43,63 @@ Because of the *global* nature of their pricing approach, authors use as their $
 # Source AQR's Global Aggregate Equity Portfolio ("AQR GAP")
 # NOTE: returns in decimal unit
 # source("vignettes/Value--Devil-in-HMLs-Details.R")
-parser.path <- system.file('parsers', 'Value--Devil-in-HMLs-Details.R',package='ExpectedReturns')
+library(xts)
+parser.path <- system.file('parsers',        
+                           'Devil-in-HML-Details.R',
+                           package='ExpectedReturns')
 source(parser.path)
 
 # Subset AQR GAP data points 
 MKT.GLOBAL <- HML_Devil.MKT[,"Global"]
 colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
+
 # delete leading NAs
 MKT.GLOBAL <- na.trim(MKT.GLOBAL)
+
 #tclass(MKT.GLOBAL) <- "yearmon"
 
 # Correlation methods to pass to cor()
 cor.methods <- c('pearson', 'spearman')
 ```
 
+
 ```{r AQR GAP vs MSCI WI}
 # NOTE: returns in decimal unit
-path.parser <- system.file('parsers', 'MSCI-WI.R', package = 'ExpectedReturns')
+path.parser <- system.file('parsers', 
+                           'MSCI-WI.R', 
+                           package = 'ExpectedReturns')
 source(path.parser)
 
 #change date to end-of-month
 # tclass(MSCI.WI) <- yearmon(index(MSCI.WI))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
-min.tp <- first(which(!is.na(global.proxies$MKT.GLOBAL))) + 1
-max.tp <- nrow(global.proxies)
-gap.wi.cor <- sapply(1:length(cor.methods), function(x) {
-  as.numeric(
-    cor(
-      global.proxies$MKT.GLOBAL[min.tp:max.tp],
-      global.proxies$COMP.RET[min.tp:max.tp],
-      use='na.or.complete',
-      method=cor.methods[x]
-    )
-  )
-})
-gap.wi.cor
+
+PerformanceAnalytics::table.Correlation(global.proxies$MKT.GLOBAL, global.proxies$COMP.RET,
+                                          method = "pearson")
+PerformanceAnalytics::chart.Correlation(global.proxies)
 
 # Plot comparison
 # global.proxies.cont <- na.locf(global.proxies)
-global.proxies.cont <- na.fill(global.proxies, c(NA, 'extend', 'extend'))
+global.proxies.cont <- na.trim(global.proxies)
+
 plot.global.proxies.cont <- function(x=global.proxies.cont) {
-  plot.xts(
-    x, 
-    main='AQR\'s Global MKT vs MSCI World Index',
-    screens=factor(1, 1), col=c('black', 'blue'), lwd=c(0.95, 0.95)
-  )
-  addLegend(
-    'bottomleft', 
-    legend.names = c(
-      'Global MKT', 'MSCI WI', 
-      expression(paste(rho[Pearson], ' = 0.9834098')),
-      expression(paste(rho[Spearman], ' = 0.9790861'))
-    ), 
-    cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
-  )
+  plot.xts(x, 
+           main='AQR\'s Global MKT vs MSCI World Index',
+           screens=factor(1, 1), 
+           col=c('black', 'blue'), 
+           lwd=c(0.95, 0.95)
+           )
+  addLegend('bottomleft', 
+            legend.names = c('Global MKT', 'MSCI WI', 
+                             expression(paste(rho[Pearson], ' = 0.9620982	'))
+                             ), 
+            cex=0.75, lty=1, lwd=1, 
+            col=c('black', 'blue', 
+                         NA, NA)
+            )
 }
+
 plot.global.proxies.cont()
 ```
 
@@ -113,19 +114,10 @@ source(path.parser)
 #index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
-min.tp <- first(which(!is.na(global.proxies$COMP.RET)))
-max.tp <- nrow(global.proxies)
-gap.acwi.cor <- sapply(1:length(cor.methods), function(x) {
-  as.numeric(
-    cor(
-      global.proxies$MKT.GLOBAL[min.tp:max.tp],
-      global.proxies$COMP.RET[min.tp:max.tp],
-      use='na.or.complete',
-      method=cor.methods[x]
-    )
-  )
-})
-gap.acwi.cor
+
+PerformanceAnalytics::table.Correlation(global.proxies$MKT.GLOBAL, global.proxies$COMP.RET)
+PerformanceAnalytics::chart.Correlation(global.proxies)
+
 
 # Plot comparison
 # global.proxies.cont <- na.locf(global.proxies)
@@ -140,8 +132,7 @@ plot.global.proxies.cont <- function(x=global.proxies.cont) {
     'bottomleft', 
     legend.names = c(
       'Global MKT', 'MSCI ACWI', 
-      expression(paste(rho[Pearson], ' = 0.9887671')),
-      expression(paste(rho[Spearman], ' = 0.9840154'))
+      expression(paste(rho[Pearson], ' = 0.9642701'))
     ), 
     cex=0.75, lty=1, lwd=1, col=c('black', 'blue', NA, NA)
   )
@@ -187,9 +178,11 @@ it has been linked with financial crises (see what happened in 1987), flash cras
 ## Comovement and Asset Pricing Tests
 ```{r Get factors and portfolios data}
 ## Import AQR data
+
 # VME data
-source(system.file('parsers', 'VME-Factors.R',package='ExpectedReturns'))
+source(system.file('parsers', 'VME-Factors-orig.R',package='ExpectedReturns'))
 source(system.file('parsers', 'VME-Portfolios.R',package='ExpectedReturns'))
+
 # Bonds data
 source(system.file('parsers', 'CRP.R',package='ExpectedReturns'))
 ```
