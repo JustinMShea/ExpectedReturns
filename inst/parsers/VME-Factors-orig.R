@@ -7,7 +7,10 @@
 # Source: https://images.aqr.com/Insights/Datasets/Value-and-Momentum-Everywhere-Factors-Monthly
 
 ##Download data to R
-AQR.VME.Factors.orig.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Original-Paper-Data.xlsx"
+AQR.VME.Factors.orig.url <- system("wget https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Original-Paper-Data.xlsx")
+
+AQR.VME.Factors.orig.url <- list.files(path = "../expected-returns", pattern = "Momentum-Everywhere-Original", full.names = TRUE)
+
 VME.Factors.orig <- openxlsx::read.xlsx(AQR.VME.Factors.orig.url, sheet = 2, startRow = 15, colNames = TRUE, detectDates =  TRUE)
 
 ## Clean up
@@ -27,3 +30,5 @@ VME.Factors.orig <- xts::xts(VME.Factors.orig[,-1], order.by = VME.Factors.orig$
 rm(AQR.VME.Factors.orig.url,
    variable.names
 )
+
+system("rm ../expected-returns/Value-and-Momentum-Everywhere-Original-Paper-Data.xlsx")

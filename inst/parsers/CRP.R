@@ -8,7 +8,11 @@
 # Source: https://www.aqr.com/Insights/Datasets/Credit-Risk-Premium-Preliminary-Paper-Data
 
 ## Download data in R environment
-AQR.CRP.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Credit-Risk-Premium-Preliminary-Paper-Data.xlsx"
+AQR.CRP.url <- system("wget https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Credit-Risk-Premium-Preliminary-Paper-Data.xlsx")
+
+AQR.CRP.url <- list.files(path = ".", pattern = "Credit-Risk-Premium-Preliminary-Paper-Data.xlsx", full.names = TRUE)
+
+
 CRP <- openxlsx::read.xlsx(AQR.CRP.url, sheet=1, startRow=10,
                                          colNames=TRUE, detectDates = TRUE)
 ## Clean up
@@ -22,3 +26,5 @@ CRP <- xts::xts(x = CRP[,-1], order.by = CRP[,1])
 
 ## Remove unused variables
 rm(AQR.CRP.url, variable.names)
+
+system("rm ./Credit-Risk-Premium-Preliminary-Paper-Data.xlsx")

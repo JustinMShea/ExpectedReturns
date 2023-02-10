@@ -9,7 +9,10 @@
 
 ## Download in R environment
 
-AQR.VME.Portfolios.url <- "https://www.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Original-Paper-Data.xlsx"
+AQR.VME.Portfolios.url <- system("wget https://www.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Original-Paper-Data.xlsx")
+
+AQR.VME.Portfolios.url <- list.files(path = "../expected-returns", pattern = "Momentum-Everywhere-Original", full.names = TRUE)
+
 
 # AQR.VME.Portfolios.url <- "https://images.aqr.com/-/media/AQR/Documents/Insights/Data-Sets/Value-and-Momentum-Everywhere-Portfolios-Monthly.xlsx"
 VME.Portfolios.raw <- openxlsx::read.xlsx(AQR.VME.Portfolios.url, sheet=1, startRow=1,
@@ -42,3 +45,5 @@ rm(
   , variable.names
   , VME.Portfolios.vars
 )
+system("rm ../expected-returns/Value-and-Momentum-Everywhere-Original-Paper-Data.xlsx")
+
