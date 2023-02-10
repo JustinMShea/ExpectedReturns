@@ -24,7 +24,7 @@ colnames(VME.Factors.orig) <- variable.names
 # VME.Factors.orig <- zoo::na.trim(VME.Factors.orig)
 
 ## Convert to xts
-VME.Factors.orig <- xts::xts(VME.Factors.orig[,-1], order.by = VME.Factors.orig$DATE)
+VME.Factors.orig <- xts::xts(VME.Factors.orig[,-1], order.by = as.yearmon(VME.Factors.orig$DATE))
 
 ## Remove unused variables
 rm(AQR.VME.Factors.orig.url,

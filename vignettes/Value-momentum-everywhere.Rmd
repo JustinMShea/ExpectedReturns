@@ -3,7 +3,7 @@ title: '"Value and Momentum Everywhere"'
 subtitle: (draft)
 author: "Vito Lestingi"
 date: "`r Sys.Date()`"
-abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
+abstract: "This reproducible document includes material on some academic and practitioners' literature instrumental for the project."
 output:
   rmarkdown::pdf_document:
     citation_package: biblatex
@@ -30,10 +30,6 @@ library(xts)
 library(plm)
 ```
 
-```{r, echo=FALSE}
-# Mentors, please feel free to add yourself to the authors' field if you wish.
-```
-
 # Introduction
 In these notes we replicate \textcite{asness-moskowitz-pedersen-2013} (AMP hereafter).
 The authors aim at providing a *global*, across both markets/asset classes and across countries, asset pricing approach. This is what "everywhere" in "Value and Momentum *Everywhere*" stands for.
@@ -50,10 +46,11 @@ parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
 source(parser.path)
 
 # Subset AQR GAP data points 
-MKT.GLOBAL <- xts::xts(x = HML_Devil.MKT$Global, order.by = index(HML_Devil.MKT))
+MKT.GLOBAL <- HML_Devil.MKT[,"Global"]
 colnames(MKT.GLOBAL) <- 'MKT.GLOBAL'
 # delete leading NAs
 MKT.GLOBAL <- na.trim(MKT.GLOBAL)
+#tclass(MKT.GLOBAL) <- "yearmon"
 
 # Correlation methods to pass to cor()
 cor.methods <- c('pearson', 'spearman')
@@ -65,7 +62,7 @@ path.parser <- file.path('inst', 'parsers', 'MSCI-WI.R')
 source(path.parser)
 
 #change date to end-of-month
-index(MSCI.WI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.WI)))
+# tclass(MSCI.WI) <- yearmon(index(MSCI.WI))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.WI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$MKT.GLOBAL))) + 1
@@ -112,7 +109,7 @@ path.parser <- file.path('inst', 'parsers', 'MSCI-ACWI.R')
 source(path.parser)
 
 #change date to end-of-month
-index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
+#index(MSCI.ACWI) <- as.Date(timeDate::timeLastDayInMonth(index(MSCI.ACWI)))
 # Merge and compute correlation(s)
 global.proxies <- merge(MKT.GLOBAL, MSCI.ACWI$COMP.RET)
 min.tp <- first(which(!is.na(global.proxies$COMP.RET)))
@@ -199,11 +196,11 @@ source(file.path('inst', 'parsers', 'CRP.R'))
 ```{r Replicate Table 1 pg.940 Performance of Value and Momentum Portfolios across Markets and Asset Classes}
 # function for computing annualized return, standard deviation, and sharpe (need to still incorporate t-stats, P3-P1 column, 50/50 comb column, &  corresponding alphas)
 
-VME_table1 <- function(VME.Portfolios, geometric = FALSE) {
+VME_table1 <- function(VME.Portfolios, ...) {
 
-return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, geometric = FALSE)
-SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, geometric = FALSE)
-sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, geometric = FALSE)
+return <- PerformanceAnalytics::Return.annualized(VME.Portfolios, ...)
+SD <- PerformanceAnalytics::sd.annualized(VME.Portfolios, ...)
+sharpe <- PerformanceAnalytics::SharpeRatio.annualized(VME.Portfolios, ...)
 
   return(rbind(return, SD, sharpe) )
 }
@@ -244,8 +241,10 @@ VME.PORTF.RET <- VME.Portfolios
 ```
 
 ```{r Get factors and portfolios data 3}
+
 ## Get Fama-French-Carhart Four Factors (MKT.RF, SMB, HML, MOM)
-source("~/R/expected-returns/inst/parsers/FFdownloads_factors_package.R")
+source("../inst/parsers/FFdownloads_factors_package.R")
+
 ## Function to parse through 'ffdownloads' package available monthly data from "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" - Bryan
 FFfactors <- FFfactors_xts(x)
 ## assigning same name as used in this and other scripts.
@@ -257,21 +256,30 @@ MOM <- FFfactors[["x_F-F_Momentum_Factor"]]
 #min.tp <- max(first(index(FF3)), first(index(MOM)))
 #max.tp <- min(last(index(FF3)), last(index(MOM)))
 
+
 min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
 max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
 
 # tp <- paste(min.tp, max.tp, sep='/')
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+
+## aded as.Date() wrap since date format in new data comes in as "%b %Y" (May 2022). Need to properly adjust FFfactors function so this is taken care of before.
+# min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
+# max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
+# tp <- paste(min.tp, max.tp, sep='/')
+# days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
+# ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
+
 ```
 
 ```{r Get factors and portfolios data 4}
 ## Merge Factors and Portfolios Data
 # Factors data
-index(MSCI.WI) <- as.yearmon(index(MSCI.WI))
 
 
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
+
 portfolios <- merge(MSCI.WI, FFC4)
 # MSCI  
 portfolios$MSCI.RF <- zoo::na.locf(portfolios$RET)
@@ -280,10 +288,9 @@ portfolios$MSCI.RF <- zoo::na.locf(portfolios$RET)
 # - portfolios$RF
 # Bonds factors data
 CRP <- CRP[, colnames(CRP) != 'SP500.XS']
-index(CRP) <- as.yearmon(index(CRP))
 
 #change date to end-of-month
-index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
+#index(CRP) <- as.Date(timeDate::timeLastDayInMonth(index(CRP)))
 portfolios <- merge(CRP, portfolios)
 # Merge factors data
 # portfolios <- zoo::na.locf(portfolios)
@@ -292,9 +299,9 @@ portfolios <- merge(CRP, portfolios)
 #   portfolios[ff.dates, c(colnames(CRP), 'MSCI.RF', colnames(FFC4))],
 #   row.names=NULL
 # )
-portfolios <- portfolios[ff.dates,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
-tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
-portfolios <- portfolios[tp, ]
+#portfolios <- portfolios[,c(colnames(CRP), 'MSCI.RF', colnames(FFC4))]
+#tp <- 1:max(which(!is.na(portfolios$CORP.XS)))
+#portfolios <- portfolios[tp, ]
 
 # Merge VME Factors and VME Portfolios Returns
 # TODO: use xts, but this is a minimal fix to ensure document knits successfully as we use 'DATE' column lower down
@@ -387,7 +394,7 @@ row.names(portfoliosDT) <- NULL
 
 ```{r Global Three-Factor Model 2}
 # TODO: Only model for which data is readily available at the moment.
-
+library(FactorAnalytics)
 ## attemptingg to reproduce regression below using fitTsfm instead
 
 ts.reg2 <- fitTsfm(asset.names = colnames(portfolios2[,(11:13)]),
@@ -533,4 +540,3 @@ lines(par()$usr[1:2], par()$usr[3:4], col='gray75')
 text(x=x, y=y, names(x), cex=0.5, pos=4)
 grid()
 ```
-

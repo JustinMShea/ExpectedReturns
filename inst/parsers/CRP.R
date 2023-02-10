@@ -19,7 +19,7 @@ CRP <- openxlsx::read.xlsx(AQR.CRP.url, sheet=1, startRow=10,
 variable.names <- colnames(CRP)
 variable.names <- gsub('_', '.', variable.names)
 colnames(CRP) <- toupper(variable.names)
-CRP <- xts::xts(x = CRP[,-1], order.by = CRP[,1])
+CRP <- xts::xts(x = CRP[,-1], order.by = as.yearmon(CRP[,1]))
 
 # Convert variables to "numeric" and dates to "Date"
 # NOTE: dates get parsed as character, but are numeric relative dates
