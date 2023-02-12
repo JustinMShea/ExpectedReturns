@@ -33,5 +33,7 @@ vignettes/*.html
 .RData
 .Ruserdata
 
+*.bib.sav
+
 /sandbox/data/FuturesData/
 /sandbox/data/misc/
