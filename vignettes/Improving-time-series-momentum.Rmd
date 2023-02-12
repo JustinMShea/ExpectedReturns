@@ -124,7 +124,7 @@ Of methodological relevance is that authors adjust futures quotes series for rol
 
 Furthermore, as will be better detailed in following sections, we consider daily settlement futures prices as opposed to closing prices (see [CME Group Daily Settlement Procedures](https://www.cmegroup.com/market-data/files/CME_Group_Settlement_Procedures.pdf) for information). This is chiefly dictated by the fact closing price data is not readily available in our data set. However, we observe that often the two series are row-wise equal and when they're not prices result to be quite close indeed. However, there are important conceptual differences between the two and thus this "substitution" shouldn't take place when full OCHL data is available. 
 
-```{r Load/source futures data}
+```{r source futures data}
 # Commodities, equity indexes, currencies, and interest rates
 # TODO: Eurostoxx50 in USD?
 # TODO: 'EC1' for EUR/USD FX rate?
