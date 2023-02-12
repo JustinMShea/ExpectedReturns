@@ -6,7 +6,7 @@ date: "`r Sys.Date()`"
 abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
 output: 
   rmarkdown::pdf_document:
-    citation_package: biblatex
+    citation_package: default
 bibliography: references.bib
 vignette: >
   %\VignetteIndexEntry{Value-oriented equity selection: The Devil in HML's Details}
@@ -64,7 +64,7 @@ Compare the results.
 - Justin
 -->
 
-In the following we briefly review \textcite{asness-frazzini-2013} (AF hereafter) 
+In the following we briefly review @asness-frazzini-2013 (AF hereafter) 
 and reproduce this work thanks to replication data sets publicly available. Data 
 are updated and maintained by AQR (www.aqr.com).
 As will be clear from further discussions, for their analysis authors use data until
@@ -77,7 +77,7 @@ reported on July, 31, 1926.
 
 ### Value measures
 Introducing the value measures contemplated in this work, the first value measure 
-studied is the standard practice pioneered by \textcite{fama-french-1992}. It is 
+studied is the standard practice pioneered by @fama-french-1992. It is 
 the most widely used measure in the literature and as such it is also referred to 
 as the "standard method". 
 The Fama-French value measure is defined
@@ -187,12 +187,13 @@ Couldn't find anything close to the "International sample".
 
 ### Which Book-to-market ratio Form Better Value Portfolios? 
 
-Country portfolios are aggregated into international and global portfolios using the country's total market capitalization as of the prior month. Further details are provided by \textcite{asness-frazzini-2013} in *Exhibit A1*.
-In the construction of their original "International sample" (or "Global ex US"), \textcite{asness-frazzini-2013} included the following countries: Austria, Australia, Belgium, Canada, Switzerland, Germany, Denmark, Spain, Finland, France, Italy, Japan, Netherlands, Norway, New Zealand, Singapore, Sweden, and United Kingdom. Latest data provided by AQR, extends this list of countries with Ireland, Israel, and Portugal. We study the full panel of countries in the newest International sample, restricting attention to the original sample would certainly be possible but requires explicit weighting of country series. The "Global sample" includes the United States of America as well.
+Country portfolios are aggregated into international and global portfolios using the country's total market capitalization as of the prior month. Further details are provided by @asness-frazzini-2013 in *Exhibit A1*.
+In the construction of their original "International sample" (or "Global ex US"), @asness-frazzini-2013 included the following countries: Austria, Australia, Belgium, Canada, Switzerland, Germany, Denmark, Spain, Finland, France, Italy, Japan, Netherlands, Norway, New Zealand, Singapore, Sweden, and United Kingdom. Latest data provided by AQR, extends this list of countries with Ireland, Israel, and Portugal. We study the full panel of countries in the newest International sample, restricting attention to the original sample would certainly be possible but requires explicit weighting of country series. The "Global sample" includes the United States of America as well.
 ```{r Get Factors Data}
 ## Run Justin-Erol's parser for Asness-Frazzini (2013) replication data set
-#source("vignettes/Value--Devil-in-HMLs-Details.R")
-parser.path <- file.path('inst', 'parsers', 'Value--Devil-in-HMLs-Details.R')
+parser.path <- system.file('parsers',        
+                           'Value--Devil-in-HMLs-Details.R',
+                           package='ExpectedReturns')
 source(parser.path)
 
 # NOTE: In the paper sample period is 1950-2011 for US, 1983-2011 for Intl. Sample
