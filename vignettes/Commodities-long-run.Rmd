@@ -239,3 +239,4 @@ style.regs <- LmHorizon(
 lapply(unlist(style.regs, recursive=FALSE), summary)
 ```
 
+# References
