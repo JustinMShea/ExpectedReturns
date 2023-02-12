@@ -71,25 +71,38 @@ where $MSCI$ is the MSCI World Index, $GSCI$ the S&P Goldman Sachs Commodity Ind
 
 ```{r Load Factors and Portfolios Returns Data}
 # TSM portfolios
-parser.path <- file.path('inst', 'parsers', 'TSM.R')
-source(parser.path)
+path.parser <- system.file('parsers', 
+                           'TSM.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 TSM <- xts::xts(TSM[, -1], order.by=TSM$DATE)
 # MSCI
-parser.path <- file.path('inst', 'parsers', 'MSCI-WI.R')
-source(parser.path)
+# NOTE: returns in decimal unit
+path.parser <- system.file('parsers', 
+                           'MSCI-WI.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 # NOTE: 
 # - in place of 'GSCI' we use 'CM.MARKET'
 # - in place of 'BOND' we use 'FI.MARKET'
-parser.path <- file.path('inst', 'parsers', 'CFP.R')
-source(parser.path)
+path.parser <- system.file('parsers', 
+                           'CFP.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 CM.MARKET <- CFP[, 'CM.MARKET']
 FI.MARKET <- CFP[, 'FI.MARKET']
 # VME
-parser.path <- file.path('inst', 'parsers', 'VME-Factors.R')
-source(parser.path)
+path.parser <- system.file('parsers', 
+                           'VME-Factors.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 VME.FACTORS <- VME.Factors[, c('VAL.EVR', 'MOM.EVR')]
 # FFC factors
-source("~/R/expected-returns/inst/parsers/FFdownloads_factors_package.R")
+
+path.parser <- system.file('parsers', 
+                           'FFdownloads_factors_package.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 ## Function to parse through 'ffdownloads' package available monthly data from "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" - Bryan
 FFfactors <- FFfactors_xts(x)
 ## assigning same name as used in this and other scripts.
@@ -105,8 +118,11 @@ max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
 days.diff <- diff(seq.Date(min.tp, max.tp, by='month'))[-1]
 ff.dates <- c(min.tp, min.tp + cumsum(as.numeric(days.diff)))
 # VIX Index
-parser.path <- file.path('inst', 'parsers', 'VIX-FRED.R')
-source(parser.path)
+
+path.parser <- system.file('parsers', 
+                           'VIX-FRED.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 VIX.RET <- VIX.cls.monthly$VIX.RET
 # VIX Index top ~20% extremes
 vix20idxs <- order(
@@ -115,8 +131,10 @@ vix20idxs <- order(
 VIX20 <- VIX.RET[vix20idxs, ]
 colnames(VIX20) <- 'VIX.TOP.20'
 # TED Spread
-parser.path <- file.path('inst', 'parsers', 'TED-Spread.R')
-source(parser.path)
+path.parser <- system.file('parsers', 
+                           'TED-Spread.R', 
+                           package = 'ExpectedReturns')
+source(path.parser)
 colnames(TED.SPREAD) <- 'TED'
 # TED Spread top ~20% extremes
 ted20idxs <- order(
@@ -358,4 +376,5 @@ tsmom.div.all <- lapply(Y, function(y) {
 lapply(tsmom.div.all, summary)
 ```
 
+# References
 

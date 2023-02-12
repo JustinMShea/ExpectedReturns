@@ -451,3 +451,5 @@ https://www.aqr.com/Insights/Perspectives/Is-Systematic-Value-Investing-Dead
 # Presenting results
 
 Print resulting model estimates in a table, comparing estimates and fit. See Engle for inspiration.
+
+# References
