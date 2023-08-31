@@ -473,6 +473,7 @@ To notice is that TREND and SMT are the only signals that can result in inactive
 
 ```{r TSMOM strats signals}
 # 12 months lookback as 261 trading days
+futures.data <- lapply(futures.data, na.omit)
 signals <- c('SIGN', 'MA', 'TREND', 'SMT', 'EEMD')
 mom.sign <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='SIGN')
 mom.ma <- ExpectedReturns::MomSignal(futures.data, lookback=261, signal='MA')
