@@ -9,6 +9,7 @@ Authors@R: c(
   , person(given="Bryan",family="Rodriguez",role=c("aut","cph"), email="bryanrod182@gmail.com")
   , person(given="Erol",family="Biceroglu",role=c("aut","cph"), email="erol.biceroglu@alumni.utoronto.ca")
   , person(given=c("Brian","G."),family="Peterson",role=c("aut","cph"), email="brian@braverock.com")
+  , person(given=c("Harry"), family="He", role=c("aut", "cph"), email="zih028@ucsd.edu")
   , person(given="Peter",family="Carl",role=c("cph"), email="peter@braverock.com")
   , person(given="Jasen",family="Mackie",role=c("ctb"))
   , person(given="Soumya",family="Kalra",role=c("ctb"))
