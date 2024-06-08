@@ -63,35 +63,238 @@ full_data[, `:=` (
   MKT = MKT_EX + RF,
   RETEX = R1M_USD - (MKT_EX + RF)
 )]
-```
 
+full_data <- full_data[, !("RF")]
+factor_vars <- factor_vars[factor_vars != "RF"]
+```
 
 ```{r}
 short_data <- full_data[, .SD, .SDcols = c("DATE", "RETEX", factor_vars)]
-cutoff_date <- as.yearmon("2014-12")
-training_data <- short_data[DATE <= cutoff_date, !("DATE")]
-testing_data <- short_data[DATE > cutoff_date, !("DATE")]
+cutoff_1 <- as.yearmon("2013-12")
+cutoff_2 <- as.yearmon("2015-12")
+training_data <- short_data[DATE <= cutoff_1, ]
+holdout_data <- short_data[((DATE > cutoff_1) & (DATE <= cutoff_2)), ]
+testing_data <- short_data[DATE > cutoff_2, ]
 ```
 
-LASSO
+Prevailing Means Benchmark
 ```{r}
-lasso <- TaskRegr$new(id = "lasso", backend = training_data, target = "RETEX")
-lrn_lasso <- lrn("regr.cv_glmnet", alpha = 1)
-lrn_lasso$train(lasso)
-fitted_lasso <- lrn_lasso$model
-lasso_lambda_min <- fitted_model$lambda.min
-lasso_train_predict <- predict(fitted_lasso, as.matrix(training_data[, !("RETEX")]), lasso_lambda_min)
-lasso_test_predict <- predict(fitted_lasso, as.matrix(testing_data[, !("RETEX")]), lasso_lambda_min)
-lasso_test_acc <- mean(lasso_test_predict * testing_data$RETEX > 0)
+pm_predictions <- numeric(nrow(testing_data))
+pm_accuracies <- numeric(nrow(testing_data))
+for (i in 1:nrow(testing_data)) {
+  current_test_date <- testing_data[i, DATE]
+  
+  # Update training data to include all data up to the current test date
+  updated_training_data <- short_data[DATE < current_test_date]
+  
+  # Calculate the benchmark prediction as the mean of previous RETEX values
+  pm_predictions[i] <- mean(updated_training_data$RETEX)
+  
+  # Calculate accuracy (e.g., direction prediction accuracy)
+  pm_accuracies[i] <- (pm_predictions[i] > 0) == (testing_data[i, RETEX] > 0)
+}
+pm_acc <- mean(pm_accuracies)
+
+# Calculate prediction errors for the benchmark model
+pm_errors <- testing_data$RETEX - pm_predictions
+# Sum of squared errors for the benchmark model
+ss_pm <- sum(pm_errors^2, na.rm = TRUE)
+```
+
+Combination Forecast
+```{r}
+# Initialize vectors to store results
+c_predictions <- nrow(testing_data)
+c_accuracies <- nrow(testing_data)
+
+# Loop over each point in the testing data
+for (i in 1:nrow(testing_data)) {
+  current_test_date <- testing_data[i, DATE]
+  
+  # Update training data to include all data up to the current test date
+  updated_training_data <- short_data[DATE < current_test_date]
+  
+  # Initialize a vector to store individual model predictions
+  individual_predictions <- numeric(length(factor_vars))
+  
+  # Loop over each covariate to train univariate models and make predictions
+  for (j in seq_along(factor_vars)) {
+    covariate <- factor_vars[j]
+    formula <- as.formula(paste("RETEX ~", covariate))
+    
+    # Train the univariate OLS model
+    ols_model <- lm(formula, data = updated_training_data)
+    
+    # Predict the current test point
+    current_test_point <- as.data.table(testing_data[i, ..covariate])
+    individual_predictions[j] <- predict(ols_model, newdata = current_test_point)
+  }
+  
+  # Combine predictions by averaging them
+  c_predictions[i] <- mean(individual_predictions)
+  
+  # Calculate accuracy (e.g., direction prediction accuracy)
+  c_accuracies[i] <- (c_predictions[i] > 0) == (testing_data[i, RETEX] > 0)
+}
+
+# Calculate overall accuracy for the combined predictions
+c_acc <- mean(c_accuracies)
+
+# Model evaluation
+# Calculate prediction errors for the combined model
+c_errors <- testing_data$RETEX - c_predictions
+# Sum of squared errors for the combined model
+ss_c <- sum(c_errors^2, na.rm = TRUE)
+# Calculate R^2_OS
+r2_c <- 1 - (ss_c / ss_pm)
+```
+
+Elastic Net
+Following the methodology of Rapach and Zhou 2019
+```{r}
+enet_predictions <- nrow(testing_data)
+enet_accuracies <- nrow(testing_data)
+for (i in 1:nrow(testing_data)) {
+  current_test_date <- as.yearmon(testing_data[i, "DATE"])
+
+  # Update training data to include all data up to the current test date
+  updated_training_data <- short_data[DATE < current_test_date, !("DATE")]
+  
+  # Train the model on the updated training data
+  lasso <- TaskRegr$new(id = "lasso", backend = updated_training_data, target = "RETEX")
+  lrn_lasso <- lrn("regr.cv_glmnet", alpha = 0.5)
+  lrn_lasso$train(lasso)
+  fitted_lasso <- lrn_lasso$model
+  lasso_lambda_min <- fitted_lasso$lambda.min
+  
+  # Predict the current test point
+  current_test_point <- testing_data[i, !c("RETEX", "DATE")]
+  lasso_test_predict <- predict(fitted_lasso, as.matrix(current_test_point), lasso_lambda_min)
+  
+  # Store the prediction
+  enet_predictions[i] <- lasso_test_predict
+  
+  # Calculate accuracy (e.g., direction prediction accuracy)
+  enet_accuracies[i] <- mean((lasso_test_predict > 0) == (testing_data[i, RETEX] > 0))
+}
+enet_acc <- mean(enet_accuracies)
+# Model evaluation
+# Calculate prediction errors for the combined model
+enet_errors <- testing_data$RETEX - enet_predictions
+# Sum of squared errors for the combined model
+ss_enet <- sum(enet_errors^2, na.rm = TRUE)
+# Calculate R^2_OS
+r2_enet <- 1 - (ss_enet / ss_pm)
+```
+
+C-ENET
+```{r}
+combined_holdout_data <- rbind(holdout_data, testing_data)
+
+# Initialize vectors to store results
+cenet_predictions <- numeric(nrow(testing_data))
+cenet_accuracies <- numeric(nrow(testing_data))
+
+# Step 1: Loop over each point in the holdout and testing data for univariate OLS predictions
+univariate_forecasts <- matrix(NA, nrow = nrow(combined_holdout_data), ncol = length(factor_vars))
+
+for (i in 1:nrow(combined_holdout_data)) {
+  current_test_date <- combined_holdout_data[i, DATE]
+  
+  # Update training data to include all data up to the day before the current test date
+  updated_training_data <- short_data[DATE < current_test_date]
+  
+  # Compute recursive univariate predictive regression forecasts
+  for (j in seq_along(factor_vars)) {
+    covariate <- factor_vars[j]
+    formula <- as.formula(paste("RETEX ~", covariate))
+    
+    # Train the univariate OLS model
+    ols_model <- lm(formula, data = updated_training_data)
+    
+    # Predict the current test point
+    current_test_point <- as.data.frame(combined_holdout_data[i, ..covariate])
+    univariate_forecasts[i, j] <- predict(ols_model, newdata = current_test_point)
+  }
+}
+
+# Step 2: Loop over each point in the testing data for ENet training and combined predictions
+for (i in 1:nrow(testing_data)) {
+  holdout_index <- nrow(holdout_data) + i
+  
+  if (holdout_index > 1) {
+    X <- univariate_forecasts[1:(holdout_index - 1), , drop = FALSE]
+    y <- combined_holdout_data$RETEX[1:(holdout_index - 1)]
+
+    # Create a data.table for mlr3
+    enet_data <- as.data.table(cbind(X, y = y))
+    
+    # Define the task and learner for Elastic Net
+    task <- TaskRegr$new("elastic_net", backend = enet_data, target = "y")
+    learner <- lrn("regr.cv_glmnet", alpha = 0.000005)
+
+    # Train the Elastic Net model
+    learner$train(task)
+    enet_coefs <- coef(learner$model, s="lambda.min")[-1]
+
+    # Identify selected predictors
+    selected_indices <- which(enet_coefs != 0)
+    if (length(selected_indices) > 0) {
+      selected_forecasts <- univariate_forecasts[holdout_index, selected_indices]
+      
+      # Compute the C-ENet forecast
+      cenet_predictions[i] <- mean(selected_forecasts)
+      
+      # Calculate accuracy (e.g., direction prediction accuracy)
+      cenet_accuracies[i] <- (cenet_predictions[i] > 0) == (testing_data[i, RETEX] > 0)
+    }
+  }
+}
+
+# Calculate overall accuracy for the combined predictions
+cenet_acc <- mean(cenet_accuracies, na.rm = TRUE)
+
+# Model evaluation
+# Calculate prediction errors for the combined model
+cenet_errors <- testing_data$RETEX - cenet_predictions
+# Sum of squared errors for the combined model
+ss_cenet <- sum(cenet_errors^2, na.rm = TRUE)
+# Calculate R^2_OS
+r2_cenet <- 1 - (ss_cenet / ss_pm)
 ```
 
 
 Tree
 ```{r}
-rpart <- TaskRegr$new(id = "rpart", backend = training_data, target = "RETEX")
-lrn_rpart <- lrn("regr.rpart", maxdepth = 6)
-rpart_train_predict <- lrn_rpart$train(rpart)
-rpart_test_predict <- lrn_rpart$predict(rpart)
-rpart_test_acc <- mean(rpart_test_predict$truth * rpart_test_predict$response > 0)
+rpart_predictions <- nrow(testing_data)
+rpart_accuracies <- nrow(testing_data)
+for (i in 1:nrow(testing_data)) {
+  current_test_date <- testing_data[i, DATE]
+  
+  # Update training data to include all data up to the day before the current test date
+  updated_training_data <- short_data[DATE < current_test_date, !("DATE")]
+  
+  # Define the task and learner for the decision tree
+  task <- TaskRegr$new(id = "rpart", backend = updated_training_data, target = "RETEX")
+  learner <- lrn("regr.rpart")
+  
+  # Train the decision tree model
+  learner$train(task)
+  
+  # Predict the current test point
+  current_test_point <- testing_data[i, !c("DATE")]
+  rpart_predictions[i] <- learner$predict_newdata(current_test_point)[["response"]]
+  rpart_accuracies[i] <- mean((rpart_predictions[i] > 0) == (testing_data[i, RETEX] > 0))
+}
+
+rpart_acc <- mean(enet_accuracies)
+
+# Model evaluation
+# Calculate prediction errors for the combined model
+rpart_errors <- testing_data$RETEX - rpart_predictions
+# Sum of squared errors for the combined model
+ss_rpart <- sum(rpart_errors^2, na.rm = TRUE)
+# Calculate R^2_OS
+r2_rpart <- 1 - (ss_rpart / ss_pm)
 ```
 
