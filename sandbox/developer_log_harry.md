@@ -25,3 +25,7 @@
 	- We may need to rely more on in-house functions for data-preprocessing since there are some unique steps we may want to take with financial time-series data
 	- We can rely on MLR3 for most of the ML algorithms but we may want to have some documentations just for ourselves for smoother implementation
 	- Sometimes we will build our own prediction and evaluation functions. Sometimes MLR3 does quirky things with prediction so I will look more under the hood
+
+### 6/8/2024
+- Applied two elastic net algorithm by Rapach and Zhou (2019). Results are not great since there were some data constraints. The intention was not to prove how well model can perform but just to test the performances.
+- At this stage I thinking using MLR3 should help with our workflow, but because time-series machine learning can be a bit different. MLR3Temporal is still under development and I am not sure how reliable it will be (has not been updated in a year)
