@@ -89,8 +89,9 @@ lasso_test_acc <- mean(lasso_test_predict * testing_data$RETEX > 0)
 Tree
 ```{r}
 rpart <- TaskRegr$new(id = "rpart", backend = training_data, target = "RETEX")
-lrn_rpart <- lrn("regr.rpart")
-lrn_rpart$train(rpart)
-lrn_rpart$predict(rpart)
+lrn_rpart <- lrn("regr.rpart", maxdepth = 6)
+rpart_train_predict <- lrn_rpart$train(rpart)
+rpart_test_predict <- lrn_rpart$predict(rpart)
+rpart_test_acc <- mean(rpart_test_predict$truth * rpart_test_predict$response > 0)
 ```
 
