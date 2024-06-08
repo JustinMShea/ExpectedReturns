@@ -1,0 +1,96 @@
+---
+title: "Predictive Models using MLR3"
+output: html_notebook
+---
+
+```{r}
+required_packages <- c("mlr3verse", "data.table", "xts", "openxlsx", "glmnet") # Add your required packages here
+
+# Function to check and install the necessary packages
+install_and_load <- function(packages) {
+  for (package in packages) {
+    # Check if the package is installed
+    if (!require(package, character.only = TRUE)) {
+      # Install the package if it is not installed
+      install.packages(package, dependencies = TRUE)
+      # Load the package after installing
+      library(package, character.only = TRUE)
+    }
+  }
+}
+
+install_and_load(required_packages)
+```
+
+```{r}
+# Load factors and return data
+source(file.path('..', 'inst', 'parsers', 'Value--Devil-in-HMLs-Details.R'))
+data("data_ml")
+```
+
+```{r}
+colnames(data_ml) <- toupper(colnames(data_ml))
+data_ml$DATE <- as.yearmon(as.Date(data_ml$DATE, format = "%Y-%m-%d"))
+data_ml[,-2] <- apply(data_ml[,-2],2,as.numeric)
+data_ml <- as.data.table(data_ml)
+sample_stock <- data_ml[STOCK_ID == 17, !"STOCK_ID"]
+
+
+factor_data <- list(HML_FF = HML_Devil.HML_FF, HML_Dev = HML_Devil.HML.DEV,
+                    ME = HML_Devil.ME_1, MKT_EX = HML_Devil.MKT,
+                    RF = HML_Devil.RF, SMB = HML_Devil.SMB, UMD = HML_Devil.UMD)
+factor_vars <- c("HML_FF", "HML_Dev", "ME", "MKT_EX", "RF", "SMB", "UMD")
+nfactor <- length(factor_data)
+for (f in 1:nfactor) {
+  if (ncol(factor_data[[f]]) > 1) {
+    factor_data[[f]] <- factor_data[[f]][, 'USA']
+  }
+  factor_data[[f]] <- data.table(
+    "FACTOR" = factor_data[[f]],
+    "DATE" = index(factor_data[[f]])
+  )
+  colnames(factor_data[[f]]) <- c(factor_vars[f], 'DATE')
+}
+factor_data <- Reduce(function(...) {
+  merge(..., by='DATE', all=TRUE)
+}, factor_data)
+
+full_data <- merge(sample_stock, factor_data, by = 'DATE', all = TRUE) |> 
+  na.omit() |> 
+  as.data.table()
+
+full_data[, `:=` (
+  MKT = MKT_EX + RF,
+  RETEX = R1M_USD - (MKT_EX + RF)
+)]
+```
+
+
+```{r}
+short_data <- full_data[, .SD, .SDcols = c("DATE", "RETEX", factor_vars)]
+cutoff_date <- as.yearmon("2014-12")
+training_data <- short_data[DATE <= cutoff_date, !("DATE")]
+testing_data <- short_data[DATE > cutoff_date, !("DATE")]
+```
+
+LASSO
+```{r}
+lasso <- TaskRegr$new(id = "lasso", backend = training_data, target = "RETEX")
+lrn_lasso <- lrn("regr.cv_glmnet", alpha = 1)
+lrn_lasso$train(lasso)
+fitted_lasso <- lrn_lasso$model
+lasso_lambda_min <- fitted_model$lambda.min
+lasso_train_predict <- predict(fitted_lasso, as.matrix(training_data[, !("RETEX")]), lasso_lambda_min)
+lasso_test_predict <- predict(fitted_lasso, as.matrix(testing_data[, !("RETEX")]), lasso_lambda_min)
+lasso_test_acc <- mean(lasso_test_predict * testing_data$RETEX > 0)
+```
+
+
+Tree
+```{r}
+rpart <- TaskRegr$new(id = "rpart", backend = training_data, target = "RETEX")
+lrn_rpart <- lrn("regr.rpart")
+lrn_rpart$train(rpart)
+lrn_rpart$predict(rpart)
+```
+
