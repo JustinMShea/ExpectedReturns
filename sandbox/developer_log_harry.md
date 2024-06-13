@@ -36,7 +36,7 @@
 	- Task: create a updated timeline by June 13 over the next two months or so
 
 ## 6/12/2024
-## Conceptualization of pipeline
+### Conceptualization of pipeline
 
 **Preprocessing**
 - *How well-processed do we want our input data to be?*
@@ -61,7 +61,7 @@
 	- Make output (visualization) of model decisions/parameters
 	- Allow users to evaluate whether these outputs make economic senses - this is probably most easy to see for tree-based models but can be generalized
 
-## Short to Medium Term Plan
+### Short to Medium Term Plan
 **Day 1-2**
 - Create a minimum-viable pipeline
 	- Create a test dataset
