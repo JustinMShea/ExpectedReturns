@@ -98,3 +98,8 @@
 - Test pipelines with various data/tasks to evaluate performance and identify areas of improvements
 
 The end of this tentative plan put us at August 9.
+
+### Meeting with mentors
+- Getting a minimum-viable build as soon as possible and go from there
+- We are doing some good testing work while making the build, consider saving them into separate R files. May come in handy later
+- Testing is key through the process. We should figure out ways to ensure what we get from the pipeline is the same as we expect
