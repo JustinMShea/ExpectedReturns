@@ -96,3 +96,5 @@
 **Day 30-40**
 - Write functions for more learners that are not available in the MLR3 framework(*If there are specific models we want to implement/test based on existing literature*)
 - Test pipelines with various data/tasks to evaluate performance and identify areas of improvements
+
+The end of this tentative plan put us at August 9.
