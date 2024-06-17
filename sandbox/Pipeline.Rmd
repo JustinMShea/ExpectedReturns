@@ -1,0 +1,41 @@
+---
+title: "ML Pipeline with MLR3"
+output: html_notebook
+---
+
+```{r}
+required_packages <- c("mlr3verse", "data.table", "xts", "openxlsx", "glmnet", "readxl",
+                       "PerformanceAnalytics", "outliers", "ggplot2")
+
+# Function to check and install the necessary packages
+install_and_load <- function(packages) {
+  for (package in packages) {
+    # Check if the package is installed
+    if (!require(package, character.only = TRUE)) {
+      # Install the package if it is not installed
+      install.packages(package, dependencies = TRUE)
+      # Load the package after installing
+      library(package, character.only = TRUE)
+    }
+  }
+}
+
+install_and_load(required_packages)
+```
+
+```{r}
+setwd('..')
+source(file.path('sandbox', 'sampledata.R'))
+```
+
+Preprocessing
+```{r}
+setwd('..')
+source(file.path('sandbox', 'outliers.R'))
+```
+
+```{r}
+varnames = names(regr_data[, !c("DATE", "WI.RET")])
+data_outlier <- interval(regr_data, varnames = varnames)
+```
+
