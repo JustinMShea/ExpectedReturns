@@ -1,69 +1,71 @@
 min_max_rescale <- function(data,
+                            ts_var = NULL,
+                            cs_var = NULL,
                             varnames = NULL,
                             method = "standard") {
   # Note to self: Convert data to data.table if not already
 
   # Validate the method input
   if (!method %in% c("standard", "wide")) {
-    stop("Error: method must be 'standard [0,1]' or 'wide [-1,1]'")
+    stop("Error: method must be 'standard' or 'wide'")
   }
 
-  # If varnames is NULL, use all column names
+  # If varnames is NULL, use all column names except ts_var and cs_var
   if (is.null(varnames)) {
-    varnames <- colnames(data)
+    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
   }
 
-  # Min-max rescale for each variable
-  for (variable in varnames) {
-    col_min <- min(data[[variable]], na.rm = TRUE)
-    col_max <- max(data[[variable]], na.rm = TRUE)
-
+  # Min-max rescale for each variable separately by ts_var and cs_var
+  data[, (varnames) := lapply(.SD, function(x) {
     if (method == "standard") {
       # Rescale to [0, 1]
-      data[[variable]] <- (data[[variable]] - col_min) / (col_max - col_min)
+      (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
     } else if (method == "wide") {
       # Rescale to [-1, 1]
-      data[[variable]] <- 2 * (data[[variable]] - col_min) / (col_max - col_min) - 1
+      2 * (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE)) - 1
     }
-  }
+  }), by = ts_var, .SDcols = varnames]
 
   return(data)
 }
 
 standardize <- function(data,
+                        ts_var = NULL,
+                        cs_var = NULL,
                         varnames = NULL) {
   # Note to self: Convert data to data.table if not already
 
   # If varnames is NULL, use all column names
   if (is.null(varnames)) {
-    varnames <- colnames(data)
+    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
   }
 
-  # Min-max rescale for each variable
-  for (variable in varnames) {
-    col_mean <- mean(data[[variable]], na.rm = TRUE)
-    col_sd <- sd(data[[variable]], na.rm = TRUE)
-    data[[variable]] <- (data[[variable]] - col_mean) / col_sd
-  }
+  # Standardize each variable separately by ts_var and cs_var
+  data[, (varnames) := lapply(.SD, function(x) {
+    mean_x <- mean(x, na.rm = TRUE)
+    sd_x <- sd(x, na.rm = TRUE)
+    (x - mean_x) / sd_x
+  }), by = ts_var, .SDcols = varnames]
 
   return(data)
 }
 
 uniformize <- function(data,
+                       ts_var = NULL,
+                       cs_var = NULL,
                        varnames = NULL) {
   # Note to self: Convert data to data.table if not already
 
   # If varnames is NULL, use all column names
   if (is.null(varnames)) {
-    varnames <- colnames(data)
+    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
   }
 
   # Uniformize each variable
-  for (variable in varnames) {
-    # Compute the empirical CDF values
-    ranks <- rank(data[[variable]], na.last = "keep", ties.method = "average")
-    data[[variable]] <- ranks / (length(ranks) + 1)
-  }
+  data[, (varnames):= lapply(.SD, function(x) {
+    ranks_x <- rank(x, na.last = "keep", ties.method = "average")
+    ranks_x / (length(ranks) + 1)
+  }), by = ts_var, .SD.cols = varnames]
 
   return(data)
 }
