@@ -1,13 +1,15 @@
 feature_correlation <- function(data,
-                             varnames = NULL,
-                             threshold = 0.7,
-                             remove = FALSE,
-                             method = "pearson") {
+                                ts_var = NULL,
+                                cs_var = NULL,
+                                varnames = NULL,
+                                threshold = 0.7,
+                                remove = FALSE,
+                                method = "pearson") {
   # Note to self: Convert data to data.table if not already
 
   # If varnames is NULL, use all column names
   if (is.null(varnames)) {
-    varnames <- colnames(data)
+    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
   }
 
   if (!method %in% c("pearson", "kendall", "spearman")) {
