@@ -114,3 +114,10 @@ The end of this tentative plan put us at August 9.
 - Thinking about future steps for addition preprocessing functions
 	- Outlier detection and removal: supervised, semi-supervised, and unsupervised methods. Unsupervised method is likely the most intuitive to use and allows us to better account for the multidimensionality of data. If we want to use supervised methods then we want to think about how to generate a good training data
 	- Feature selection: clustering analysis and tree based methods
+
+## 6/18/2024
+- Modified some preprocessing codes
+	- Some functions are used when we have panel data (cross-section variables), so we probably need a few different types of data/tasks to verify that the codes work
+- Idea for pipeline
+	- Overarching class object that records key information such as time-series and cross-section indices, appropriate task, etc
+	- This will allow us to call each specific function more easily. If we want, the functions do not have to be part of the class objects, but the macros in the class objects can help the user call the specific functions more easily
