@@ -111,3 +111,6 @@ The end of this tentative plan put us at August 9.
 		- Outlier detection and removal (interval (m standard deviation) method and winsorization)
 		- Feature selection (correlation matrix and removing highly correlated covariates)
 		- Rescaling (min-max scaling, standardization, uniformization)
+- Thinking about future steps for addition preprocessing functions
+	- Outlier detection and removal: supervised, semi-supervised, and unsupervised methods. Unsupervised method is likely the most intuitive to use and allows us to better account for the multidimensionality of data. If we want to use supervised methods then we want to think about how to generate a good training data
+	- Feature selection: clustering analysis and tree based methods
