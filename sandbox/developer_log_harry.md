@@ -103,3 +103,11 @@ The end of this tentative plan put us at August 9.
 - Getting a minimum-viable build as soon as possible and go from there
 - We are doing some good testing work while making the build, consider saving them into separate R files. May come in handy later
 - Testing is key through the process. We should figure out ways to ensure what we get from the pipeline is the same as we expect
+
+## 6/17/2024
+- Start building the pipeline
+	- Identify dataset
+	- Preprocessing step
+		- Outlier detection and removal (interval (m standard deviation) method and winsorization)
+		- Feature selection (correlation matrix and removing highly correlated covariates)
+		- Rescaling (min-max scaling, standardization, uniformization)
