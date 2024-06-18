@@ -31,11 +31,20 @@ source(file.path('sandbox', 'sampledata.R'))
 Preprocessing
 ```{r}
 setwd('..')
+# Outlier detection and removal
 source(file.path('sandbox', 'outliers.R'))
+
+# Feature Selection
+source(file.path('sandbox', 'featureselection.R'))
+
+# Rescaling
+source(file.path('sandbox', 'rescale.R'))
 ```
 
 ```{r}
 varnames = names(regr_data[, !c("DATE", "WI.RET")])
-data_outlier <- interval(regr_data, varnames = varnames)
+interval_outlier <- interval(regr_data, varnames = varnames)
+winsorize_outlier <- winsorize(regr_data, varnames = varnames)
+feature_corr <- feature_correlation(regr_data, varnames = varnames)
 ```
 
