@@ -1,11 +1,14 @@
 interval <- function(data,
                      varnames = NULL,
                      m = 5,
-                     time_var = "DATE",
-                     filter = FALSE) {
+                     ts_var = "DATE",
+                     cs_var = NULL,
+                     by = "default",
+                     filter = FALSE,
+                     plot = TRUE) {
   # note to self: add function to make check and convert data to data.table
   if (is.null(varnames)) {
-    varnames <- setdiff(colnames(data), time_var)
+    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
   }
   remove_row <- c()
   plots <- list()
@@ -18,14 +21,14 @@ interval <- function(data,
     anomaly_data <- copy(data)
     anomaly_data[, anomaly := FALSE]
     anomaly_data[outlier_idx, anomaly := TRUE]
-    p <- ggplot(data, aes_string(x = time_var, y = variable)) +
+    p <- ggplot(data, aes_string(x = ts_var, y = variable)) +
       geom_line() +
-      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = time_var, y = variable, color = "anomaly")) +
+      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = ts_var, y = variable, color = "anomaly")) +
       labs(title = paste("Anomalies in", variable), x = "Time", y = variable) +
       scale_color_manual(values = c("black", "red")) +
       theme_minimal()
     plots[[variable]] <- p
-    outlier_dates[[variable]] <- data[outlier_idx, "DATE"]
+    outlier_dates[[variable]] <- data[outlier_idx, ..ts_var]
     remove_row <- c(remove_row, outlier_idx)
   }
   remove_row <- unique(remove_row)
@@ -33,16 +36,20 @@ interval <- function(data,
     data <- data[-remove_row, ]
   }
   return(list(data = data, outlier_dates = outlier_dates, remove_index = remove_row, plots = plots))
+  # Add to "ts" and "cs" method for panel data. Allow outlier detection by time-series and cross-sectional variables
 }
 
 winsorize <- function(data,
                   varnames = NULL,
                   q = 0.01,
-                  time_var = "DATE",
-                  winsorize = FALSE) {
+                  ts_var = "DATE",
+                  cs_var = NULL,
+                  by = "default",
+                  winsorize = FALSE,
+                  plot = TRUE) {
   # note to self: add function to make check and convert data to data.table
   if (is.null(varnames)) {
-    varnames <- setdiff(colnames(data), time_var)
+    varnames <- setdiff(colnames(data), ts_var)
   }
 
   plots <- list()
@@ -56,7 +63,7 @@ winsorize <- function(data,
     outlier_idx <- which(data[[variable]] < lower_bound | data[[variable]] > upper_bound)
 
     # Store the indices in the list
-    outlier_dates[[variable]] <- data[outlier_idx, "DATE"]
+    outlier_dates[[variable]] <- data[outlier_idx, ..ts_var]
 
     # Perform winsorization if filter is TRUE
     if (winsorize) {
@@ -70,9 +77,9 @@ winsorize <- function(data,
     anomaly_data[outlier_idx, anomaly := TRUE]
 
     # Generate the plot
-    p <- ggplot(data, aes_string(x = time_var, y = variable)) +
+    p <- ggplot(data, aes_string(x = ts_var, y = variable)) +
       geom_line() +
-      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = time_var, y = variable, color = "anomaly")) +
+      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = ts_var, y = variable, color = "anomaly")) +
       labs(title = paste("Outliers in", variable), x = "Time", y = variable) +
       scale_color_manual(values = c("black", "red")) +
       theme_minimal()
@@ -83,4 +90,5 @@ winsorize <- function(data,
 
   # Return the list of plots and outlier indices
   return(list(data = data, outlier_dates = outlier_dates, plots = plots))
+  # Add to "ts" and "cs" method for panel data. Allow outlier detection by time-series and cross-sectional variables
 }
