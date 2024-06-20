@@ -92,3 +92,67 @@ winsorize <- function(data,
   return(list(data = data, outlier_dates = outlier_dates, plots = plots))
   # Add to "ts" and "cs" method for panel data. Allow outlier detection by time-series and cross-sectional variables
 }
+
+TSML$set("public", "interval_outlier", function(m = 5,
+                                                varnames = NULL,
+                                                by = "default",
+                                                filter = FALSE,
+                                                plot = TRUE) {
+  if (is.null(varnames)) {
+    varnames <- setdiff(colnames(self$data), c(self$ts_var, self$cs_var))
+  }
+
+  remove_row <- c()
+  plots <- list()
+  outlier_dates <- list()
+  data <- self$data
+  for (variable in varnames) {
+    col_mean <- mean(data[[variable]], na.rm = TRUE)
+    col_sd <- sd(data[[variable]], na.rm = TRUE)
+    interval <- c(col_mean - m * col_sd, col_mean + m * col_sd)
+    outlier_idx <- which(data[[variable]] < interval[1] | data[[variable]] > interval[2])
+    anomaly_data <- copy(data)
+    anomaly_data[, anomaly := FALSE]
+    anomaly_data[outlier_idx, anomaly := TRUE]
+    p <- ggplot(data, aes_string(x = self$ts_var, y = variable, color = "variable values")) +
+      geom_line() +
+      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = self$ts_var, y = variable, color = "anomaly")) +
+      labs(title = paste("Anomalies in", variable), x = "Time", y = variable) +
+      scale_color_manuals(values = c("black", "red")) +
+      theme_minimal()
+    plots[[variable]] <- p
+    outlier_dates[[variable]] <- data[outlier_idx, ..self$ts_var]
+    remove_row <- c(remove_row, outlier_idx)
+  }
+  remove_row <- unique(remove_row)
+  if (filter) {
+    self$data <- self$data[-remove_row, ]
+  }
+  return(list(data = data, outlier_dates = outlier_dates, remove_index = remove_row, plots = plots))
+
+
+  for (variable in varnames) {
+    col_mean <- mean(data[[variable]], na.rm = TRUE)
+    col_sd <- sd(data[[variable]], na.rm = TRUE)
+    interval <- c(col_mean - m * col_sd, col_mean + m * col_sd)
+    outlier_idx <- which(data[[variable]] < interval[1] | data[[variable]] > interval[2])
+    anomaly_data <- copy(data)
+    anomaly_data[, anomaly := FALSE]
+    anomaly_data[outlier_idx, anomaly := TRUE]
+    p <- ggplot(data, aes_string(x = ts_var, y = variable)) +
+      geom_line() +
+      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = ts_var, y = variable, color = "anomaly")) +
+      labs(title = paste("Anomalies in", variable), x = "Time", y = variable) +
+      scale_color_manual(values = c("black", "red")) +
+      theme_minimal()
+    plots[[variable]] <- p
+    outlier_dates[[variable]] <- data[outlier_idx, ..ts_var]
+    remove_row <- c(remove_row, outlier_idx)
+  }
+  remove_row <- unique(remove_row)
+  if (filter) {
+    data <- data[-remove_row, ]
+  }
+  return(list(data = data, outlier_dates = outlier_dates, remove_index = remove_row, plots = plots))
+  # Add to "ts" and "cs" method for panel data. Allow outlier detection by time-series and cross-sectional variables
+}
