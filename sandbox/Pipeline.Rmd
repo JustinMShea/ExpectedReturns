@@ -28,6 +28,20 @@ setwd('..')
 source(file.path('sandbox', 'sampledata.R'))
 ```
 
+```{r}
+setwd('..')
+source(file.path('sandbox', 'TSML.R'))
+source(file.path('sandbox', 'MLutils.R'))
+```
+
+```{r}
+testtask <- TSML$new(data = regr_data,
+                     ts_var = "DATE",
+                     y = "WI.RET")
+testtask$train_test_split(cutoff = 0.8)
+```
+
+
 Preprocessing
 ```{r}
 setwd('..')
@@ -56,5 +70,14 @@ feature_corr <- feature_correlation(regr_data, varnames = varnames)
 split_data <- train_test_split(regr_data, ts_var = "DATE")
 regr_train <- split_data[[1]]
 regr_test <- split_data[[2]]
+```
+
+```{r}
+setwd('..')
+source(file.path('sandbox', 'cvglmnet.R'))
+```
+
+```{r}
+test_cvglmnet(regr_train[, !"DATE"], regr_test[, !"DATE"], "WI.RET")
 ```
 
