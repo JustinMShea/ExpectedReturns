@@ -1,3 +1,4 @@
+# Regular Version
 train_test_split <- function(data,
                              ts_var = NULL,
                              cs_var = NULL,
@@ -51,7 +52,7 @@ train_test_split <- function(data,
   return(list(train = train_data, test = test_data))
 }
 
-prevailing_means <- function(full_data, train_data, test_data, y_var, ts_var) {
+prevailing_means <- function(full_data, train_data, test_data, y, ts_var) {
   # Initialize prediction vector
   predictions <- numeric(nrow(test_data))
 
@@ -61,7 +62,7 @@ prevailing_means <- function(full_data, train_data, test_data, y_var, ts_var) {
     current_date <- test_data[i, get(ts_var)]
 
     # Get the prevailing mean up to the current test date using full data
-    prevailing_mean <- full_data[get(ts_var) < current_date, mean(get(y_var), na.rm = TRUE)]
+    prevailing_mean <- full_data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
 
     # Store the prediction
     predictions[i] <- prevailing_mean
@@ -69,3 +70,58 @@ prevailing_means <- function(full_data, train_data, test_data, y_var, ts_var) {
 
   return(predictions)
 }
+
+# Pipeline Version
+TSML$set("public", "train_test_split", function(cutoff = 0.8) {
+  data <- self$data
+  ts_var <- self$ts_var
+
+  if (!(is.numeric(cutoff) && cutoff > 0 && cutoff < 1) && !inherits(cutoff, "Date")) {
+    stop("Error: cutoff must either be a number between 0 and 1 or a date object")
+  }
+
+  if (inherits(cutoff, "Date")) {
+    min_date <- min(data[[ts_var]], na.rm = TRUE)
+    max_date <- max(data[[ts_var]], na.rm = TRUE)
+    if (cutoff < min_date || cutoff > max_date) {
+      stop("Error: cutoff date must be between the first and last date of the time series")
+    }
+    date_cutoff <- cutoff
+  } else {
+    unique_dates <- unique(data[[ts_var]])
+    unique_dates <- unique_dates[order(unique_dates)]
+    date_cutoff_index <- ceiling(length(unique_dates) * cutoff)
+    date_cutoff <- unique_dates[date_cutoff_index]
+  }
+
+  self$train_data <- data[data[[ts_var]] <= date_cutoff]
+  self$test_data <- data[data[[ts_var]] > date_cutoff]
+})
+
+TSML$set("public", "prevailing_means", function() {
+  full_data <- self$data
+  test_data <- self$test_data
+  y <- self$y
+  ts_var <- self$ts_var
+
+  # Initialize prediction vector
+  predictions <- numeric(nrow(test_data))
+
+  # Loop over each row in the test data
+  for (i in 1:nrow(test_data)) {
+    # Get the current test date
+    current_date <- test_data[i, get(ts_var)]
+
+    # Get the prevailing mean up to the current test date using full data
+    prevailing_mean <- full_data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
+
+    # Store the prediction
+    predictions[i] <- prevailing_mean
+  }
+
+  return(predictions)
+})
+
+
+
+
