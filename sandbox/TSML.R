@@ -1,0 +1,43 @@
+library(R6)
+library(data.table)
+
+TSML <- R6Class("Time Series Machine Learning",
+  public = list(
+    data = NULL,
+    ts_var = NULL,
+    y = NULL,
+    cs_var = NULL,
+    train_data = NULL,
+    test_data = NULL,
+    model = NULL,
+    predictions = NULL,
+    rmse = NULL,
+
+    initialize = function(data, ts_var, y, cs_var = NULL) {
+      if (!is.data.table(data)) {
+        tryCatch({
+          data <- as.data.table(data)
+        }, error = function(e) {
+          stop(paste("Error: data conversion to data.table failed:", e$message))
+        })
+      }
+
+      if (is.null(ts_var)) {
+        stop("Error: time series variable cannot be empty")
+      }
+
+      if (!inherits(data[[ts_var]], "Date")) {
+        tryCatch({
+          data[[ts_var]] <- as.Date(data[[ts_var]])
+        }, error = function(e) {
+          stop(paste("Error: time-series column not properly formatted:", e$message))
+        })
+      }
+
+      self$data <- data
+      self$ts_var <- ts_var
+      self$y <- y
+      self$cs_var <- cs_var
+    }
+  )
+)
