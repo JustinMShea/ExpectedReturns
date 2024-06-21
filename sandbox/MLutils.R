@@ -52,25 +52,6 @@ train_test_split <- function(data,
   return(list(train = train_data, test = test_data))
 }
 
-prevailing_means <- function(full_data, train_data, test_data, y, ts_var) {
-  # Initialize prediction vector
-  predictions <- numeric(nrow(test_data))
-
-  # Loop over each row in the test data
-  for (i in 1:nrow(test_data)) {
-    # Get the current test date
-    current_date <- test_data[i, get(ts_var)]
-
-    # Get the prevailing mean up to the current test date using full data
-    prevailing_mean <- full_data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
-
-    # Store the prediction
-    predictions[i] <- prevailing_mean
-  }
-
-  return(predictions)
-}
-
 # Pipeline Version
 TSML$set("public", "train_test_split", function(cutoff = 0.8) {
   data <- self$data
