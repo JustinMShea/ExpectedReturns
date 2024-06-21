@@ -79,28 +79,52 @@ TSML$set("public", "train_test_split", function(cutoff = 0.8) {
   self$test_data <- data[data[[ts_var]] > date_cutoff]
 })
 
-TSML$set("public", "prevailing_means", function() {
-  full_data <- self$data
-  test_data <- self$test_data
-  y <- self$y
-  ts_var <- self$ts_var
+TSML$set("public", "train", function(task, ...) {
 
-  # Initialize prediction vector
-  predictions <- numeric(nrow(test_data))
+})
 
-  # Loop over each row in the test data
-  for (i in 1:nrow(test_data)) {
-    # Get the current test date
-    current_date <- test_data[i, get(ts_var)]
-
-    # Get the prevailing mean up to the current test date using full data
-    prevailing_mean <- full_data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
-
-    # Store the prediction
-    predictions[i] <- prevailing_mean
+TSML$set("public", "train_predict", function(model, method = c("default", "recursive"), vars = NULL, ...) {
+  if (!method %in% c("default", "recursive")) {
+    stop("Error: method must be either 'default' or 'recursive'")
   }
+  self$model = model
+  self$learner = lrn(model, ...)
+  if (is.null(vars)) {
+    vars <- setdiff(colnames(self$data), c(self$ts_var, self$cs_var))
+  }
+  if (!self$y %in% vars) {
+    stop("Error: the target variable must be included in the variable list")
+  }
+  current_train <- self$training_data[, ..vars]
+  current_test <- self$testing_data[, ..vars]
+  if (method == "default") {
+    if ("regr" %in% model) {
+      task <- TaskRegr$new(id = "newregr", backend = current_train, target = self$y)
+    } else if ("classif" %in% model) {
+      task <- TaskClassif$new(id = "newclassif", backend = current_train, target = self$y)
+    }
+    self$learner$train(task)
 
-  return(predictions)
+    self$prediction <- self$learner$predict_newdata(task, current_test)[["response"]]
+  }
+  if (method == "recursive") {
+    if ("regr" %in% model) {
+      task <- TaskRegr$new(id = "newregr", backend = current_train, target = self$y)
+    } else if ("classif" %in% model) {
+      task <- TaskClassif$new(id = "newclassif", backend = current_train, target = self$y)
+    }
+    old_test <- new_test <- NULL
+    for (i in nrow(current_test)) {
+      new_test <- current_test[i, ]
+      if (!is.null(old_test)) {
+        task$rbind(old_test)
+      }
+      self$learner$train(task)
+      self$prediction[i] <- self$learner$predict_newdata(new_test)[["response"]]
+
+      old_test <- new_test
+    }
+  }
 })
 
 
