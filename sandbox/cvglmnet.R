@@ -1,4 +1,4 @@
-cvglmnet <- function(training_data,
+mlr_cvglmnet <- function(training_data,
                      y,
                      alpha = 0.5) {
   enet <- TaskRegr$new(id = "enet", backend = training_data, target = y)
@@ -13,7 +13,7 @@ test_cvglmnet <- function(training_data,
                           alpha = 0.5) {
   x_test <- as.matrix(testing_data[, !..y])
 
-  mlr_enet <- cvglmnet(training_data, y, alpha)
+  mlr_enet <- mlr_cvglmnet(training_data, y, alpha)
   mlr_enet_fitted <- mlr_enet$model
   mlr_enet_lambda_min <- mlr_enet_fitted$lambda.min
 
