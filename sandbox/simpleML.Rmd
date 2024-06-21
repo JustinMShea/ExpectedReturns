@@ -266,8 +266,8 @@ r2_cenet <- 1 - (ss_cenet / ss_pm)
 
 Tree
 ```{r}
-rpart_predictions <- nrow(testing_data)
-rpart_accuracies <- nrow(testing_data)
+rpart_predictions <- NULL
+rpart_accuracies <- NULL
 for (i in 1:nrow(testing_data)) {
   current_test_date <- testing_data[i, DATE]
   
@@ -283,11 +283,13 @@ for (i in 1:nrow(testing_data)) {
   
   # Predict the current test point
   current_test_point <- testing_data[i, !c("DATE")]
+  print(learner$predict_newdata(current_test_point)[["response"]])
+  print(learner$predict_newdata(current_test_point))
   rpart_predictions[i] <- learner$predict_newdata(current_test_point)[["response"]]
   rpart_accuracies[i] <- mean((rpart_predictions[i] > 0) == (testing_data[i, RETEX] > 0))
 }
 
-rpart_acc <- mean(enet_accuracies)
+rpart_acc <- mean(rpart_accuracies)
 
 # Model evaluation
 # Calculate prediction errors for the combined model
