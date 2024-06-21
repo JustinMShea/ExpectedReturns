@@ -121,3 +121,8 @@ The end of this tentative plan put us at August 9.
 - Idea for pipeline
 	- Overarching class object that records key information such as time-series and cross-section indices, appropriate task, etc
 	- This will allow us to call each specific function more easily. If we want, the functions do not have to be part of the class objects, but the macros in the class objects can help the user call the specific functions more easily
+
+## 6/20/2024
+- New paper: "The Virtue of Complexity in Return Prediction"
+- *Feature Engineering*
+- RCPP (integrating R and C++)
