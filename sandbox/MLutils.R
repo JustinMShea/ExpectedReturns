@@ -79,10 +79,6 @@ TSML$set("public", "train_test_split", function(cutoff = 0.8) {
   self$test_data <- data[data[[ts_var]] > date_cutoff]
 })
 
-TSML$set("public", "train", function(task, ...) {
-
-})
-
 TSML$set("public", "train_predict", function(model, method = c("default", "recursive"), vars = NULL, ...) {
   if (!method %in% c("default", "recursive")) {
     stop("Error: method must be either 'default' or 'recursive'")
