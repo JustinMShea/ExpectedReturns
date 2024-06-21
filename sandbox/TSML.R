@@ -10,6 +10,7 @@ TSML <- R6Class("Time Series Machine Learning",
     train_data = NULL,
     test_data = NULL,
     model = NULL,
+    benchmark = list(),
     predictions = NULL,
     rmse = NULL,
 
