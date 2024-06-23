@@ -135,3 +135,8 @@ The end of this tentative plan put us at August 9.
 - Incorporate random forest and SVM into the pipeline
 	- MLR3 sets default seed to NULL
 	- MLR3 functions for both algorithms passed test
+- Note to self, once the basic algoritms are incorporated we need to make better documentations to assist users setting/tuning parameters
+	- List important and relevant parameters
+	- Be clear about their default values, especially ones that have may induce stochasticity in model outputs
+	- We can decide later on how to users can interact with this information
+
