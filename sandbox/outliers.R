@@ -108,25 +108,32 @@ TSML$set("public", "interval_outlier", function(m = 5,
   plots <- list()
   outlier_dates <- list()
   data <- self$data
+
   for (variable in varnames) {
     col_mean <- mean(data[[variable]], na.rm = TRUE)
     col_sd <- sd(data[[variable]], na.rm = TRUE)
     interval <- c(col_mean - m * col_sd, col_mean + m * col_sd)
     outlier_idx <- which(data[[variable]] < interval[1] | data[[variable]] > interval[2])
-    p <- ggplot(data, aes_string(x = self$ts_var, y = variable, color = "variable values")) +
-      geom_line() +
-      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = self$ts_var, y = variable, color = "anomaly")) +
-      labs(title = paste("Anomalies in", variable), x = "Time", y = variable) +
-      scale_color_manuals(values = c("black", "red")) +
-      theme_minimal()
-    plots[[variable]] <- p
+
+    if (plot) {
+      p <- ggplot(data, aes_string(x = self$ts_var, y = variable)) +
+        geom_line() +
+        geom_point(data = data[outlier_idx, ], aes_string(x = self$ts_var, y = variable), color = "red") +
+        labs(title = paste("Anomalies in", variable), x = "Time", y = variable) +
+        theme_minimal()
+      plots[[variable]] <- p
+    }
+
     outlier_dates[[variable]] <- data[outlier_idx, ..self$ts_var]
     remove_row <- c(remove_row, outlier_idx)
   }
+
+
   remove_row <- unique(remove_row)
   if (filter) {
     self$data <- self$data[-remove_row, ]
   }
+
   return(list(outlier_dates = outlier_dates, remove_index = remove_row, plots = plots))
 })
 
@@ -143,22 +150,21 @@ TSML$set("public", "winsorize", function(q = 0.01,
   plots <- list()
   data <- self$data
 
-  for (variable in varnames){
+  for (variable in varnames) {
     lower_bound <- quantile(data[[variable]], q, na.rm = TRUE)
-    upper_bound <- quantile(data[[variable]], 1-q, na.rm = TRUE)
+    upper_bound <- quantile(data[[variable]], 1 - q, na.rm = TRUE)
 
     outlier_idx <- which(data[[variable]] < lower_bound | data[[variable]] > upper_bound)
+    outlier_dates[[variable]] <- data[outlier_idx, ..self$ts_var]
 
-    outlier_dates[[variable]] <- data[[outlier_idx, ..self$ts_var]]
-
-    p <- ggplot(data, aes_string(x = self$ts_var, y = variable)) +
-      geom_line() +
-      geom_point(data = anomaly_data[anomaly == TRUE], aes_string(x = self$ts_var, y = variable, color = "anomaly")) +
-      labs(title = paste("Outliers in", variable), x = "Time", y = variable) +
-      scale_color_manual(values = c("black", "red")) +
-      theme_minimal()
-
-    plots[[variable]] <- p
+    if (plot) {
+      p <- ggplot(data, aes_string(x = self$ts_var, y = variable)) +
+        geom_line() +
+        geom_point(data = data[outlier_idx, ], aes_string(x = self$ts_var, y = variable), color = "red") +
+        labs(title = paste("Outliers in", variable), x = "Time", y = variable) +
+        theme_minimal()
+      plots[[variable]] <- p
+    }
 
     if (winsorize) {
       self$data[[variable]][self$data[[variable]] < lower_bound] <- lower_bound
