@@ -139,4 +139,8 @@ The end of this tentative plan put us at August 9.
 	- List important and relevant parameters
 	- Be clear about their default values, especially ones that have may induce stochasticity in model outputs
 	- We can decide later on how to users can interact with this information
-
+- First round of algorithms left to integrate (This should take 1-2 more days)
+	- LDA & QDA
+	- Naive Bayes
+	- Simple neural net
+	- K nearest neighbor
