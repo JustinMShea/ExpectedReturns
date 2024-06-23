@@ -126,3 +126,12 @@ The end of this tentative plan put us at August 9.
 - New paper: "The Virtue of Complexity in Return Prediction"
 - *Feature Engineering*
 - RCPP (integrating R and C++)
+
+## 6/21/2024
+- Updated pipeline readability and ease of use
+- Incorporate decision tree algorithm into the pipeline (MLR3 functions passed test)
+
+## 6/23/2024
+- Incorporate random forest and SVM into the pipeline
+	- MLR3 sets default seed to NULL
+	- MLR3 functions for both algorithms passed test
