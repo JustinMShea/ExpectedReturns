@@ -16,7 +16,7 @@ test_rpart <- function(training_data,
   mlr_tree_fitted <- mlr_tree$model
   mlr_tree_predict <- mlr_tree$predict_newdata(testing_data)[["response"]]
 
-  formula <- paste(y, "~", paste(colnames(training_data[, !..y]), collapse = " + "))
+  formula <- as.formula(paste(y, "~", paste(colnames(training_data[, !..y]), collapse = " + ")))
   rpart_tree <- rpart::rpart(formula, training_data, ...)
   rpart_predict <- unname(predict(rpart_tree, testing_data))
 
