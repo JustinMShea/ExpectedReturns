@@ -76,10 +76,18 @@ regr_test <- split_data[[2]]
 setwd('..')
 source(file.path('sandbox', 'cvglmnet.R'))
 source(file.path('sandbox', 'rpart.R'))
+source(file.path('sandbox', 'ranger.R'))
+source(file.path('sandbox', 'svm.R'))
+source(file.path('sandbox', 'lda.R'))
+source(file.path('sandbox', 'qda.R'))
+source(file.path('sandbox', 'naiveBayes.R'))
+source(file.path('sandbox', 'KNN.R'))
+source(file.path('sandbox', 'nnet.R'))
 ```
 
 ```{r}
 test_cvglmnet(regr_train[, !"DATE"], regr_test[, !"DATE"], "WI.RET")
 test_rpart(regr_train[, !"DATE"], regr_test[, !"DATE"], "WI.RET")
+
 ```
 
