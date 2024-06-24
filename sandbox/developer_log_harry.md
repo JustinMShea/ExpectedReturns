@@ -144,3 +144,7 @@ The end of this tentative plan put us at August 9.
 	- Naive Bayes
 	- Simple neural net
 	- K nearest neighbor
+
+## 6/24/2024
+- Incorporated 4 groups of algorithms into the pipeline (LDA, QDA, naive Bayes, one layer neural net, and K nearest neighbor)
+- The one-layer neural network uses stochastic gradient descent for optimization so setting seeds is necessary for replicability, but neither MLR3 nor nnet allows seed as a parameter
