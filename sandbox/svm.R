@@ -1,17 +1,14 @@
 library(e1071)
-mlr_svm <- function(training_data,
-                       y,
-                       ...) {
-  svm <- TaskRegr$new(id = "svm", backend = training_data, target = y)
+mlr_svm <- function(training_data, y, ...) {
+  svm <- TaskRegr$new(id = "svm",
+                      backend = training_data,
+                      target = y)
   lrn_svm <- lrn("regr.svm", ...)
   lrn_svm$train(svm)
   return(lrn_svm)
 }
 
-test_svm <- function(training_data,
-                     testing_data,
-                     y,
-                     ...) {
+test_svm <- function(training_data, testing_data, y, ...) {
   mlr_model <- mlr_svm(training_data, y, ...)
   mlr_model_fitted <- mlr_model$model
   mlr_model_predict <- mlr_model$predict_newdata(testing_data)[["response"]]
