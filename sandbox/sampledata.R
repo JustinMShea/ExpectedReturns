@@ -29,8 +29,8 @@ factor_data <- factor_data |>
 breakpoints <- quantile(factor_data$WI.RET, probs = c(1/3, 2/3))
 
 # Create the new column
-factor_data[, signal := ifelse(WI.RET < breakpoints[1], -1,
-                               ifelse(WI.RET <= breakpoints[2], 0, 1))]
+factor_data[, signal := factor(ifelse(WI.RET < breakpoints[1], -1,
+                               ifelse(WI.RET <= breakpoints[2], 0, 1)))]
 regr_data <- factor_data[, !'signal']
 class_data <- factor_data[, !'WI.RET']
 rm(list = setdiff(ls(envir = .GlobalEnv), objects), envir = .GlobalEnv)
