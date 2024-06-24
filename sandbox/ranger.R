@@ -16,7 +16,7 @@ test_ranger <- function(training_data,
   mlr_forest_fitted <- mlr_forest$model
   mlr_forest_predict <- mlr_forest$predict_newdata(testing_data)[["response"]]
 
-  formula <- paste(y, "~", paste(colnames(training_data[, !..y]), collapse = " + "))
+  formula <- as.formula(paste(y, "~", paste(colnames(training_data[, !..y]), collapse = " + ")))
   ranger_forest <- ranger::ranger(formula, training_data, ...)
   ranger_predict <- predict(ranger_forest, testing_data)$predictions
 
