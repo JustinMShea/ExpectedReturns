@@ -132,19 +132,19 @@ The end of this tentative plan put us at August 9.
 - Incorporate decision tree algorithm into the pipeline (MLR3 functions passed test)
 
 ## 6/23/2024
-- Incorporate random forest and SVM into the pipeline
+- Test random forest and SVM learners
 	- MLR3 sets default seed to NULL
 	- MLR3 functions for both algorithms passed test
 - Note to self, once the basic algoritms are incorporated we need to make better documentations to assist users setting/tuning parameters
 	- List important and relevant parameters
 	- Be clear about their default values, especially ones that have may induce stochasticity in model outputs
 	- We can decide later on how to users can interact with this information
-- First round of algorithms left to integrate (This should take 1-2 more days)
+- First round of algorithms left to test (This should take 1-2 more days)
 	- LDA & QDA
 	- Naive Bayes
 	- Simple neural net
 	- K nearest neighbor
 
 ## 6/24/2024
-- Incorporated 4 groups of algorithms into the pipeline (LDA, QDA, naive Bayes, one layer neural net, and K nearest neighbor)
+- Tested 4 groups of algorithms (LDA, QDA, naive Bayes, one layer neural net, and K nearest neighbor)
 - The one-layer neural network uses stochastic gradient descent for optimization so setting seeds is necessary for replicability, but neither MLR3 nor nnet allows seed as a parameter
