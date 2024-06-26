@@ -148,3 +148,8 @@ The end of this tentative plan put us at August 9.
 ## 6/24/2024
 - Tested 4 groups of algorithms (LDA, QDA, naive Bayes, one layer neural net, and K nearest neighbor)
 - The one-layer neural network uses stochastic gradient descent for optimization so setting seeds is necessary for replicability, but neither MLR3 nor nnet allows seed as a parameter
+
+## 6/25/2024
+- Light reading day. Took a look at "The Virtue of Complexity in Return Prediction"
+	- This paper includes some great stuff we can try to implement in our pipeline, including feature building, rolling window construction, and model evaluation
+	- The math portion will likely take a while to get through. Given our limited time right now, we may want to be a bit more pragmatic and utilitarian
