@@ -17,7 +17,43 @@ prevailing_means <- function(full_data, train_data, test_data, y, ts_var) {
   return(predictions)
 }
 
-TSML$set("public", "prevailing_means", function(){
+TSML$set("public", "prevailing_means", function(window = "default",
+                                                weights = NULL,
+                                                name = "prevailing means"){
+
+  if ((window != "default") & (!is.numeric(window))) {
+    stop("Error: rolling window must be either 'default' or a number.")
+  }
+
+  if ((is.numeric(window)) & (window > nrow(self$train_data))) {
+    stop("Error: rolling window cannot be larger than the size of the training data.")
+  }
+
+  if (!is.null(weights)) {
+    if (window == "default") {
+      window <- length(weights)
+      if (!self$quiet) {
+        message("Rolling window size set to weights size.")
+      }
+    } else if (window != length(weights)) {
+      stop("Error: rolling window size must match the length of the weights vector.")
+    }
+    if (!is.numeric(weights)) {
+      stop("Error: weights must be numbers.")
+    } else {
+      if(anyNA(weights)) {
+        weights[is.na(weights)] <- 0
+        warning("Warning: weights vector contains NA, changed to 0.")
+      }
+      if(sum(weights, na.rm = TRUE) == 0) {
+        stop("Error: weights cannot be 0.")
+      }
+      if(sum(weights, na.rm = TRUE) != 1) {
+        weights <- weights / sum(weights)
+        message("Weights did not sum to 1. Scaled weights.")
+      }
+    }
+  }
 
   test_data <- self$test_data
   ts_var <- self$ts_var
@@ -33,10 +69,20 @@ TSML$set("public", "prevailing_means", function(){
   for (i in 1:nrow(test_data)){
     current_date <- test_data[i, get(ts_var)]
 
-    prevailing_mean <- data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
+    if (window == "default") {
+      prevailing_mean <- data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
+    } else {
+      window_data <- data[get(ts_var) < current_date, ]
+      window_data <- window_data[(nrow(window_data) - window + 1):nrow(window_data), ]
+      if (!is.null(weights)) {
+        prevailing_mean <- weighted.mean(window_data[[y]], weights, na.rm = TRUE)
+      } else {
+        prevailing_mean <- window_data[, mean(get(y), na.rm = TRUE)]
+      }
+    }
 
     predictions[i] <- prevailing_mean
   }
 
-  self$benchmark[["prevailing means"]] <- predictions
+  self$benchmark[[name]] <- predictions
 })
