@@ -15,6 +15,7 @@ TSML <- R6Class("Time Series Machine Learning",
     benchmark = list(),
     prediction = NULL,
     evals = list(),
+    quiet = TRUE,
 
     initialize = function(data, task, ts_var, y, cs_var = NULL) {
       if (!is.data.table(data)) {
