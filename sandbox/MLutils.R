@@ -77,6 +77,9 @@ TSML$set("public", "train_test_split", function(cutoff = 0.8) {
 
   self$train_data <- data[data[[ts_var]] <= date_cutoff]
   self$test_data <- data[data[[ts_var]] > date_cutoff]
+
+  # This may/should be moved somewhere else
+  self$benchmeark[["zero"]] <- rep(0, length(self$test_data))
 })
 
 TSML$set("public", "train_predict", function(model, method = c("default", "recursive"), vars = NULL, ...) {
