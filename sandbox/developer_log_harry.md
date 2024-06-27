@@ -154,3 +154,10 @@ The end of this tentative plan put us at August 9.
 	- This paper includes some great stuff we can try to implement in our pipeline, including feature building, rolling window construction, and model evaluation
 	- The math portion will likely take a while to get through. Given our limited time right now, we may want to be a bit more pragmatic and utilitarian
 	- Since I am moving onto building the first batch of model evaluation functions, I will try to do implement some referenced in this paper as well.
+
+## 6/27/2024
+- Meeting with mentors, decide next plan of actions
+	- Start documentations in the R scripts
+	- Integrate the pipeline and make sure it works (with existing functions)
+	- Expand model testing and evaluation functions
+- 
