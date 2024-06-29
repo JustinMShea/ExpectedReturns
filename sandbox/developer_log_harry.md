@@ -160,4 +160,8 @@ The end of this tentative plan put us at August 9.
 	- Start documentations in the R scripts
 	- Integrate the pipeline and make sure it works (with existing functions)
 	- Expand model testing and evaluation functions
-- 
+
+## 6/28/2024
+- Pipeline integration
+	- Encountered some initialization problem with MLR3, especially when we try to run recursive model. Will need to update the code to allow a rolling window of training data
+	- So far the pipeline seems to work, will need to do a few more tests to verify the results
