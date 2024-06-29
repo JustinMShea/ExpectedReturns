@@ -17,7 +17,7 @@ test_cvglmnet <- function(training_data,
   mlr_enet_fitted <- mlr_enet$model
   mlr_enet_lambda_min <- mlr_enet_fitted$lambda.min
 
-  mlr_enet_predict <- predict(mlr_enet_fitted, newx = x_test, s = mlr_enet_lambda_min)
+  mlr_enet_predict <- mlr_enet$predict_newdata(testing_data, s = "lambda.min")
 
   x_train <- as.matrix(training_data[, !..y])
   y_train <- training_data[[y]]
