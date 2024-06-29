@@ -7,7 +7,7 @@ TSML$set("public", "mae", function() {
   predicted_values <- self$prediction
 
   mae <- mean(abs(true_values - predicted_values), na.rm = TRUE)
-  evals[["mae"]] <- mae
+  self$evals[["mae"]] <- mae
 })
 
 TSML$set("public", "mse", function() {
@@ -19,7 +19,7 @@ TSML$set("public", "mse", function() {
   predicted_values <- self$prediction
 
   mse <- mean((true_values - predicted_values)^2, na.rm = TRUE)
-  evals[["mse"]] <- mse
+  self$evals[["mse"]] <- mse
 })
 
 TSML$set("public", "rsq", function(benchmark = "prevailing means") {
@@ -38,5 +38,5 @@ TSML$set("public", "rsq", function(benchmark = "prevailing means") {
 
 
   rsq <- 1 - (ss_res / ss_total)
-  evals[["rsq"]] <- rsq
+  self$evals[["rsq"]] <- rsq
 })
