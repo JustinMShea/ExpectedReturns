@@ -57,8 +57,7 @@ feature_correlation <- function(data,
 TSML$set("public", "feature_correlation", function(threshold = 0.7,
                                                    varnames = NULL,
                                                    method = "pearson",
-                                                   remove = FALSE,
-                                                   ) {
+                                                   remove = FALSE) {
   if (is.null(varnames)) {
     varnames <- setdiff(colnames(self$data), c(self$ts_var, self$cs_var))
   }
