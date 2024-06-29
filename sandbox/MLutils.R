@@ -79,41 +79,43 @@ TSML$set("public", "train_test_split", function(cutoff = 0.8) {
   self$test_data <- data[data[[ts_var]] > date_cutoff]
 
   # This may/should be moved somewhere else
-  self$benchmeark[["zero"]] <- rep(0, length(self$test_data))
+  self$benchmark[["zero"]] <- rep(0, nrow(self$test_data))
 })
 
 TSML$set("public", "train_predict", function(model, method = c("default", "recursive"), vars = NULL, ...) {
+  method <- method[1]
   if (!method %in% c("default", "recursive")) {
     stop("Error: method must be either 'default' or 'recursive'")
   }
-  self$model = model
-  self$learner = lrn(model, ...)
+  self$model <- model
+  self$learner <- lrn(model, ...)
+  self$prediction <- NULL
   if (is.null(vars)) {
     vars <- setdiff(colnames(self$data), c(self$ts_var, self$cs_var))
   }
   if (!self$y %in% vars) {
     stop("Error: the target variable must be included in the variable list")
   }
-  current_train <- self$training_data[, ..vars]
-  current_test <- self$testing_data[, ..vars]
+  current_train <- self$train_data[, ..vars]
+  current_test <- self$test_data[, ..vars]
   if (method == "default") {
     if ("regr" %in% model) {
-      task <- TaskRegr$new(id = "newregr", backend = current_train, target = self$y)
+      task <- as_task_regr(current_train, target = self$y)
     } else if ("classif" %in% model) {
-      task <- TaskClassif$new(id = "newclassif", backend = current_train, target = self$y)
+      task <- as_task_classif(current_train, target = self$y)
     }
     self$learner$train(task)
 
-    self$prediction <- self$learner$predict_newdata(task, current_test)[["response"]]
+    self$prediction <- self$learner$predict_newdata(current_test)[["response"]]
   }
   if (method == "recursive") {
     if ("regr" %in% model) {
-      task <- TaskRegr$new(id = "newregr", backend = current_train, target = self$y)
+      task <- as_task_regr(current_train, target = self$y)
     } else if ("classif" %in% model) {
-      task <- TaskClassif$new(id = "newclassif", backend = current_train, target = self$y)
+      task <- as_task_classif(current_train, target = self$y)
     }
     old_test <- new_test <- NULL
-    for (i in nrow(current_test)) {
+    for (i in 1:nrow(current_test)) {
       new_test <- current_test[i, ]
       if (!is.null(old_test)) {
         task$rbind(old_test)
