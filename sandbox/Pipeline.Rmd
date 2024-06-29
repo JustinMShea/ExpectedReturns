@@ -34,14 +34,6 @@ source(file.path('sandbox', 'TSML.R'))
 source(file.path('sandbox', 'MLutils.R'))
 ```
 
-```{r}
-testtask <- TSML$new(data = regr_data,
-                     ts_var = "DATE",
-                     y = "WI.RET")
-testtask$train_test_split(cutoff = 0.8)
-```
-
-
 Preprocessing
 ```{r}
 setwd('..')
@@ -53,24 +45,38 @@ source(file.path('sandbox', 'featureselection.R'))
 
 # Rescaling
 source(file.path('sandbox', 'rescale.R'))
+```
 
-# ML Utils
-source(file.path('sandbox', 'MLutils.R'))
+Evaluation
+```{r}
+setwd('..')
+# Constructing benchmarks
+source(file.path('sandbox', 'benchmark.R'))
+# Evaluation scores
+source(file.path('sandbox', 'evaluation.R'))
+```
+
+
+```{r}
+testtask <- TSML$new(data = regr_data,
+                     task = "regression",
+                     ts_var = "DATE",
+                     y = "WI.RET")
+testtask$train_test_split(cutoff = 0.8)
 ```
 
 ```{r}
-varnames = names(regr_data[, !c("DATE", "WI.RET")])
-interval_outlier <- interval(regr_data, varnames = varnames)
-winsorize_outlier <- winsorize(regr_data, varnames = varnames)
-feature_corr <- feature_correlation(regr_data, varnames = varnames)
+testtask$train_predict("regr.rpart", method = "default")
 ```
-
 
 ```{r}
-split_data <- train_test_split(regr_data, ts_var = "DATE")
-regr_train <- split_data[[1]]
-regr_test <- split_data[[2]]
+testtask$prevailing_means()
+testtask$mse()
+testtask$mae()
+testtask$rsq(benchmark = "zero")
+testtask$evals
 ```
+
 
 ```{r}
 setwd('..')
@@ -84,10 +90,3 @@ source(file.path('sandbox', 'naiveBayes.R'))
 source(file.path('sandbox', 'KNN.R'))
 source(file.path('sandbox', 'nnet.R'))
 ```
-
-```{r}
-test_cvglmnet(regr_train[, !"DATE"], regr_test[, !"DATE"], "WI.RET")
-test_rpart(regr_train[, !"DATE"], regr_test[, !"DATE"], "WI.RET")
-
-```
-
