@@ -12,9 +12,9 @@ TSML <- R6Class("Time Series Machine Learning",
     test_data = NULL,
     model = NULL,
     learner = NULL,
-    benchmark = list(),
+    benchmark = NULL,
     prediction = NULL,
-    evals = list(),
+    evals = NULL,
     quiet = TRUE,
 
     initialize = function(data, task, ts_var, y, cs_var = NULL) {
@@ -47,6 +47,9 @@ TSML <- R6Class("Time Series Machine Learning",
       self$ts_var <- ts_var
       self$y <- y
       self$cs_var <- cs_var
+      self$benchmark <- list()
+      self$evals <- list()
+      self$task <- task
     }
   )
 )
