@@ -1,25 +1,19 @@
-TSML$set("public", "mae", function() {
+TSML$set("public", "RegressionMetrics", function() {
   if (is.null(self$test_data) || is.null(self$prediction)) {
     stop("Error: test data or prediction is missing.")
   }
-
-  true_values <- self$test_data[[self$y]]
+  true_values <- self$test-data[[self$y]]
   predicted_values <- self$prediction
 
   mae <- mean(abs(true_values - predicted_values), na.rm = TRUE)
-  self$evals[["mae"]] <- mae
-})
-
-TSML$set("public", "mse", function() {
-  if (is.null(self$test_data) || is.null(self$prediction)) {
-    stop("Error: test data or prediction is missing.")
-  }
-
-  true_values <- self$test_data[[self$y]]
-  predicted_values <- self$prediction
-
   mse <- mean((true_values - predicted_values)^2, na.rm = TRUE)
+  mape <- mean(abs((true_values - predicted_values) / true_values), na.rm = TRUE)
+  mspe <- mean(((true_values - predicted_values) / true_values)^2, na.rm = TRUE)
+
+  self$evals[["mae"]] <- mae
   self$evals[["mse"]] <- mse
+  self$evals[["mape"]] <- mape
+  self$evals[["mspe"]] <- mspe
 })
 
 TSML$set("public", "rsq", function(benchmark = "prevailing means") {
