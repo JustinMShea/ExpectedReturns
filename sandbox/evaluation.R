@@ -3,9 +3,11 @@ TSML$set("public", "RegressionMetrics", function() {
     stop("Error: test data or prediction is missing.")
   }
 
-  if (self$)
+  if (self$task != "REGRESSION") {
+    stop("Error: regression metrics can only be calculated for a regression task.")
+  }
 
-  true_values <- self$test-data[[self$y]]
+  true_values <- self$test_data[[self$y]]
   predicted_values <- self$prediction
 
   mae <- mean(abs(true_values - predicted_values), na.rm = TRUE)
@@ -25,6 +27,16 @@ TSML$set("public", "ClassificationMetrics", function(){
   if (is.null(self$test_data) || is.null(self$prediction)) {
     stop("Error: test data or prediction is missing.")
   }
+
+  if (self$task != "CLASSIFICATION") {
+    stop("Error: classification metrics can only be calculated for a classification task.")
+  }
+
+  true_values <- self$test_data[[self$y]]
+  predicted_values <- selfprediction
+
+  TP <- mean(as.numeric((true_values == 1) && (predicted_values == 1)), na.rm = TRUE)
+  TN <- mean(as.numeric((true_values == 0)))
 })
 
 TSML$set("public", "rsq", function(benchmark = "prevailing means") {
