@@ -165,3 +165,10 @@ The end of this tentative plan put us at August 9.
 - Pipeline integration
 	- Encountered some initialization problem with MLR3, especially when we try to run recursive model. Will need to update the code to allow a rolling window of training data
 	- So far the pipeline seems to work, will need to do a few more tests to verify the results
+
+## 7/2/2024
+- Read some of the papers cited in the tstest package. Will have to discuss with mentors about how to integrate them
+- Start writing documentations for key functions
+- MLR3 already included many useful evaluation metrics. How should we incorporate them into the pipeline?
+	- Should we rely on users to call them after getting the "truth" and "prediction" data from the pipeline?
+	- Are there additional ones we should write/include?
