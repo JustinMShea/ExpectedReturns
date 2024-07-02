@@ -1,9 +1,34 @@
+#' Train Test Split
+#'
+#' @section Usage
+#' TSML$train_test_split(cutoff = 0.8)
+#' @section Arguments
+#' @param cutoff cutoff index for splitting. Can be a numeric value or a date object
+#' @section Example
+#' # 80/20 split of training and test data
+#' TSML$train_test_split(cutoff = 0.8)
+#' # Specify a 12 period buffer set for initial training
+#' TSML$train_test_split(cutoff = 12)
+#' # Split dataset by date index
+#' date_idx <- as.Date("2020-06-22")
+#' TSML$train_test_split(cutoff = date_idx)
+
 TSML$set("public", "train_test_split", function(cutoff) {
   data <- self$data
   ts_var <- self$ts_var
 
-  if (!(is.numeric(cutoff) && cutoff > 0 && cutoff < 1) && !inherits(cutoff, "Date")) {
-    stop("Error: cutoff must either be a number between 0 and 1 or a date object")
+  if (is.numeric(cutoff)) {
+    if (cutoff < 0) {
+      stop("Error: cutoff cannot be a negative number.")
+    }
+    if (cutoff > nrow(data)) {
+      stop("Error: cutoff cannot be larger than the number of row of the dataset.")
+    }
+    if ((cutoff == nrow(data)) || (cutoff == 0)) {
+      stop("Error: length of training and test datasets cannot be 0.")
+    }
+  } else if (!inherits(cutoff, "Date")) {
+    stop("Error: cutoff must either be a number or a date object.")
   }
 
   if (inherits(cutoff, "Date")) {
@@ -16,7 +41,11 @@ TSML$set("public", "train_test_split", function(cutoff) {
   } else {
     unique_dates <- unique(data[[ts_var]])
     unique_dates <- unique_dates[order(unique_dates)]
-    date_cutoff_index <- ceiling(length(unique_dates) * cutoff)
+    if (cutoff < 1) {
+      date_cutoff_index <- ceiling(length(unique_dates) * cutoff)
+    } else {
+      date_cutoff_index <- cutoff
+    }
     date_cutoff <- unique_dates[date_cutoff_index]
   }
 
