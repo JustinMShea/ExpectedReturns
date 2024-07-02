@@ -1,4 +1,8 @@
-prevailing_means <- function(full_data, train_data, test_data, y, ts_var) {
+
+
+prevailing_means <- function(full_data, train_data, test_data, y, ts_var,
+                             window = "default", weights = NULL, name = "prevailing means",
+                             ...) {
   # Initialize prediction vector
   predictions <- numeric(nrow(test_data))
 
@@ -19,7 +23,8 @@ prevailing_means <- function(full_data, train_data, test_data, y, ts_var) {
 
 TSML$set("public", "prevailing_means", function(window = "default",
                                                 weights = NULL,
-                                                name = "prevailing means"){
+                                                name = "prevailing means",
+                                                ...){
 
   if ((window != "default") & (!is.numeric(window))) {
     stop("Error: rolling window must be either 'default' or a number.")
