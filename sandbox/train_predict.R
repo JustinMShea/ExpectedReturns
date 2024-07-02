@@ -1,3 +1,20 @@
+#' Perform Model Training and Make Predictions
+#'
+#' @section Usage
+#' ## Conventional pipeline
+#' TSML$train_predict(model, method = "default",...)
+#' ## Recursive pipeline
+#' TSML$train_predict(model, method = "recursive",...)
+#' ## Recursive pipeline with fixed buffer window
+#' TSML$train_predict(model, method = "recursive", buffer = bufferwindow, ...)
+#' ## Either pipeline with specific covariates
+#' TSML$train_predict(model, vars = varlist)
+#' @section Arguments
+#' @param model a character string for the machine learning algorithm to be called.
+#' @param method a character string of either "default" or "recursive".
+#' @param vars a character vector of covariate names. Default uses all available covariates.
+#' @param buffer a number for the fixed buffer period. Default set to no fixed rolling window.
+
 TSML$set("public", "train_predict", function(model,
                                              method = c("default", "recursive"),
                                              vars = NULL,
