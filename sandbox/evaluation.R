@@ -1,3 +1,5 @@
+
+
 TSML$set("public", "RegressionMetrics", function() {
   if (is.null(self$test_data) || is.null(self$prediction)) {
     stop("Error: test data or prediction is missing.")
@@ -39,12 +41,12 @@ TSML$set("public", "ClassificationMetrics", function(){
   TN <- mean(as.numeric((true_values == 0)))
 })
 
-TSML$set("public", "rsq", function(benchmark = "prevailing means") {
+TSML$set("public", "rsq", function(benchmark) {
   if (is.null(self$test_data) || is.null(self$prediction)) {
     stop("Error: test data or prediction is missing.")
   }
 
-  true_values <- self$test_data[[self$y]]
+  true_values <- self$truth
   predicted_values <- self$prediction
 
   ss_res <- sum((true_values - predicted_values)^2, na.rm = TRUE)
