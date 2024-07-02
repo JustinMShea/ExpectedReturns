@@ -80,6 +80,7 @@ TSML$set("public", "train_test_split", function(cutoff = 0.8) {
 
   # This may/should be moved somewhere else
   self$benchmark[["zero"]] <- rep(0, nrow(self$test_data))
+  self$truth <- self$test_data[[self$y]]
 })
 
 TSML$set("public", "train_predict", function(model,
