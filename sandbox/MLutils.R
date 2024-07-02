@@ -82,7 +82,11 @@ TSML$set("public", "train_test_split", function(cutoff = 0.8) {
   self$benchmark[["zero"]] <- rep(0, nrow(self$test_data))
 })
 
-TSML$set("public", "train_predict", function(model, method = c("default", "recursive"), vars = NULL, ...) {
+TSML$set("public", "train_predict", function(model,
+                                             method = c("default", "recursive"),
+                                             vars = NULL,
+                                             buffer = NULL,
+                                             ...) {
   method <- method[1]
   if (!method %in% c("default", "recursive")) {
     stop("Error: method must be either 'default' or 'recursive'")
@@ -96,7 +100,19 @@ TSML$set("public", "train_predict", function(model, method = c("default", "recur
   if (!self$y %in% vars) {
     stop("Error: the target variable must be included in the variable list")
   }
-  current_train <- self$train_data[, ..vars]
+  if (is.null(buffer)) {
+    current_train <- self$train_data[, ..vars]
+  } else {
+    if (!is.numeric(buffer)) {
+      stop("Error: buffer must be a number.")
+    }
+    if (buffer > nrow(self$train_data)) {
+      stop("Error: buffer must be smaller than the length of training data.")
+    }
+    buffer_idx <- -1:-(nrow(current_train) - buffer)
+    current_train <- self$train_data[buffer_idx, ..vars]
+  }
+
   current_test <- self$test_data[, ..vars]
   if (method == "default") {
     if ("regr" %in% model) {
@@ -117,13 +133,10 @@ TSML$set("public", "train_predict", function(model, method = c("default", "recur
     old_test <- new_test <- NULL
     for (i in 1:nrow(current_test)) {
       new_test <- current_test[i, ]
-      if (!is.null(old_test)) {
-        task$rbind(old_test)
-      }
       self$learner$train(task)
       self$prediction[i] <- self$learner$predict_newdata(new_test)[["response"]]
-
-      old_test <- new_test
+      current_train <- rbind(current_train[-1, ], new_test)
+      task$backend <- current_train
     }
   }
 })
