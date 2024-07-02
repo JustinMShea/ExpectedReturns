@@ -1,7 +1,22 @@
-
+#' Create prevailing means benchmark.
+#' @section Usage
+#' TSML$prevailing_means(
+#' window = NULL,
+#' weights = NULL,
+#' name = "prevailing means"
+#' )
+#'
+#' @section Arguments
+#' @param window A number for rolling window length.
+#' @param weights A vector of non-negative and finite sample weights, must have the same length as @param window if both are specified
+#' @param name A string for benchmark name. Default to "prevailing means"
+#' @param ... Additional arguments. Currently ignored
+#'
+#' @section Returns
+#' A vector of prevailing mean predictions with the same length as the test data stored in the public benchmark field.
 
 prevailing_means <- function(full_data, train_data, test_data, y, ts_var,
-                             window = "default", weights = NULL, name = "prevailing means",
+                             window = NULL, weights = NULL, name = "prevailing means",
                              ...) {
   # Initialize prediction vector
   predictions <- numeric(nrow(test_data))
@@ -21,12 +36,12 @@ prevailing_means <- function(full_data, train_data, test_data, y, ts_var,
   return(predictions)
 }
 
-TSML$set("public", "prevailing_means", function(window = "default",
+TSML$set("public", "prevailing_means", function(window = NULL,
                                                 weights = NULL,
                                                 name = "prevailing means",
                                                 ...){
 
-  if ((window != "default") & (!is.numeric(window))) {
+  if ((!is.null(window)) & (!is.numeric(window))) {
     stop("Error: rolling window must be either 'default' or a number.")
   }
 
@@ -74,7 +89,7 @@ TSML$set("public", "prevailing_means", function(window = "default",
   for (i in 1:nrow(test_data)){
     current_date <- test_data[i, get(ts_var)]
 
-    if (window == "default") {
+    if (is.null(window)) {
       prevailing_mean <- data[get(ts_var) < current_date, mean(get(y), na.rm = TRUE)]
     } else {
       window_data <- data[get(ts_var) < current_date, ]
