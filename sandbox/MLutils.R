@@ -130,7 +130,19 @@ TSML$set("public", "train_predict", function(model,
     } else if ("classif" %in% model) {
       task <- as_task_classif(current_train, target = self$y)
     }
-    old_test <- new_test <- NULL
+
+    # This gets rid of the for loop, will have to test if it works
+    #recursive_predict <- function(index) {
+    #  new_test <- current_test[index, ]
+    #  self$learner$train(task)
+    #  prediction <- self$learner$predict_newdata(new_test)[["response"]]
+    #  current_train <<- rbind(current_train[-1, ], new_test)
+    #  task$backend <- current_train
+    #  return(prediction)
+    #}
+
+    self$prediction <- sapply(seq_len(nrow(current_test)), recursive_predict)
+
     for (i in 1:nrow(current_test)) {
       new_test <- current_test[i, ]
       self$learner$train(task)
