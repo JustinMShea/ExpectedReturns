@@ -57,7 +57,8 @@ feature_correlation <- function(data,
 TSML$set("public", "feature_correlation", function(threshold = 0.7,
                                                    varnames = NULL,
                                                    method = "pearson",
-                                                   remove = FALSE) {
+                                                   remove = FALSE,
+                                                   plot = FALSE) {
   if (is.null(varnames)) {
     varnames <- setdiff(colnames(self$data), c(self$ts_var, self$cs_var))
   }
@@ -96,5 +97,7 @@ TSML$set("public", "feature_correlation", function(threshold = 0.7,
   }
   return(list(remove_var = to_remove, cor_matrix = cor_matrix))
 })
+
+
 
 # Future work: clustering analysis, tree based selection
