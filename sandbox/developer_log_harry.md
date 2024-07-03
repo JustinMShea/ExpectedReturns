@@ -172,3 +172,7 @@ The end of this tentative plan put us at August 9.
 - MLR3 already included many useful evaluation metrics. How should we incorporate them into the pipeline?
 	- Should we rely on users to call them after getting the "truth" and "prediction" data from the pipeline?
 	- Are there additional ones we should write/include?
+
+## 7/3/2024
+- Added some functionality (fixed rolling window) for recursive training
+- Note to self: maybe instead of making certain preprocessing functionalities public functions embedded in the class, we can make them separate functions that we can pass the class object into. This may be easier for users to interact with.
