@@ -18,6 +18,7 @@
 TSML$set("public", "train_predict", function(model,
                                              method = c("default", "recursive"),
                                              vars = NULL,
+                                             fixed_window = FALSE,
                                              buffer = NULL,
                                              ...) {
   method <- method[1]
@@ -33,6 +34,7 @@ TSML$set("public", "train_predict", function(model,
   if (!self$y %in% vars) {
     stop("Error: the target variable must be included in the variable list")
   }
+
   if (is.null(buffer)) {
     current_train <- self$train_data[, ..vars]
   } else {
@@ -42,6 +44,7 @@ TSML$set("public", "train_predict", function(model,
     if (buffer > nrow(self$train_data)) {
       stop("Error: buffer must be smaller than the length of training data.")
     }
+    fix_window = TRUE
     buffer_idx <- -1:-(nrow(current_train) - buffer)
     current_train <- self$train_data[buffer_idx, ..vars]
   }
@@ -69,7 +72,11 @@ TSML$set("public", "train_predict", function(model,
     #  new_test <- current_test[index, ]
     #  self$learner$train(task)
     #  prediction <- self$learner$predict_newdata(new_test)[["response"]]
-    #  current_train <<- rbind(current_train[-1, ], new_test)
+    #  if (fixed_window) {
+    #    current_train <- rbind(current_train[-1, ], new_test)
+    #  } else {
+    #    current_train <- rbind(current_train, new_test)
+    #  }
     #  task$backend <- current_train
     #  return(prediction)
     #}
@@ -80,7 +87,11 @@ TSML$set("public", "train_predict", function(model,
       new_test <- current_test[i, ]
       self$learner$train(task)
       self$prediction[i] <- self$learner$predict_newdata(new_test)[["response"]]
-      current_train <- rbind(current_train[-1, ], new_test)
+      if (fixed_window) {
+        current_train <- rbind(current_train[-1, ], new_test)
+      } else {
+        current_train <- rbind(current_train, new_test)
+      }
       task$backend <- current_train
     }
   }
