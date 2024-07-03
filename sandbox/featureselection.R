@@ -56,15 +56,20 @@ feature_correlation <- function(data,
 
 TSML$set("public", "feature_correlation", function(threshold = 0.7,
                                                    varnames = NULL,
-                                                   method = "pearson",
+                                                   method = c("pearson", "kendall", "spearman"),
                                                    remove = FALSE,
-                                                   plot = FALSE) {
+                                                   plot = FALSE,
+                                                   ...) {
   if (is.null(varnames)) {
     varnames <- setdiff(colnames(self$data), c(self$ts_var, self$cs_var))
   }
 
   if (!method %in% c("pearson", "kendal", "spearman")) {
     stop("Error: method must be one of 'spearman', 'pearson', or 'kendall'")
+  }
+
+  if (missing(method)) {
+    method <- method[1]
   }
 
   data <- self$data
@@ -92,9 +97,14 @@ TSML$set("public", "feature_correlation", function(threshold = 0.7,
     high_cor_pairs <- high_cor_pairs[!duplicated(t(apply(high_cor_pairs, 1, sort))), ]
   }
 
-  if (remove){
+  if (remove) {
     self$data[, (to_remove) := NULL]
   }
+
+  if (plot) {
+    PerformanceAnalytics::chart.Correlation(data[, ..varnames], method = method, ...)
+  }
+
   return(list(remove_var = to_remove, cor_matrix = cor_matrix))
 })
 
