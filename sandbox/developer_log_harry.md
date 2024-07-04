@@ -176,3 +176,14 @@ The end of this tentative plan put us at August 9.
 ## 7/3/2024
 - Added some functionality (fixed rolling window) for recursive training
 - Note to self: maybe instead of making certain preprocessing functionalities public functions embedded in the class, we can make them separate functions that we can pass the class object into. This may be easier for users to interact with.
+
+## 7/4/2024
+- Meeting with mentors
+	- Metrics to add (Let's pose this question in the chat)
+	- Backtesting models with quantstrat (trading context)
+	- For tstest integration, we should delve to explore what model/distribution assumptions we should make
+	- Should we jump into portfolio selection?
+	- quantkiosk
+	- How data are formatted is an important question to consider
+	- I will start building the second part of the pipeline (portfolio sorting functionalities)
+- Put some questions in the chat
