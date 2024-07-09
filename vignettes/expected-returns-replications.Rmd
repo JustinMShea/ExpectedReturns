@@ -64,24 +64,24 @@ library(xts)
 ### Experimenting fitFfm() to fit FF three-factor model ###
 
 ## Get and set data to pass to fitFfm()
-data("factorDataSetDjia5Yrs") 
+# data("factorDataSetDjia5Yrs") 
 data("FF3.monthly")
 
 # select some variables needed
-factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
+# factorDataSetDjia5Yrs <- factorDataSetDjia5Yrs[, c('DATE', 'TICKER', 'NAME', 'RETURN.OLD', 'RETURN', 'RETURN.DIFF')]
 
 # make 'ff3.data.monthly' and 'factorDataSetDjia5Yrs' compatible for testing
 ff3.data.monthly.dates <- index(FF3.monthly)
 ff3.data.monthly <- as.data.frame(coredata(FF3.monthly))
 ff3.data.monthly <- cbind(ff3.data.monthly.dates, ff3.data.monthly)
 colnames(ff3.data.monthly)[1] <- 'DATE'
-factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
+# factorDataSetDjia5Yrs$DATE <- as.Date(factorDataSetDjia5Yrs$DATE)
 
-test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
+# test.data <- merge(factorDataSetDjia5Yrs, ff3.data.monthly)
 
 # excess returns
-test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
-test.data$RF <- NULL
+# test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
+# test.data$RF <- NULL
 ```
 
 ## Fama-French
@@ -91,9 +91,9 @@ test.data$RF <- NULL
 exposure.vars <- c('MKT.RF', 'SMB', 'HML')
 
 ## Run fitFfm() to fit factor model using cross-sectional regression
-fit.test <- fitFfm(data=test.data, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", 
-                   exposure.vars=exposure.vars, addIntercept=TRUE)
-fit.test
+# fit.test <- fitFfm(data=test.data, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", 
+#                    exposure.vars=exposure.vars, addIntercept=TRUE)
+# fit.test
 
 ```
 
@@ -117,36 +117,36 @@ fit.test
 
 ## Fama-MacBeth for FF Three-factor model, looping over lm()
 # test.data$EXC.RETURN <- test.data$RETURN - test.data$RF # FF risk-free rate (one-month Treasury bill rate from Ibbotson Associates)
-periods <- unique(factorDataSetDjia5Yrs$DATE)
-tickers <- unique(factorDataSetDjia5Yrs$TICKER)
+# periods <- unique(factorDataSetDjia5Yrs$DATE)
+# tickers <- unique(factorDataSetDjia5Yrs$TICKER)
 factor.vars <- c('MKT.RF', 'SMB', 'HML')
 
 # Run N time-series regressions
-beta.coefs <- matrix(NA, length(tickers), length(factor.vars) + 1)
-for (i in 1:length(tickers)) {
-  asset.reg <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data=test.data[which(test.data[, 'TICKER'] == tickers[i]), ])
-  beta.coefs[i, ] <- asset.reg$coefficients
-}
-row.names(beta.coefs) <- tickers
-colnames(beta.coefs) <- c('(Intercept)', 'MKT.RF', 'SMB', 'HML')
-beta.coefs
+# beta.coefs <- matrix(NA, length(tickers), length(factor.vars) + 1)
+# for (i in 1:length(tickers)) {
+#   asset.reg <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data=test.data[which(test.data[, 'TICKER'] == tickers[i]), ])
+#   beta.coefs[i, ] <- asset.reg$coefficients
+# }
+# row.names(beta.coefs) <- tickers
+# colnames(beta.coefs) <- c('(Intercept)', 'MKT.RF', 'SMB', 'HML')
+# beta.coefs
 
 # Run T cross-sectional regressions 
-gamma.coefs <- matrix(NA, length(periods), length(factor.vars) + 1)
-gamma.rsq <- matrix(NA, length(periods), 1)
-for (t in 1:length(periods)) {
-  per.period.assets.ret <- test.data[which(test.data[, 'DATE'] == periods[t]), 'EXC.RETURN']
-  data <- data.frame('EXC.RETURN'=per.period.assets.ret, beta.coefs[, 2:4]) # excluding prev. est. intercepts
-  time.reg <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data=data)
-  gamma.coefs[t, ] <- time.reg$coefficients
-}
-gamma.coefs <- data.frame(periods, gamma.coefs)
-colnames(gamma.coefs) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
-gamma.coefs
+# gamma.coefs <- matrix(NA, length(periods), length(factor.vars) + 1)
+# gamma.rsq <- matrix(NA, length(periods), 1)
+# for (t in 1:length(periods)) {
+#   per.period.assets.ret <- test.data[which(test.data[, 'DATE'] == periods[t]), 'EXC.RETURN']
+#   data <- data.frame('EXC.RETURN'=per.period.assets.ret, beta.coefs[, 2:4]) # excluding prev. est. intercepts
+#   time.reg <- lm(EXC.RETURN ~ MKT.RF + SMB + HML, data=data)
+#   gamma.coefs[t, ] <- time.reg$coefficients
+# }
+# gamma.coefs <- data.frame(periods, gamma.coefs)
+# colnames(gamma.coefs) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
+# gamma.coefs
 
 # Average last regression coefficients estimates
-avg.coefs <- colMeans(gamma.coefs[, 2:ncol(gamma.coefs)])
-avg.coefs
+# avg.coefs <- colMeans(gamma.coefs[, 2:ncol(gamma.coefs)])
+# avg.coefs
 ```
 
 ## Fama-Macbeth plm 
@@ -158,80 +158,80 @@ avg.coefs
 # Only concerning with the core mechanics so far.
 library(plm)             # to estimate model
 # match and merge FF3 factors data and stocks data
-test.data.plm <- test.data
+# test.data.plm <- test.data
 
 # Indexes to determine panel structure
 # 'PERIOD.ID', each date gets same number id across
-periods <- unique(factorDataSetDjia5Yrs$DATE)
-periods.id <- 1:length(periods)
-periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
-test.data.plm <- merge(test.data.plm, periods.id, by='DATE')
+# periods <- unique(factorDataSetDjia5Yrs$DATE)
+# periods.id <- 1:length(periods)
+# periods.id <- data.frame('DATE'=periods, 'PERIOD.ID'=periods.id)
+# test.data.plm <- merge(test.data.plm, periods.id, by='DATE')
 # 'ASSET.ID', each asset gets same number id across
-tickers <- unique(factorDataSetDjia5Yrs$TICKER)
-assets.id <- 1:length(tickers)
-assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
-test.data.plm <- merge(test.data.plm, assets.id) # this messes up dates order within a ticker
-
-# Sort data set
-test.data.plm <- test.data.plm[order(test.data.plm[, 'ASSET.ID'], test.data.plm[, 'PERIOD.ID']), ]
-row.names(test.data.plm) <- NULL
+# tickers <- unique(factorDataSetDjia5Yrs$TICKER)
+# assets.id <- 1:length(tickers)
+# assets.id <- data.frame('TICKER'=tickers, 'ASSET.ID'=assets.id)
+# test.data.plm <- merge(test.data.plm, assets.id) # this messes up dates order within a ticker
+# 
+# # Sort data set
+# test.data.plm <- test.data.plm[order(test.data.plm[, 'ASSET.ID'], test.data.plm[, 'PERIOD.ID']), ]
+# row.names(test.data.plm) <- NULL
 
 #test.data.plm$EXC.RETURN <- test.data.plm$RETURN - test.data.plm$RF # FF risk-free rate (1-month T-bill rate)
-test.data.input <- test.data.plm[, c("ASSET.ID", "PERIOD.ID", "DATE", "EXC.RETURN", "MKT.RF", "SMB", "HML")]
+# test.data.input <- test.data.plm[, c("ASSET.ID", "PERIOD.ID", "DATE", "EXC.RETURN", "MKT.RF", "SMB", "HML")]
 
 # Time-series regressions
-fm.ts.reg <- plm::pmg(EXC.RETURN ~ MKT.RF + SMB + HML, 
-                      data=test.data.input, index=c('ASSET.ID', 'PERIOD.ID'))
-summary(fm.ts.reg)
-betas <- t(fm.ts.reg$indcoef) # all coefficients
-rownames(betas) <- tickers
-colnames(betas) <- paste('BETA', colnames(betas), sep='.')
-betas
+# fm.ts.reg <- plm::pmg(EXC.RETURN ~ MKT.RF + SMB + HML, 
+#                       data=test.data.input, index=c('ASSET.ID', 'PERIOD.ID'))
+# summary(fm.ts.reg)
+# betas <- t(fm.ts.reg$indcoef) # all coefficients
+# rownames(betas) <- tickers
+# colnames(betas) <- paste('BETA', colnames(betas), sep='.')
+# betas
 
 # (Check my Fama-MacBeth snippet vs. `plm` version)
-betas == beta.coefs
+# betas == beta.coefs
 
 # Cross-sectional regressions
-test.data.input.second <- test.data.input[order(test.data.input[, 'DATE']), ]
-test.data.input.second <- data.frame(
-  test.data.input.second[, c("PERIOD.ID", "ASSET.ID", "DATE", "EXC.RETURN")], 
-  betas[, 2:4]
-)
-
-fm.cs.reg <- plm::pmg(EXC.RETURN ~ BETA.MKT.RF + BETA.SMB + BETA.HML, 
-                      data=test.data.input.second, index=c('PERIOD.ID', 'ASSET.ID'))
-summary(fm.cs.reg)
-gammas <- t(fm.cs.reg$indcoef) # all coefficients
-gammas <- data.frame(periods, gammas)
-colnames(gammas) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
-gammas
-
-# (Check my Fama-MacBeth snippet vs. `plm` version)
-gammas == gamma.coefs
+# test.data.input.second <- test.data.input[order(test.data.input[, 'DATE']), ]
+# test.data.input.second <- data.frame(
+#   test.data.input.second[, c("PERIOD.ID", "ASSET.ID", "DATE", "EXC.RETURN")], 
+#   betas[, 2:4]
+# )
+# 
+# fm.cs.reg <- plm::pmg(EXC.RETURN ~ BETA.MKT.RF + BETA.SMB + BETA.HML, 
+#                       data=test.data.input.second, index=c('PERIOD.ID', 'ASSET.ID'))
+# summary(fm.cs.reg)
+# gammas <- t(fm.cs.reg$indcoef) # all coefficients
+# gammas <- data.frame(periods, gammas)
+# colnames(gammas) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
+# gammas
+# 
+# # (Check my Fama-MacBeth snippet vs. `plm` version)
+# gammas == gamma.coefs
 
 
 #refactor by Jiarui
 
 #Use fitTsfm to do time series regression 
-test.data.third <- data.table::dcast(test.data, DATE ~ TICKER,  value.var = "EXC.RETURN")
-test.data.third <- merge(test.data.third, ff3.data.monthly[c('DATE', 'MKT.RF','SMB','HML')], by='DATE')
-row.names(test.data.third) <- test.data.third$DATE
-test.data.third$DATE <- NULL
-fit.test <- fitTsfm(asset.names = unique(factorDataSetDjia5Yrs$TICKER), factor.names = c('MKT.RF','SMB','HML'), data = test.data.third)
-fit.test.coefs <- cbind(fit.test$alpha, fit.test$beta) 
-fit.test.coefs == betas
-fit.test.coefs == beta.coefs
+# test.data.third <- data.table::dcast(test.data, DATE ~ TICKER,  value.var = "EXC.RETURN")
+# test.data.third <- merge(test.data.third, ff3.data.monthly[c('DATE', 'MKT.RF','SMB','HML')], by='DATE')
+# row.names(test.data.third) <- test.data.third$DATE
+# test.data.third$DATE <- NULL
+# fit.test <- fitTsfm(asset.names = unique(factorDataSetDjia5Yrs$TICKER), factor.names = c('MKT.RF','SMB','HML'), data = test.data.third)
+# fit.test.coefs <- cbind(fit.test$alpha, fit.test$beta) 
+# fit.test.coefs == betas
+# fit.test.coefs == beta.coefs
 
 
 #Use fitFfm to do cross sectional regression
 
-test.data.fourth  <-  data.frame(test.data[, c("DATE", "TICKER", "EXC.RETURN")], fit.test.coefs[, 2:4])
-exposure.vars <- c('MKT.RF', 'SMB', 'HML')
-fit.test.second <- fitFfm(data=test.data.fourth, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", exposure.vars=exposure.vars, addIntercept=TRUE, lagExposures = FALSE)
-fit.test.second.coefs <- data.frame(unique(test.data.fourth$DATE), fit.test.second$factor.returns)
-colnames(fit.test.second.coefs) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
-row.names(fit.test.second.coefs) <- NULL 
-fit.test.second.coefs == gammas
-fit.test.second.coefs == gamma.coefs
+# test.data.fourth  <-  data.frame(test.data[, c("DATE", "TICKER", "EXC.RETURN")], fit.test.coefs[, 2:4])
+# exposure.vars <- c('MKT.RF', 'SMB', 'HML')
+# fit.test.second <- fitFfm(data=test.data.fourth, asset.var="TICKER", ret.var="EXC.RETURN", date.var="DATE", exposure.vars=exposure.vars, addIntercept=TRUE, lagExposures = FALSE)
+# fit.test.second.coefs <- data.frame(unique(test.data.fourth$DATE), fit.test.second$factor.returns)
+# colnames(fit.test.second.coefs) <- c('DATE', '(Intercept)', 'MKT.RF', 'SMB', 'HML')
+# row.names(fit.test.second.coefs) <- NULL 
+# fit.test.second.coefs == gammas
+# fit.test.second.coefs == gamma.coefs
 ```
 
