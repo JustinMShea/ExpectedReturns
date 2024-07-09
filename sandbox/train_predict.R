@@ -1,4 +1,4 @@
-#' Perform Model Training and Make Predictions
+#' Evaluate portfolio performance against market level variables
 #'
 #' @section Usage
 #' ## Conventional pipeline
@@ -81,7 +81,7 @@ TSML$set("public", "train_predict", function(model,
     #  return(prediction)
     #}
 
-    self$prediction <- sapply(seq_len(nrow(current_test)), recursive_predict)
+    # self$prediction <- sapply(seq_len(nrow(current_test)), recursive_predict)
 
     for (i in 1:nrow(current_test)) {
       new_test <- current_test[i, ]
