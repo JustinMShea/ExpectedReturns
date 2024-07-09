@@ -187,3 +187,6 @@ The end of this tentative plan put us at August 9.
 	- How data are formatted is an important question to consider
 	- I will start building the second part of the pipeline (portfolio sorting functionalities)
 - Put some questions in the chat
+
+## 7/8/2024
+- Start building portfolio selection portion of the pipeline
