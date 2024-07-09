@@ -190,3 +190,8 @@ The end of this tentative plan put us at August 9.
 
 ## 7/8/2024
 - Start building portfolio selection portion of the pipeline
+
+## 7/9/2024
+- Continue building portfolio selection funcitons
+- Will also build benchmarks (e.g. equal weighted portfolios as benchmarks)
+- Will put questions in chat later this week
