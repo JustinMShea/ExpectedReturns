@@ -193,5 +193,6 @@ The end of this tentative plan put us at August 9.
 
 ## 7/9/2024
 - Continue building portfolio selection funcitons
+- Add portfolio evaluation functions (will integrate PerformanceAnalytics functions such as VaR)
 - Will also build benchmarks (e.g. equal weighted portfolios as benchmarks)
 - Will put questions in chat later this week
