@@ -5,6 +5,7 @@ build_strategy <- function(object,
                            buffer = NULL,
                            keep = 1,
                            filter = 0,
+                           w = c("equal", "scaled"),
                            ...) {
 
   if ((is.null(object$cs_var)) || (object$cs_var < 2)) {
@@ -51,7 +52,7 @@ build_strategy <- function(object,
   learner <- lrn(model, ...)
 
   for (t in 1:length(current_test)) {
-    new_test <-current_test[ts_var == Time[train_end + t], ]
+    new_test <- current_test[ts_var == Time[train_end + t], ]
     if (filter > 0) {
       train_idx <- which(current_train[, ..y] < quantile(current_train[, ..y], filter) |
                            current_train[, ..y] > quantile(current_train[, ..y], 1 - filter))
@@ -60,6 +61,13 @@ build_strategy <- function(object,
     learner$train(task)
     predictions <- learner$predict_newdata(new_test)[["response"]]
     weights <- predictions > quantile(predictions, 1 - keep)
+    if (w == "equal") {
+      portf_weights[t, ] <- weights / sum(weights)
+    } else if (w == "scaled") {
+      portf_weights[t, ] <- (weights * predictions) / sum(weights * predictions)
+    }
+    portf_returns[t, ] <- c(Time[train_end + t], sum(portf_weights[t, ] * current_test[, ..y]))
   }
+  return(list(portf_weights, portf_returns))
 }
 
