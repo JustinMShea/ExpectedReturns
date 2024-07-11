@@ -3,11 +3,12 @@ benchmark_strategy <- function(object,
                                w = c("equal", "scaled")) {
   data <- object$data
   ts_var <- object$ts_var
+  cs_var <- object$cs_var
   y <- object$y
 
-  Time <- unique(data[, ..ts_var])
-  train_T <- length(unique(object$train_data[, ..ts_var]))
-  test_T <- length(unique(object$test_data[, ..ts_var]))
+  Time <- unique(data[, ..ts_var])[[1]]
+  train_T <- nrow(unique(object$train_data[, ..ts_var]))
+  test_T <- nrow(unique(object$test_data[, ..ts_var]))
 
   train_end <- train_T
   if (is.null(lookback)) {
@@ -18,7 +19,8 @@ benchmark_strategy <- function(object,
 
   current_train <- data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ]
 
-  N <- length(unique(object[, ..object$cs_var]))
+  ticks <- unique(data[, ..cs_var])[[1]]
+  N <- length(ticks)
 
   portf_weights <- matrix(0, nrow = test_T, ncol = N)
   portf_returns <- matrix(0, nrow = test_T, ncol = 2)
@@ -26,15 +28,26 @@ benchmark_strategy <- function(object,
   w = w[1]
 
   if (w == "equal") {
-    portf_weights <- matrix(1/N, nrow = test_T, ncol = N)
     for (t in 1:test_T) {
-      portf_returns[t, ] <- c(Time[train_T + t], sum(portf_weights[t, ] * current_test[, ..y]))
+      current_test <- data[get(ts_var) == Time[train_T + t], ]
+      n <- nrow(unique(current_test[, ..cs_var]))
+      weights$weights <- rep(1/n, n)
+      weights$names <- unique(current_test[, ..cs_var])[[1]]
+      idx <- na.omit(match(weights$names, ticks))
+      portf_weights[t, idx] <- weights$weights
+      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * current_test[, ..y]))
     }
   } else if (w == "scaled") {
     for (t in 1:test_T) {
-      new_test <- current_test[ts_var == Time[train_T + t], ]
-      past_returns <- current_train[, lapply(y, DescTools::Gmean), by = object$cs_var]
-      portf_weights[t, ] <- past_returns / sum(predictions)
+      current_test <- data[get(ts_var) == Time[train_T + t], ]
+      # Need to fix to ensure the weights assigned has return data (in other words the length of weights must match length of names)
+      past_returns <- current_train[, lapply(y, DescTools::Gmean), by = cs_var]
+      weights$weights <- past_returns / sum(predictions)
+      weights$names <- unique(current_test[, ..cs_var])[[1]]
+      idx <- na.omit(match(weights$names, ticks))
+      portf_weights[t, idx] <- weights$weights
+      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * current_test[, ..y]))
     }
   }
+  return(list(portf_weights, portf_returns))
 }
