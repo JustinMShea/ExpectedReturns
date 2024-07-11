@@ -1,21 +1,21 @@
-portf_metrics <- function(return_lst,
-                          weight_lst,
+portf_metrics <- function(return_list,
+                          weight_list,
                           p = 0.05,
                           names = NULL){
-  if (!is.list(return_lst)) {
-    return_lst <- list(return_lst)
+  if (!is.list(return_list)) {
+    return_list <- list(return_list)
   }
-  if (!is.list(weight_lst)) {
-    weight_lst <- list(weight_lst)
+  if (!is.list(weight_list)) {
+    weight_list <- list(weight_list)
   }
-  if (length(return_lst) != length(weight_lst)) {
+  if (length(return_list) != length(weight_list)) {
     stop("Return list and weight list must have equal numbers of objects.")
   }
 
   metrics <- data.frame()
-  for (n in 1:length(return_lst)) {
-    portf_returns <- return_lst[n]
-    portf_weights <- weight_lst[n]
+  for (n in 1:length(return_list)) {
+    portf_returns <- return_list[n][, 2]
+    portf_weights <- weight_list[n]
     avg_ret <- mean(portf_returns, na.rm = T)                     # Arithmetic mean
     vol <- sd(portf_returns, na.rm = T)                           # Volatility
     Sharpe_ratio <- avg_ret / vol                                 # Sharpe ratio
