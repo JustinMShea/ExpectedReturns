@@ -6,7 +6,7 @@ benchmark_strategy <- function(object,
   cs_var <- object$cs_var
   y <- object$y
 
-  Time <- unique(data[, ..ts_var])[[1]]
+  Time <- sort(unique(data[, ..ts_var])[[1]])
   train_T <- nrow(unique(object$train_data[, ..ts_var]))
   test_T <- nrow(unique(object$test_data[, ..ts_var]))
 
@@ -17,7 +17,7 @@ benchmark_strategy <- function(object,
     train_start = train_T - lookback + 1
   }
 
-  current_train <- data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ]
+  current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
 
   ticks <- unique(data[, ..cs_var])[[1]]
   N <- length(ticks)
@@ -41,7 +41,8 @@ benchmark_strategy <- function(object,
     for (t in 1:test_T) {
       current_test <- data[get(ts_var) == Time[train_T + t], ]
       # Need to fix to ensure the weights assigned has return data (in other words the length of weights must match length of names)
-      past_returns <- current_train[, lapply(y, DescTools::Gmean), by = cs_var]
+      past_returns <- current_train[, lapply(get(y), DescTools::Gmean), by = cs_var]
+      # There is an error here: current_train |> group_by(stock_id) |> summarize(gmean = Gmean(R1M_Usd + 1, na.rm = TRUE)) (convert this to data.table syntax)
       weights$weights <- past_returns / sum(predictions)
       weights$names <- unique(current_test[, ..cs_var])[[1]]
       idx <- na.omit(match(weights$names, ticks))
