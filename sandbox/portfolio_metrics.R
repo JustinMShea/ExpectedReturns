@@ -14,8 +14,8 @@ portf_metrics <- function(return_list,
 
   metrics <- data.frame()
   for (n in 1:length(return_list)) {
-    portf_returns <- return_list[n][, 2]
-    portf_weights <- weight_list[n]
+    portf_returns <- return_list[[n]][, 2]
+    portf_weights <- weight_list[[n]]
     avg_ret <- mean(portf_returns, na.rm = T)                     # Arithmetic mean
     vol <- sd(portf_returns, na.rm = T)                           # Volatility
     Sharpe_ratio <- avg_ret / vol                                 # Sharpe ratio
