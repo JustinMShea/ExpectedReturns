@@ -51,6 +51,8 @@ build_strategy <- function(object,
   task <- as_task_regr(current_train, target = object$y)
   learner <- lrn(model, ...)
 
+  w = w[1]
+
   for (t in 1:length(current_test)) {
     new_test <- current_test[ts_var == Time[train_end + t], ]
     if (filter > 0) {
