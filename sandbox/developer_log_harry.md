@@ -199,3 +199,5 @@ The end of this tentative plan put us at August 9.
 
 ## 7/10/2024
 - Build functions for plotting strategy returns
+- Build functions for creating equal weighted and return-scaled benchmarks
+- Will use dataset from *Machine Learning for Factor Investing* to test these functions
