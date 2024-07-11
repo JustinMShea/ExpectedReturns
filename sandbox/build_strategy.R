@@ -41,8 +41,8 @@ build_strategy <- function(object,
     filter <- 1 - filter
   }
 
-  current_train <- object$train_data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ..vars]
-  current_test <- object$test_data[ts_var > Time[train_end], ..vars]
+  current_train <- data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ..vars]
+  current_test <- object$test_data[, ..vars]
   N <- length(unique(object[, ..object$cs_var]))
 
   portf_weights <- matrix(0, nrow = test_T, ncol = N)
@@ -53,8 +53,8 @@ build_strategy <- function(object,
 
   w = w[1]
 
-  for (t in 1:length(current_test)) {
-    new_test <- current_test[ts_var == Time[train_end + t], ]
+  for (t in 1:test_T) {
+    new_test <- current_test[ts_var == Time[train_T + t], ]
     if (filter > 0) {
       train_idx <- which(current_train[, ..y] < quantile(current_train[, ..y], filter) |
                            current_train[, ..y] > quantile(current_train[, ..y], 1 - filter))
@@ -68,7 +68,10 @@ build_strategy <- function(object,
     } else if (w == "scaled") {
       portf_weights[t, ] <- (weights * predictions) / sum(weights * predictions)
     }
-    portf_returns[t, ] <- c(Time[train_end + t], sum(portf_weights[t, ] * current_test[, ..y]))
+    portf_returns[t, ] <- c(Time[train_T + t], sum(portf_weights[t, ] * new_test[, ..y]))
+    train_start <- train_start + 1
+    train_end <- train_end + 1
+    current_train <- data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ..vars]
   }
   return(list(portf_weights, portf_returns))
 }
