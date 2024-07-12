@@ -201,3 +201,17 @@ The end of this tentative plan put us at August 9.
 - Build functions for plotting strategy returns
 - Build functions for creating equal weighted and return-scaled benchmarks
 - Will use dataset from *Machine Learning for Factor Investing* to test these functions
+
+## 7/11/2024
+- Meeting with mentors
+	- We can do extensions by two-week increments (make decision by mid-August)
+	- Final evaluation in end of August
+	- Tstest package integration
+		- Some are about distributional assumptions
+		- Information-based ratios
+		- Have a discussion of these functions in the near future
+	- Time series function (get at time-series direction)
+		- Factor model features are typically values - not standard statistics test (does a change in the level of BP predict a change in level of principal)
+		- What can we learn from residuals
+	- Preprocessing step
+		- Brian will share some links
