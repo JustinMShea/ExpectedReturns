@@ -40,17 +40,19 @@ benchmark_strategy <- function(object,
   } else if (w == "scaled") {
     for (t in 1:test_T) {
       current_test <- data[get(ts_var) == Time[train_T + t], ]
-      # Need to fix to ensure the weights assigned has return data (in other words the length of weights must match length of names)
       past_returns <- current_train[, .(gmean = Gmean(get(y) + 1, na.rm = TRUE)), by = get(cs_var)]
       names(past_returns) <- c(cs_var, "gmean")
-      past_returns <- merge(current_test[, ..cs_var], past_returns, by = cs_var, all.x = TRUE)
+      past_returns <- merge(current_test[, c(cs_var, y), with = FALSE], past_returns, by = cs_var, all.x = TRUE)
       past_returns[is.na(past_returns)] <- 0
-      # There is an error here: current_train |> group_by(stock_id) |> summarize(gmean = Gmean(R1M_Usd + 1, na.rm = TRUE)) (convert this to data.table syntax)
-      weights$weights <- past_returns[, gmean] / sum(past_returns)
-      weights$names <- unique()[[1]]
+      # This is probably not the based scale. May want to consider various scaling schemes
+      weights$weights <- past_returns[, gmean] / sum(past_returns[, gmean])
+      weights$names <- unique(past_returns[, ..cs_var])[[1]]
       idx <- na.omit(match(weights$names, ticks))
       portf_weights[t, idx] <- weights$weights
-      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * current_test[, ..y]))
+      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * past_returns[, ..y]))
+      train_start <- train_start + 1
+      train_end <- train_end + 1
+      current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
     }
   }
   return(list(portf_weights, portf_returns))
