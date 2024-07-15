@@ -46,8 +46,8 @@ plot_strategy <- function(return_list,
     } else {
       agg_returns <- cum_returns[, c("Time", "Return", "Strategy")]
     }
-    plot$barplot <- ggplot(agg_returns) +
-      geom_bar(aes(x = Time, y = Return, fill = Strategy), stat = "identity") +
+    plots$barplot <- ggplot(agg_returns) +
+      geom_bar(aes(x = Time, y = Return, fill = Strategy), stat = "identity", position = position_dodge()) +
       labs(title = "Portfolio Returns", x = "Time", y = "Return") +
       theme_minimal()
   }
@@ -55,6 +55,8 @@ plot_strategy <- function(return_list,
   if (cumulative) {
     plots$cumulative <- ggplot(cum_returns) +
       geom_line(aes(x = Time, y = CumReturn, color = Strategy)) +
+      labs(title = "Cumulative Portfolio Returns", x = "Time", y = "Return") +
       theme_minimal()
   }
+  return(plots)
 }
