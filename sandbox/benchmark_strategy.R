@@ -1,6 +1,7 @@
 benchmark_strategy <- function(object,
                                lookback = NULL,
-                               w = c("equal", "scaled")) {
+                               w = c("equal", "scaled", "trimmed"),
+                               trim = 0.5) {
   data <- object$data
   ts_var <- object$ts_var
   cs_var <- object$cs_var
@@ -36,6 +37,22 @@ benchmark_strategy <- function(object,
       idx <- na.omit(match(weights$names, ticks))
       portf_weights[t, idx] <- weights$weights
       portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * current_test[, ..y]))
+    }
+  } else if (w == "trimmed") {
+    for (t in 1:test_T) {
+      current_test <- data[get(ts_var) == Time[train_T + t], ]
+      past_returns <- current_train[, .(gmean = Gmean(get(y) + 1, na.rm = TRUE)), by = get(cs_var)]
+      names(past_returns) <- c(cs_var, "gmean")
+      past_returns <- merge(current_test[, c(cs_var, y), with = FALSE], past_returns, by = cs_var, all.x = TRUE)
+      past_returns[is.na(past_returns)] <- 0
+      weights$weights <- as.numeric(past_returns[, gmean] > mean(past_returns[, gmean], na.rm = TRUE))
+      weights$names <- unique(past_returns[, ..cs_var])[[1]]
+      idx <- na.omit(match(weights$names, ticks))
+      portf_weights[t, idx] <- weights$weights
+      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * past_returns[, ..y]))
+      train_start <- train_start + 1
+      train_end <- train_end + 1
+      current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
     }
   } else if (w == "scaled") {
     for (t in 1:test_T) {
