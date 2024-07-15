@@ -1,7 +1,11 @@
 benchmark_strategy <- function(object,
                                lookback = NULL,
-                               w = c("equal", "scaled", "trimmed"),
-                               trim = 0.5) {
+                               w = c("equal", "scaled"),
+                               trim = 0) {
+  if ((trim < 0) | (trim > 1)) {
+    stop("Error: trim must be a number between 0 and 1.")
+  }
+
   data <- object$data
   ts_var <- object$ts_var
   cs_var <- object$cs_var
@@ -28,49 +32,28 @@ benchmark_strategy <- function(object,
 
   w = w[1]
 
-  if (w == "equal") {
-    for (t in 1:test_T) {
-      current_test <- data[get(ts_var) == Time[train_T + t], ]
-      n <- nrow(unique(current_test[, ..cs_var]))
-      weights$weights <- rep(1/n, n)
-      weights$names <- unique(current_test[, ..cs_var])[[1]]
-      idx <- na.omit(match(weights$names, ticks))
-      portf_weights[t, idx] <- weights$weights
-      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * current_test[, ..y]))
+  for (t in 1:test_T) {
+    current_test <- data[get(ts_var) == Time[train_T + t], ]
+    past_returns <- current_train[, .(gmean = DescTools::Gmean(get(y) + 1, na.rm = TRUE)), by = get(cs_var)]
+    names(past_returns) <- c(cs_var, "gmean")
+    past_returns <- merge(current_test[, c(cs_var, y), with = FALSE], past_returns, by = cs_var, all.x = TRUE)
+    past_returns[is.na(past_returns)] <- 0
+    past_returns[, flag := as.numeric(gmean > quantile(past_returns[, gmean], trim))]
+    if (w == "equal") {
+      n <- sum(past_returns[, flag])
+      weights <- past_returns[, flag] * (1 / sum(past_returns[, flag]))
+    } else if (w == "scaled") {
+      past_returns[, gmean] <- past_returns[, gmean] * past_returns[, flag]
+      weights <- past_returns[, gmean] / sum(past_returns[, gmean])
     }
-  } else if (w == "trimmed") {
-    for (t in 1:test_T) {
-      current_test <- data[get(ts_var) == Time[train_T + t], ]
-      past_returns <- current_train[, .(gmean = Gmean(get(y) + 1, na.rm = TRUE)), by = get(cs_var)]
-      names(past_returns) <- c(cs_var, "gmean")
-      past_returns <- merge(current_test[, c(cs_var, y), with = FALSE], past_returns, by = cs_var, all.x = TRUE)
-      past_returns[is.na(past_returns)] <- 0
-      weights$weights <- as.numeric(past_returns[, gmean] > mean(past_returns[, gmean], na.rm = TRUE))
-      weights$names <- unique(past_returns[, ..cs_var])[[1]]
-      idx <- na.omit(match(weights$names, ticks))
-      portf_weights[t, idx] <- weights$weights
-      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * past_returns[, ..y]))
-      train_start <- train_start + 1
-      train_end <- train_end + 1
-      current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
-    }
-  } else if (w == "scaled") {
-    for (t in 1:test_T) {
-      current_test <- data[get(ts_var) == Time[train_T + t], ]
-      past_returns <- current_train[, .(gmean = Gmean(get(y) + 1, na.rm = TRUE)), by = get(cs_var)]
-      names(past_returns) <- c(cs_var, "gmean")
-      past_returns <- merge(current_test[, c(cs_var, y), with = FALSE], past_returns, by = cs_var, all.x = TRUE)
-      past_returns[is.na(past_returns)] <- 0
-      # This is probably not the based scale. May want to consider various scaling schemes
-      weights$weights <- past_returns[, gmean] / sum(past_returns[, gmean])
-      weights$names <- unique(past_returns[, ..cs_var])[[1]]
-      idx <- na.omit(match(weights$names, ticks))
-      portf_weights[t, idx] <- weights$weights
-      portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * past_returns[, ..y]))
-      train_start <- train_start + 1
-      train_end <- train_end + 1
-      current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
-    }
+    names <- past_returns[, ..cs_var][[1]]
+    idx <- na.omit(match(names, ticks))
+    portf_weights[t, idx] <- weights$weights
+    portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * past_returns[, ..y]))
+    train_start <- train_start + 1
+    train_end <- train_end + 1
+    current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
   }
+
   return(list(portf_weights, portf_returns))
 }
