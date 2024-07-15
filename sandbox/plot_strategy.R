@@ -33,15 +33,15 @@ plot_strategy <- function(return_list,
       if (time_diff > 5256000) {  # More than 10 years
         agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = year(Time), Strategy)]
       } else if (time_diff > 525600) {  # More than 1 year
-        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = format(Time, "%Y-%m"), Strategy)]
+        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = paste(year(Time), month(Time), sep = "-"), Strategy)]
       } else if (time_diff > 43200) {  # More than 1 month
-        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = format(Time, "%Y-%U"), Strategy)]
+        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = paste("Week", week(Time)), Strategy)]
       } else if (time_diff > 1440) {  # More than 1 day
         agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = as.Date(Time), Strategy)]
       } else if (time_diff > 60) {  # More than 1 hour
-        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = format(Time, "%Y-%m-%d %H:00"), Strategy)]
+        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = paste0(hour(Time), ":00"), Strategy)]
       } else {
-        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = format(Time, "%Y-%m-%d %H:%M"), Strategy)]
+        agg_returns <- cum_returns[, .(Return = DescTools::Gmean(Return + 1, na.rm = TRUE) - 1), by = .(Time = paste(hour(Time), minute(Time), sep = ":"), Strategy)]
       }
     } else {
       agg_returns <- cum_returns[, c("Time", "Return", "Strategy")]
