@@ -215,3 +215,5 @@ The end of this tentative plan put us at August 9.
 		- What can we learn from residuals
 	- Preprocessing step
 		- Brian will share some links
+	- Communications
+		- Ping in Slack with specific questions
