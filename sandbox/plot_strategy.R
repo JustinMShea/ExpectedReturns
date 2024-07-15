@@ -18,7 +18,14 @@ plot_strategy <- function(return_list,
     }
     names(portf_returns) <- c("Time", "Return")
     # Check whether time can be converted to time and return is numeric
-    ########
+    portf_returns[, "Time"] <- try(as.POSIXct(portf_returns[, "Time"]), silent = TRUE)
+    if (inherits(portf_returns[, "Time"], "try-error")) {
+      stop("Error: the first column of return data frame cannot be converted to time object.")
+    }
+    portf_returns[, "Return"] <- try(as.numeric(data[[return_col]]), silent = TRUE)
+    if (inherits(portf_returns[, "Return"], "try-error")) {
+      stop("Error: the second column of return data frame cannot be converted to numeric object.")
+    }
 
     portf_returns[, "CumReturn"] <- cumprod(1 + portf_returns[, "Return"])
     portf_returns[, "Strategy"] <- rep(names[n], nrow(portf_returns))
