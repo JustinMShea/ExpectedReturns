@@ -48,12 +48,14 @@ benchmark_strategy <- function(object,
     }
     names <- past_returns[, ..cs_var][[1]]
     idx <- na.omit(match(names, ticks))
-    portf_weights[t, idx] <- weights$weights
-    portf_returns[t, ] <- c(Time[train_T + t], sum(weights$weights * past_returns[, ..y]))
+    portf_weights[t, idx] <- weights
+    portf_returns[t, ] <- c(Time[train_T + t], sum(weights * past_returns[, ..y]))
     train_start <- train_start + 1
     train_end <- train_end + 1
     current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ]
   }
+  portf_returns <- as.data.frame(portf_returns)
+  names(portf_returns) <- c("Time", "Return")
 
-  return(list(portf_weights, portf_returns))
+  return(list(weights = portf_weights, returns = portf_returns))
 }
