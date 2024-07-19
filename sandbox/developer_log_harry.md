@@ -217,3 +217,14 @@ The end of this tentative plan put us at August 9.
 		- Brian will share some links
 	- Communications
 		- Ping in Slack with specific questions
+
+## 7/15/2024
+- Build functions for plotting strategy returns
+
+## 7/16/2024
+- Build functions for evaluating portfolio returns
+
+## 7/17/2024
+- Fix bugs in portfolio startegy functions
+- Continue building strategy construction functions
+- Reading PerformanceAnalytics vignettes to identify relevant functions to integrate
