@@ -8,17 +8,23 @@ build_strategy <- function(object,
                            w = c("equal", "scaled"),
                            ...) {
 
-  if ((is.null(object$cs_var)) || (object$cs_var < 2)) {
+  data <- object$data
+  ts_var <- object$ts_var
+  cs_var <- object$cs_var
+  y <- object$y
+  w = w[1]
+
+  if ((is.null(cs_var)) || (cs_var < 2)) {
     stop("Error: cross-sectional variable must be defined and must be greater than 2.")
   }
 
-  data <- object$data
-  ts_var <- object$ts_var
-  y <- object$y
+  if ((w == "equal") and (keep == 1)) {
+    warning("Warning: this is equivalent to a equal-weighted benchmark strategy.")
+  }
 
-  Time <- unique(data[, ..ts_var])
-  train_T <- length(unique(object$train_data[, ..ts_var]))
-  test_T <- length(unique(object$test_data[, ..ts_var]))
+  Time <- sort(unique(data[, ..ts_var][[1]]))
+  train_T <- nrow(unique(object$train_data[, ..ts_var]))
+  test_T <- nrow(unique(object$test_data[, ..ts_var]))
 
   train_end <- train_T - offset
 
@@ -32,7 +38,7 @@ build_strategy <- function(object,
   }
 
   if (is.null(vars)) {
-    vars <- setdiff(colnames(data), c(ts_var, object$cs_var))
+    vars <- setdiff(colnames(data), c(ts_var, cs_var))
   }
 
   if ((!is.numeric(filter)) | (filter > 1)) {
@@ -41,38 +47,41 @@ build_strategy <- function(object,
     filter <- 1 - filter
   }
 
-  current_train <- data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ..vars]
-  current_test <- object$test_data[, ..vars]
-  N <- length(unique(object[, ..object$cs_var]))
+  current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ..vars]
+  current_test <- object$test_data
+
+  ticks <- unique(data[, ..cs_var])[[1]]
+  N <- length(ticks)
 
   portf_weights <- matrix(0, nrow = test_T, ncol = N)
   portf_returns <- matrix(0, nrow = test_T, ncol = 2)
 
-  task <- as_task_regr(current_train, target = object$y)
+  task <- as_task_regr(current_train, target = y)
   learner <- lrn(model, ...)
 
-  w = w[1]
-
   for (t in 1:test_T) {
-    new_test <- current_test[ts_var == Time[train_T + t], ]
+    new_test <- current_test[get(ts_var) == Time[train_T + t], ]
     if (filter > 0) {
       train_idx <- which(current_train[, ..y] < quantile(current_train[, ..y], filter) |
                            current_train[, ..y] > quantile(current_train[, ..y], 1 - filter))
       task$backend <- current_train[train_idx, ]
     }
     learner$train(task)
-    predictions <- learner$predict_newdata(new_test)[["response"]]
+    predictions <- learner$predict_newdata(new_test[, ..vars])[["response"]]
     weights <- predictions > quantile(predictions, 1 - keep)
+    names <- new_test[, ..cs_var][[1]]
     if (w == "equal") {
-      portf_weights[t, ] <- weights / sum(weights)
+      weights <- weights / sum(weights)
     } else if (w == "scaled") {
-      portf_weights[t, ] <- (weights * predictions) / sum(weights * predictions)
+      weights <- (weights * predictions) / sum(weights * predictions)
     }
+    idx <- na.omit(match(names, ticks))
+    portf_weights[t, idx] <- weights
     portf_returns[t, ] <- c(Time[train_T + t], sum(portf_weights[t, ] * new_test[, ..y]))
     train_start <- train_start + 1
     train_end <- train_end + 1
-    current_train <- data[ts_var >= Time[train_start] | ts_var <= Time[train_end], ..vars]
+    current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ..vars]
   }
-  return(list(portf_weights, portf_returns))
+  return(list(weights = portf_weights, returns = portf_returns))
 }
 
