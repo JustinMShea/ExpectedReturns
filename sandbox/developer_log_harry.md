@@ -229,10 +229,6 @@ The end of this tentative plan put us at August 9.
 - Continue building strategy construction functions
 - Reading PerformanceAnalytics vignettes to identify relevant functions to integrate
 
-## 7/18/2024
-
-## 7/19/2024
-
 ## 7/22/2024
 - Read up on preprocessing and feature engineering
 
