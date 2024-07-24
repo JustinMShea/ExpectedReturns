@@ -14,11 +14,11 @@ build_strategy <- function(object,
   y <- object$y
   w = w[1]
 
-  if ((is.null(cs_var)) || (cs_var < 2)) {
+  if ((is.null(cs_var)) | (cs_var < 2)) {
     stop("Error: cross-sectional variable must be defined and must be greater than 2.")
   }
 
-  if ((w == "equal") and (keep == 1)) {
+  if ((w == "equal") & (keep == 1)) {
     warning("Warning: this is equivalent to a equal-weighted benchmark strategy.")
   }
 
@@ -59,6 +59,8 @@ build_strategy <- function(object,
   task <- as_task_regr(current_train, target = y)
   learner <- lrn(model, ...)
 
+  pb <- txtProgressBar()
+
   for (t in 1:test_T) {
     new_test <- current_test[get(ts_var) == Time[train_T + t], ]
     if (filter > 0) {
@@ -77,11 +79,16 @@ build_strategy <- function(object,
     }
     idx <- na.omit(match(names, ticks))
     portf_weights[t, idx] <- weights
-    portf_returns[t, ] <- c(Time[train_T + t], sum(portf_weights[t, ] * new_test[, ..y]))
+    portf_returns[t, ] <- c(Time[train_T + t], sum(weights * new_test[, ..y]))
     train_start <- train_start + 1
     train_end <- train_end + 1
     current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ..vars]
+    task$backend <- as_data_backend(current_train)
+    setTxtProgressBar(pb, t/test_T)
   }
+  close(pb)
+  portf_returns <- as.data.frame(portf_returns)
+  names(portf_returns) <- c("Time", "Return")
   return(list(weights = portf_weights, returns = portf_returns))
 }
 
