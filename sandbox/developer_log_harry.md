@@ -228,3 +228,15 @@ The end of this tentative plan put us at August 9.
 - Fix bugs in portfolio startegy functions
 - Continue building strategy construction functions
 - Reading PerformanceAnalytics vignettes to identify relevant functions to integrate
+
+## 7/18/2024
+
+## 7/19/2024
+
+## 7/22/2024
+- Read up on preprocessing and feature engineering
+
+## 7/23/2024
+- Debug portfolio strategy construction functions
+- Rewrite some preprocessing functions
+- Test/debug elastic net algorithm
