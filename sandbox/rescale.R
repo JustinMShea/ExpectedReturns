@@ -1,71 +1,41 @@
-min_max_rescale <- function(data,
-                            ts_var = NULL,
-                            cs_var = NULL,
-                            varnames = NULL,
-                            method = "standard") {
-  # Note to self: Convert data to data.table if not already
+minmax_rescale <- function(data,
+                           range = c(0,1)) {
+  min <- range[1]
+  max <- range[2]
+  data <- apply(data, 2, function(x) {
+    (x - min(x)) / (max(x) - min(x)) * (max - min) + min
+  })
 
-  # Validate the method input
-  if (!method %in% c("standard", "wide")) {
-    stop("Error: method must be 'standard' or 'wide'")
-  }
+  return(data)
+}
 
-  # If varnames is NULL, use all column names except ts_var and cs_var
-  if (is.null(varnames)) {
-    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
-  }
+standard_rescale <- function(data,
+                             with_mean = TRUE,
+                             with_sd = TRUE) {
 
-  # Min-max rescale for each variable separately by ts_var and cs_var
-  data[, (varnames) := lapply(.SD, function(x) {
-    if (method == "standard") {
-      # Rescale to [0, 1]
-      (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE))
-    } else if (method == "wide") {
-      # Rescale to [-1, 1]
-      2 * (x - min(x, na.rm = TRUE)) / (max(x, na.rm = TRUE) - min(x, na.rm = TRUE)) - 1
+  data <- apply(data, 2, function(x) {
+    mu = 0
+    sd = 1
+    if (with_mean) {
+      mu = mean(x, na.rm = TRUE)
     }
-  }), by = ts_var, .SDcols = varnames]
+    if (with_sd) {
+      sd = sd(x, na.rm = TRUE)
+    }
+    (x- mu) / sd
+  })
 
   return(data)
 }
 
-standardize <- function(data,
-                        ts_var = NULL,
-                        cs_var = NULL,
-                        varnames = NULL) {
-  # Note to self: Convert data to data.table if not already
-
-  # If varnames is NULL, use all column names
-  if (is.null(varnames)) {
-    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
-  }
-
-  # Standardize each variable separately by ts_var and cs_var
-  data[, (varnames) := lapply(.SD, function(x) {
-    mean_x <- mean(x, na.rm = TRUE)
-    sd_x <- sd(x, na.rm = TRUE)
-    (x - mean_x) / sd_x
-  }), by = ts_var, .SDcols = varnames]
-
-  return(data)
-}
-
-uniformize <- function(data,
-                       ts_var = NULL,
-                       cs_var = NULL,
-                       varnames = NULL) {
-  # Note to self: Convert data to data.table if not already
-
-  # If varnames is NULL, use all column names
-  if (is.null(varnames)) {
-    varnames <- setdiff(colnames(data), c(ts_var, cs_var))
-  }
-
-  # Uniformize each variable
-  data[, (varnames):= lapply(.SD, function(x) {
-    ranks_x <- rank(x, na.last = "keep", ties.method = "average")
-    ranks_x / (length(ranks) + 1)
-  }), by = ts_var, .SD.cols = varnames]
+uniform_rescale <- function(data,
+                            range = c(0, 1)) {
+  min <- range[1]
+  max <- range[2]
+  data <- apply(data, 2, function(x) {
+    ranks <- rank(x, na.last = "keep", ties.method = "average")
+    ranks / length(ranks) * (max - min) + min
+  })
 
   return(data)
 }
