@@ -16,7 +16,6 @@ portf_metrics <- function(return_list,
     }
   }
 
-
   VaR_method <- VaR_method[1]
 
   metrics <- data.frame()
@@ -27,7 +26,6 @@ portf_metrics <- function(return_list,
     }
     avg_ret <- DescTools::Gmean(portf_returns + 1, na.rm = TRUE) - 1  # Arithmetic mean
     vol <- sd(portf_returns, na.rm = T)                               # Volatility
-    Sharpe_ratio <- avg_ret / vol                                     # Sharpe ratio
     #Use VaR from PerformanceAnalytics to calculate value at risk
     VaR <- VaR(portf_returns, p = 1 - p, method = VaR_method)
     CVaR <- ETL(portf_returns, p = 1 - p, method = VaR_method)
