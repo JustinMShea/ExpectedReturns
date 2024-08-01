@@ -44,9 +44,9 @@ TSML$set("public", "train_predict", function(model,
     if (buffer > nrow(self$train_data)) {
       stop("Error: buffer must be smaller than the length of training data.")
     }
-    fix_window = TRUE
-    buffer_idx <- -1:-(nrow(current_train) - buffer)
-    current_train <- self$train_data[buffer_idx, ..vars]
+    fixed_window = TRUE
+    buffer_end <- nrow(current_train) - buffer
+    current_train <- self$train_data[1:buffer_end, ..vars]
   }
 
   current_test <- self$test_data[, ..vars]
@@ -88,9 +88,9 @@ TSML$set("public", "train_predict", function(model,
       self$learner$train(task)
       self$prediction[i] <- self$learner$predict_newdata(new_test)[["response"]]
       if (fixed_window) {
-        current_train <- rbind(current_train[-1, ], new_test)
+        current_train <- rbind(current_train[-1, ], self$data[buffer_end + i, ])
       } else {
-        current_train <- rbind(current_train, new_test)
+        current_train <- rbind(current_train, self$data[buffer_end + i, ])
       }
       task$backend <- current_train
     }
