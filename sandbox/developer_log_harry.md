@@ -236,3 +236,21 @@ The end of this tentative plan put us at August 9.
 - Debug portfolio strategy construction functions
 - Rewrite some preprocessing functions
 - Test/debug elastic net algorithm
+
+## 7/25/2024
+- Meeting with mentors
+	- Thinking about ways to do preprocessing
+	- A lot of preprocessing destroy explanability
+	- Build certain generic preprocessing steps
+	- Thinking about validation and experimenting with hyperparameters
+
+## 7/26/2024
+- Read up more on preprocessing and the validation step
+
+## 7/29/2024
+- More debugging of existing codes (building strategy and making time-series predictions)
+
+## 7/31/2024
+- Start building validation algorithm, here is the current idea
+	- If we apply recursive walk-forward approach, then the grid-search is performaned on the last x (cross-validation size) training samples, and once the hyperparameters are set fixed, we will use it to iteratively make predictions on the test set
+	- If we do not apply the recursive walk-foward approach, then the grid-search will be performed on x (cross-validation size) batches of the training sample, but ensuring that there will be no look-ahead bias, and once the hyperparameters are set, we will use the entire training set to train the algorithm and make predictions on the test set in one instance
