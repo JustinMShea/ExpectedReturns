@@ -85,6 +85,10 @@ build_strategy <- function(object,
     current_train <- data[get(ts_var) >= Time[train_start] & get(ts_var) <= Time[train_end], ..vars]
     task$backend <- as_data_backend(current_train)
     setTxtProgressBar(pb, t/test_T)
+    if (is.nan(sum(weights * new_test[, ..y]))) {
+      print(paste(t, train_start, train_end))
+      print(coef(learner$model), s = "lambda.min")
+    }
   }
   close(pb)
   portf_returns <- as.data.frame(portf_returns)
