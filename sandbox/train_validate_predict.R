@@ -43,40 +43,53 @@ train_validate_predict <- function(object,
       total_loss <- 0
       num_folds <- 0
 
-      start_index <- nrow(train_data) - cv + 1
+      val_start <- nrow(train_data) - cv + 1
+      val_end <- nrow(train_data)
 
-      for (i in seq(start_index, nrow(train_data))) {
-        # Define the training and validation window
+      for (i in val_start:val_end) {
         train_start <- max(1, i - window - buffer)
         train_end <- i - buffer - 1
         valid_index <- i
 
-        # Prepare training and validation data
         train_window <- train_data[train_start:train_end, ..vars, with = FALSE]
         valid_point <- train_data[valid_index, ..vars, with = FALSE]
 
-        # Update task with new training window
-        task <- TaskRegr$new(id = "time_series_task", backend = train_window, target = y)
+        task <- TaskRegr$new(id = "ts_validate", backend = train_window, target = y)
 
-        # Train the model on the current window
         learner$train(task)
 
-        # Make prediction on the validation point
         prediction <- learner$predict_newdata(valid_point)$response
 
-        # Calculate the error for the validation point
         truth <- train_data[valid_index, ..y]
         loss <- calculate_loss(preiction, truth, cv_loss, weights)
         total_loss <- total_loss + loss
         num_folds <- num_folds + 1
       }
 
-      # Average MSE for the current parameter set
       average_loss <- total_loss / num_folds
       if (average_loss < best_loss) {
         best_loss <- average_loss
         best_params <- as.list(params)
       }
     }
+    learner$param_set$values <- as.list(best_params)
+
+    test_start <- nrow(train_data) + 1
+    test_end <- nrow(data)
+    for (i in test_start:test_end) {
+      train_start <- i - window - buffer
+      train_end <- i - buffer - 1
+      test_index <- i
+
+      train_window <- data[train_start:train_end, ..vars, with = FALSE]
+      test_point <- data[test_index, ..vars, with = FALSE]
+
+      task <- TaskRegr$new(id = "ts_predict", backend = train_window, target = y)
+
+      learner$train(task)
+
+      predictions <- c(predictions, learner$predict_newdata(test_point)$response)
+    }
+    true_values <- data[test_start:test_end, ..y, with = FALSE]
   }
 }
