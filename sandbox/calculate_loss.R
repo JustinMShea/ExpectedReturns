@@ -15,6 +15,14 @@ calculate_loss <- function(prediction,
 
   weights <- weights / sum(weights)
 
+  if (inherits(prediction, "data.table") | (inherits(prediction, "data.frame"))) {
+    prediction <- as.numeric(unlist(prediction))
+  }
+
+  if (inherits(truth, "data.table") | (inherits(truth, "data.frame"))) {
+    truth <- as.numeric(unlist(truth))
+  }
+
   loss <- switch(
     loss_function,
     mse = mse(prediction, truth, weights),
