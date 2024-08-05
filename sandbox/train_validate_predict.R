@@ -1,17 +1,24 @@
 train_validate_predict <- function(object,
                                    model,
-                                   recursive = FALSE,
+                                   recursive = TRUE,
                                    vars = NULL,
                                    cv = NULL,
+                                   cv_loss = c("mse", "mspe", "mae", "mape",
+                                               "huber", "pseudo_huber", "logcosh",
+                                               "tweedie", "log_likelihood", "elastic_net",
+                                               "smooth_l1"),
                                    param_grid = NULL,
                                    window = NULL,
                                    buffer = 0,
+                                   weights = NULL,
                                    ...){
+  cv_loss <- match.arg(cv_loss)
+
   data <- object$data
   train_data <- object$train_data
   test_data <- object$test_data
   ts_var <- object$ts_var
-  target_var <- object$y
+  y <- object$y
 
   if (is.null(vars)) {
     vars <- setdiff(names(train_data), ts_var)
@@ -27,13 +34,13 @@ train_validate_predict <- function(object,
       stop("Window must be specified when recursive is TRUE.")
     }
 
-    best_mse <- Inf
+    best_loss <- Inf
     best_params <- NULL
 
     for (params in expand.grid(param_grid)) {
       learner$param_set$values <- as.list(params)
 
-      total_mse <- 0
+      total_loss <- 0
       num_folds <- 0
 
       start_index <- nrow(train_data) - cv + 1
@@ -49,25 +56,25 @@ train_validate_predict <- function(object,
         valid_point <- train_data[valid_index, ..vars, with = FALSE]
 
         # Update task with new training window
-        task <- TaskRegr$new(id = "time_series_task", backend = train_window, target = target_var)
+        task <- TaskRegr$new(id = "time_series_task", backend = train_window, target = y)
 
         # Train the model on the current window
         learner$train(task)
 
         # Make prediction on the validation point
-        prediction <- learner$predict_newdata(valid_point)
+        prediction <- learner$predict_newdata(valid_point)$response
 
         # Calculate the error for the validation point
-        actual_value <- train_data[valid_index, get(target_var)]
-        mse <- (actual_value - prediction$response)^2
-        total_mse <- total_mse + mse
+        truth <- train_data[valid_index, ..y]
+        loss <- calculate_loss(preiction, truth, cv_loss, weights)
+        total_loss <- total_loss + loss
         num_folds <- num_folds + 1
       }
 
       # Average MSE for the current parameter set
-      average_mse <- total_mse / num_folds
-      if (average_mse < best_mse) {
-        best_mse <- average_mse
+      average_loss <- total_loss / num_folds
+      if (average_loss < best_loss) {
+        best_loss <- average_loss
         best_params <- as.list(params)
       }
     }
