@@ -30,15 +30,15 @@ train_validate_predict <- function(object,
   true_values <- c()
 
   if (recursive) {
-    if (is.null(window)) {
-      stop("Window must be specified when recursive is TRUE.")
-    }
 
     best_loss <- Inf
     best_params <- NULL
 
-    for (params in expand.grid(param_grid)) {
-      learner$param_set$values <- as.list(params)
+    for (row in 1:nrow(expand.grid(param_grid))) {
+      params <- expand.grid(param_grid)[row, ]
+      for (col in 1:length(params)) {
+        learner$param_set$values[names(params[col])] <- params[col]
+      }
 
       total_loss <- 0
       num_folds <- 0
@@ -47,7 +47,7 @@ train_validate_predict <- function(object,
       val_end <- nrow(train_data)
 
       for (i in val_start:val_end) {
-        train_start <- max(1, i - window - buffer)
+        train_start <- ifelse(is.null(window), 1, max(1, i - window - buffer))
         train_end <- i - buffer - 1
         valid_index <- i
 
@@ -61,7 +61,7 @@ train_validate_predict <- function(object,
         prediction <- learner$predict_newdata(valid_point)$response
 
         truth <- train_data[valid_index, ..y]
-        loss <- calculate_loss(preiction, truth, cv_loss, weights)
+        loss <- calculate_loss(prediction, truth, cv_loss, weights)
         total_loss <- total_loss + loss
         num_folds <- num_folds + 1
       }
@@ -69,10 +69,12 @@ train_validate_predict <- function(object,
       average_loss <- total_loss / num_folds
       if (average_loss < best_loss) {
         best_loss <- average_loss
-        best_params <- as.list(params)
+        best_params <- params
       }
     }
-    learner$param_set$values <- as.list(best_params)
+    for (col in 1:length(best_params)) {
+      learner$param_set$values[names(best_params[col])] <- best_params[col]
+    }
 
     test_start <- nrow(train_data) + 1
     test_end <- nrow(data)
@@ -91,5 +93,7 @@ train_validate_predict <- function(object,
       predictions <- c(predictions, learner$predict_newdata(test_point)$response)
     }
     true_values <- data[test_start:test_end, ..y, with = FALSE]
+  } else {
+
   }
 }
