@@ -34,7 +34,6 @@ calculate_loss <- function(prediction,
     logcosh = logcosh(prediction, truth, weights),
     tweedie = tweedie(prediction, truth, weights, list(...)$power),
     log_likelihood = log_likelihood(prediction, truth, weights, list(...)$sigma),
-    elastic_net = elastic_net(prediction, truth, weights, list(...)$alpha, list(...)$lambda),
     smooth_l1 = smooth_l1(prediction, truth, weights, list(...)$beta),
     stop("Unknown loss function.")
   )
@@ -87,13 +86,6 @@ tweedie <- function(prediction, truth, weights = NULL, power = 1) {
 
 log_likelihood <- function(prediction, truth, weights = NULL, sigma = 1) {
   loss <- (1/2) * log(2 * pi * sigma^2) + (1 / (2 * sigma^2)) * (truth - prediction)^2
-  return(mean(weights * loss))
-}
-
-elastic_net <- function(prediction, truth, weights = NULL, alpha = 0.5, lambda = 0.01) {
-  loss_l1 <- sum(abs(prediction))
-  loss_l2 <- sum(prediction^2)
-  loss <- lambda * ((1 - alpha) * loss_l2 + alpha * loss_l1)
   return(mean(weights * loss))
 }
 
