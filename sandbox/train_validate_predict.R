@@ -1,6 +1,5 @@
 train_validate_predict <- function(object,
                                    model,
-                                   recursive = TRUE,
                                    vars = NULL,
                                    cv = NULL,
                                    cv_loss = c("mse", "mspe", "mae", "mape",
@@ -93,7 +92,5 @@ train_validate_predict <- function(object,
       predictions <- c(predictions, learner$predict_newdata(test_point)$response)
     }
     true_values <- data[test_start:test_end, ..y, with = FALSE]
-  } else {
-
   }
 }
