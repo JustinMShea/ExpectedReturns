@@ -42,19 +42,19 @@ calculate_loss <- function(prediction,
 }
 
 mse <- function(prediction, truth, weights = NULL) {
-  return(mean(weights * (prediction - truth)^2))
+  return(weights * (prediction - truth)^2)
 }
 
 mspe <- function(prediction, truth, weights = NULL){
-  return(mean(weights * ((prediction - truth) / truth)^2))
+  return(weights * ((prediction - truth) / truth)^2)
 }
 
 mae <- function(prediction, truth, weights = NULL) {
-  return(mean(weights * abs(prediction - truth)))
+  return(weights * abs(prediction - truth))
 }
 
 mape <- function(prediction, truth, weights = NULL) {
-  return(mean(weights * abs((prediction - truth) / truth)))
+  return(weights * abs((prediction - truth) / truth))
 }
 
 huber <- function(prediction, truth, weights = NULL, delta = 1) {
@@ -63,13 +63,13 @@ huber <- function(prediction, truth, weights = NULL, delta = 1) {
   loss <- ifelse(condition,
                  0.5 * (residual^2),
                  delta * (abs(residual) - 0.5 * delta))
-  return(mean(weights * loss))
+  return(weights * loss)
 }
 
 pseudo_huber <- function(prediction, truth, weights = NULL, delta = 1) {
   residual <- prediction - truth
   loss <- delta^2 * sqrt(1 + (residual/delta)^2 - 1)
-  return(mean(weights * loss))
+  return(weights * loss)
 }
 
 logcosh <- function(prediction, truth, weights = NULL) {
@@ -81,12 +81,12 @@ tweedie <- function(prediction, truth, weights = NULL, power = 1) {
     stop("Power parameter must be greater than 1.")
   }
   loss <- truth^2 - 2 * truth * prediction^(2-power) + prediction^(3-power)
-  return(mean(weights * loss))
+  return(weights * loss)
 }
 
 log_likelihood <- function(prediction, truth, weights = NULL, sigma = 1) {
   loss <- (1/2) * log(2 * pi * sigma^2) + (1 / (2 * sigma^2)) * (truth - prediction)^2
-  return(mean(weights * loss))
+  return(weights * loss)
 }
 
 smooth_l1 <- function(prediction, truth, weights = NULL, beta = 1) {
@@ -94,7 +94,7 @@ smooth_l1 <- function(prediction, truth, weights = NULL, beta = 1) {
   loss <- ifelse(abs(residual) < beta,
                  0.5 * (residual)^2 / beta,
                  abs(residual) - 0.5 * beta)
-  return(mean(weights * loss))
+  return(weights * loss)
 }
 
 
