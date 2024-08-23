@@ -60,7 +60,7 @@ train_validate_predict <- function(object,
         prediction <- learner$predict_newdata(valid_point)$response
 
         truth <- train_data[valid_index, ..y]
-        loss <- calculate_loss(prediction, truth, cv_loss, weights)
+        loss <- mean(calculate_loss(prediction, truth, cv_loss, weights), na.rm = TRUE)
         total_loss <- total_loss + loss
         num_folds <- num_folds + 1
       }
