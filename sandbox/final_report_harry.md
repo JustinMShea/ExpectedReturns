@@ -22,7 +22,7 @@ R does not lack packages and functions that provide machine learning frameworks 
 - Cross-validation:
 	- [Walk-forward k-fold][https://github.com/JustinMShea/ExpectedReturns/blob/master/sandbox/walkforward_kfold.R]: generalization of conventional walk-forward cross-validation method to allows for more flexibility and user controls over training/testing windows and cross-validation sizes
 	- [Purged k-fold][https://github.com/JustinMShea/ExpectedReturns/blob/master/sandbox/purged_kfold.R]: purged k-fold cross-validation as suggested by Lopez de Prado. Purging overlapped observations to minimize data leakage
-	- [Combinatorial purged][https://github.com/JustinMShea/ExpectedReturns/blob/master/sandbox/combinatorial_kfold.R]: new method suggested by Lopez de Prado to address the drawback of walk-forward cross-validation by creating more backtest paths.
+	- [Combinatorial purged][https://github.com/JustinMShea/ExpectedReturns/blob/master/sandbox/combinatorial_purged.R]: new method suggested by Lopez de Prado to address the drawback of walk-forward cross-validation by creating more backtest paths.
 
 Contributions also include constructing a class object for faster and more efficient application, test functions to ensure the MLR3 wrapper functions properly with various ML algorithms, and evaluation and visualization functions. More detailed progress is recorded in a [developer log][https://github.com/JustinMShea/ExpectedReturns/blob/master/sandbox/developer_log_harry.md]
 ## Future Steps
