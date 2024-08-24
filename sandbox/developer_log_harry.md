@@ -254,3 +254,41 @@ The end of this tentative plan put us at August 9.
 - Start building validation algorithm, here is the current idea
 	- If we apply recursive walk-forward approach, then the grid-search is performaned on the last x (cross-validation size) training samples, and once the hyperparameters are set fixed, we will use it to iteratively make predictions on the test set
 	- If we do not apply the recursive walk-foward approach, then the grid-search will be performed on x (cross-validation size) batches of the training sample, but ensuring that there will be no look-ahead bias, and once the hyperparameters are set, we will use the entire training set to train the algorithm and make predictions on the test set in one instance
+
+## 8/1/2024
+- Start building walk-forward cross-validation function
+
+## 8/5/2024
+- Continue building walk-forward cross-validation function
+- Create functions for calculating cross-validation loss
+
+## 8/8/2024
+- Update cross-validation and loss functions
+
+## 8/9/2024
+- Meet with mentor, start looking at *Advances in Financial Machine Learning* for cross-validation approaches
+
+## 8/10/2024 - 8/15/2024
+- Review and conduct literature review on time-series cross-validation approaches
+
+## 8/19/2024
+- Take new approach on building cross-validation functions
+	- Walk-forward kfold
+	- Purged kfold
+	- Combinatorial purged kfold
+- Break apart cross-validation pipeline to various smaller functions
+
+## 8/20/2024
+- Build walk-forward kfold function from the walk-forward cross-validation function
+
+## 8/21/2024
+- Build purged kfold function
+
+## 8/22/2024
+- Build comibnatorial kfold function
+- Build triple barrier labeling function
+
+## 8/23/2024
+- Build function to calculate cross-validation score
+- Next step:
+	- Function for gridsearch
