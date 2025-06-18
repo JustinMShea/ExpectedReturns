@@ -104,12 +104,12 @@ path.parser <- system.file('parsers',
                            package = 'ExpectedReturns')
 source(path.parser)
 ## Function to parse through 'ffdownloads' package available monthly data from "http://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html" - Bryan
-FFfactors <- FFfactors_xts(x)
+# FFfactors <- FFfactors_xts(x)
 ## assigning same name as used in this and other scripts.
-FF3 <- FFfactors[["x_F-F_Research_Data_Factors"]]
-MOM <- FFfactors[["x_F-F_Momentum_Factor"]]
-#FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
-#MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
+# FF3 <- FFfactors[["x_F-F_Research_Data_Factors"]]
+# MOM <- FFfactors[["x_F-F_Momentum_Factor"]]
+FF3 <- ExpectedReturns::GetFactors('FF3', freq='monthly')
+MOM <- ExpectedReturns::GetFactors('MOM', freq='monthly')
 ## aded as.Date() wrap since date format in new data comes in as "%b %Y" (May 2022). Need to properly adjust FFfactors function so this is taken care of before.
 min.tp <- max(first(as.Date(index(FF3))), first(as.Date(index(MOM))))
 max.tp <- min(last(as.Date(index(FF3))), last(as.Date(index(FF3))))
@@ -148,10 +148,10 @@ colnames(TED20) <- 'TED.TOP.20'
 # FFC4 factors
 FFC4 <- merge(FF3[ff.dates, ], MOM[ff.dates, ])
 # MSCI World Index
-data <- merge(MSCI.WI$RET, FFC4)
-data$MSCI.RET <- zoo::na.locf(data$RET)
-data$MSCI.RF <- data$MSCI.RET - data$RF
-data$RET <- NULL
+tsmom_data <- merge(MSCI.WI$RET, FFC4)
+tsmom_data$MSCI.RET <- zoo::na.locf(tsmom_data$RET)
+tsmom_data$MSCI.RF <- tsmom_data$MSCI.RET - tsmom_data$RF
+tsmom_data$RET <- NULL
 
 # Bonds factors data
 # data <- merge(CRP, data)
@@ -167,17 +167,17 @@ data$RET <- NULL
 # data <- data[tp, ]
 
 # Bonds factor
-data <- merge(data, FI.MARKET)
+tsmom_data <- merge(tsmom_data, FI.MARKET)
 # Commodities Market
-data <- merge(data, CM.MARKET)
+tsmom_data <- merge(tsmom_data, CM.MARKET)
 # VME factors
-data <- merge(data, VME.FACTORS)
+tsmom_data <- merge(tsmom_data, VME.FACTORS)
 # VIX Index
-data <- merge(data, VIX.RET)
+tsmom_data <- merge(tsmom_data, VIX.RET)
 # TED Spread
-data <- merge(data, TED.SPREAD)
+tsmom_data <- merge(tsmom_data, TED.SPREAD)
 # TSMOM(12, 1) strategy returns
-data <- merge(data, TSM)
+tsmom_data <- merge(tsmom_data, TSM)
 
 # NOTE:
 # All series are considered relative to FF dates, which are at month-end.
@@ -185,27 +185,30 @@ data <- merge(data, TSM)
 # among which publication date discrepancies or subsequent corrections. 
 # When this happens we simply consider last available values with respect to the 
 # month-end, as those are dates most series we work with refer to.
-data <- zoo::na.locf(data)
+tsmom_data <- zoo::na.locf(tsmom_data)
 # NOTE:
 # TED-Spread and VIX top ~20% series are used as they are constructed
-data <- merge(data, TED20, VIX20)
+tsmom_data <- merge(tsmom_data, TED20, VIX20)
 
-data <- data.frame(
-  DATE=ff.dates,
-  data[ff.dates, ],
-  row.names=NULL
+tsmom_data <- data.frame(
+  DATE = zoo::index(tsmom_data),
+  coredata(tsmom_data),
+  row.names = NULL
 )
+tsmom_data <- tibble::as_tibble(tsmom_data)
+
 ```
+
 
 ```{r TSM_Table_2_Time-series_Regressions}
 # Indexes
-date.id <- matrix(1:nrow(data), dimnames=list(NULL, 'DATE.ID'))
-data <- cbind(data, date.id)
+date.id <- matrix(1:nrow(tsmom_data), dimnames=list(NULL, 'DATE.ID'))
+tsmom_data <- cbind(tsmom_data, date.id)
 # The period used in the paper for running the time series regression is Jan 1985 - Dec 2009
 # The AQR website TSMOM portfolios from which we sourced our data for this replication start # reporting data from that date, but keep the data up to date. For the purposes of
 # replicating the time period in the paper, we will need to truncate the 'data' object after # Dec 2009. The resulting t-stats of the alpha intercepts are more inline with the paper if
 # we do. For the updated alpha t-stats the user can comment this line of code. 
-data <- data[-((which(data$DATE=="2009-12-31")+1):nrow(data)),]
+tsmom_data <- tsmom_data[-((which(tsmom_data$DATE=="2009-12-31")+1):nrow(tsmom_data)),]
 # Regressions variables
 y <- colnames(TSM)
 X <- c('MSCI.RF', 'CM.MARKET', 'FI.MARKET', 'SMB', 'HML', 'MOM')
@@ -218,7 +221,7 @@ tsmom.ts.reg <- lapply(1:length(y), function(x) {
     )
   )
   plm::plm(
-    model.formula, data=data,
+    model.formula, data=tsmom_data,
     model='pooling', index='DATE.ID'
   )
 })
@@ -227,9 +230,11 @@ lapply(tsmom.ts.reg, summary)
 
 ```{r TSM_Table_2_Time-series_Regressions_FA}
 #refactored
-data.test = data
-row.names(data.test) <-data.test$DATE
+data.test = tsmom_data
+row.names(data.test) <- make.unique(format(as.Date(data.test$DATE), "%Y-%m-%d"))
+
 data.test$DATE <- NULL
+
 tsmom.ts.reg.test <- lapply(1:length(y), function(x) {
   model.formula <- formula(
     paste(
@@ -240,6 +245,26 @@ tsmom.ts.reg.test <- lapply(1:length(y), function(x) {
   fitTsfm(factor.names=X, asset.names=y[x], data = data.test)
 }) 
 lapply(tsmom.ts.reg.test, summary)
+```
+
+```{r debug-check-tsmom-table-3}
+cat("🔍 DEBUG: Checking variables for Table 3 regressions\n\n")
+
+vars_to_check <- c(
+  "TSMOM", "MSCI.RF", "SMB", "HML", "MOM", 
+  "VAL.EVR", "MOM.EVR", "TED", "TED.TOP.20", 
+  "VIX.RET", "VIX.TOP.20", "DATE.ID"
+)
+
+missing_vars <- setdiff(vars_to_check, colnames(tsmom_data))
+if (length(missing_vars) > 0) {
+  cat("❌ Missing columns:\n")
+  print(missing_vars)
+}
+
+cat("\n✅ Complete cases across vars:", sum(complete.cases(tsmom_data[, vars_to_check])), "\n\n")
+cat("🧂 NA counts:\n")
+print(colSums(is.na(tsmom_data[, vars_to_check])))
 ```
 
 ```{r TSM_Table_3_Time-series_Regressions}
@@ -264,7 +289,7 @@ tsmom.div.ts.reg <- lapply(X, function(x) {
     )
   )  
   plm::plm(
-    model.formula, data=data,
+    model.formula, data=tsmom_data,
     model='pooling', index='DATE.ID'
   )
 })
@@ -273,7 +298,7 @@ lapply(tsmom.div.ts.reg, summary)
 
 ```{r TSM_Table_3_Time-series_Regressions_FA}
 #refactored by Jiarui
-data.test = data
+data.test = tsmom_data
 row.names(data.test) <-data.test$DATE
 data.test$DATE <- NULL
 data.test['MSCI.RF.square']<-data.test$MSCI.RF^2 

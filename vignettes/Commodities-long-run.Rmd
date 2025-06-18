@@ -5,7 +5,7 @@ author: "Vito Lestingi"
 date: "`r Sys.Date()`"
 abstract: "This document includes replication material on some academic and practitioners' literature instrumental for our RGSoC 2020 project. The document itself is meant to be completely reproducible."
 output:
-  rmarkdown::pdf_document:
+  rmarkdown::html_document:
     # citation_package: biblatex
 bibliography: references.bib
 vignette: >
