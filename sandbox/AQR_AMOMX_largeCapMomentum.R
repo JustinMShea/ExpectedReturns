@@ -28,3 +28,30 @@
 library(qkiosk)
 library(quantmod)
 library(FactorAnalytics)
+
+# get data
+symbols <- stockSymbols()
+
+# exclude ones not listed on described exchanges
+
+# exclude ones not listed on acceptable company types
+
+# exclude ones with three month median trading volume below $100k
+
+# exclude ones with IPO seasoning below 12 months
+
+# exclude low liquidity stocks on companies already present in data
+
+# exclude companies that are targets of announced acquisition or merger
+
+# choose top 333 companies
+
+# weight a portfolio of those 333 based on market cap
+
+# save data to /data folder
+
+
+
+
+
+
