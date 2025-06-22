@@ -14,7 +14,13 @@ Read and take notes on new Antti Ilmanen white paper
 
 \#3: [Why Are Bond Investors Contrarian While Equity Investors Extrapolate?](https://www.aqr.com/Insights/Research/White-Papers/Why-Are-Bond-Investors-Contrarian-While-Equity-Investors-Extrapolate)
 
-(John Ioannidis papers?)
+Read John Ioannidis paper(s) on published research issues
+
+\#1: [(Original Paper) Why Most Published Research Findings Are False](https://journals.plos.org/plosmedicine/article?id=10.1371/journal.pmed.0020124)
+
+\#2a: [Ioannidis: Making Medical Science Look Bad Since 2005](https://www.painscience.com/articles/ioannidis.php)
+
+\#2b: [John Ioannidis: the state of research on research](https://www.cureffi.org/2016/03/17/john-ioannidis-the-state-of-research-on-research/)
 
 Read and take notes on project convention authors (Kelly, Chen, Zimmerman)
 
@@ -22,18 +28,21 @@ Read and take notes on project convention authors (Kelly, Chen, Zimmerman)
 
 \#2: [Open Source Cross-Sectional Asset Pricing](https://papers.ssrn.com/sol3/papers.cfm?abstract_id=3604626)
 
-Compile a list of factors in `ExpectedReturns`\
-Explore additional factors from sister similar libraries to add to list:
+Continue reading through *Investing Amid Low Expected Returns*
+
+## Week 3, 16th to 22nd
+
+Compile a list for factors in `ExpectedReturns`\
+Explore factors from sister similar libraries to add to list:
+* [ReplicationCrisis](https://github.com/bkelly-lab/ReplicationCrisis)
 * [CrossSection](https://github.com/OpenSourceAP/CrossSection/tree/master/Signals/Code/DataDownloads)
 * [FactorFactory](https://github.com/cdldl/FactorFactory)
 * [0xfdf](https://github.com/0xfdf/toraniko)
 * [FactorAnalytics - Fundamental Factor Models](https://github.com/braverock/FactorAnalytics/blob/master/vignettes/Fundamental-Factor-Models-FactorAnalytics.pdf)
 
+Began coding data creation functions with roxygen2 documentation based on AQR Momentum Indicies
+
 Continue reading through *Investing Amid Low Expected Returns*
-
-## Week 3, 16th to 22nd
-
-TBD
 
 ## Week 3, 23rd to 29th
 
