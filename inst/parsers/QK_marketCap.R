@@ -1,28 +1,40 @@
 # Microsoft Market Cap
-library(qkiosk)
+
 library(quantmod)
 
-getMarketCap <- function(ticker){
-  getSymbols(ticker)
+# get price data
+ticker <- "MSFT"
+getSymbols(ticker)
 
-  ticker_wso <- as.data.frame(qk_fn(qk_ticker(ticker), "WSO")[])
-  ticker_wso <- na.omit(ticker_wso[ ticker_wso$fq > 0, c("fq","filed")])
-  ticker_wso <- xts(ticker_wso$fq, order.by=as.Date(as.character(ticker_wso$filed), "%Y%m%d"))
 
-  ticker_wso_px <- merge(ticker$ticker.Adjusted, ticker_wso)
-  names(ticker_wso_px) <- c("ticker.Adjusted","WSO")
-  ticker_wso_px <- na.locf(ticker_wso_px)
-  ticker_wso_px <- na.trim(ticker_wso_px)
+# get qk weighted shares outstanding and return file date and shares outstanding, returns data frame
+library(qkiosk)
 
-  ticker_mkt_cap <- ticker_wso_px$ticker.Adjusted * ticker_wso_px$WSO
+MSFT_wso <- as.data.frame(qk_fn(qk_ticker("MSFT"), "WSO")[])
+MSFT_wso <- na.omit(MSFT_wso[ MSFT_wso$fq > 0, c("fq","filed")])
+MSFT_wso$filed <- as.Date(as.character(MSFT_wso$filed), "%Y%m%d")
 
-  return(ticker_mkt_cap)
+# merged price and shares outstanding for date matching
+MSFT_wso_px <- merge(MSFT$MSFT.Adjusted, MSFT_wso)
+names(MSFT_wso_px) <- c("MSFT.Adjusted","WSO")
+MSFT_wso_px <- na.locf(MSFT_wso_px)
+MSFT_wso_px <- na.trim(MSFT_wso_px)
+
+
+
+market_cap <- function(price, sharesOutstanding){
+  return(price*sharesOutstanding)
 }
 
+msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted, sharesOutstanding = MSFT_wso_px$WSO)
 
+plot(msft_mcap)
+
+
+# ticker_mkt_cap <- ticker_wso_px$ticker.Adjusted * ticker_wso_px$WSO
 
 # Visual displays
 plot(ticker_mkt_cap)
-head(prettyNum(coredata(ticker_mkt_cap),big.mark=","))
-
+head(prettyNum(coredata(msft_mcap),big.mark=","))
+tail(prettyNum(coredata(msft_mcap),big.mark=","))
 
