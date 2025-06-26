@@ -3,8 +3,7 @@
 library(quantmod)
 
 # get price data
-ticker <- "MSFT"
-getSymbols(ticker)
+getSymbols("MSFT")
 
 
 # get qk weighted shares outstanding and return file date and shares outstanding, returns data frame
@@ -21,20 +20,17 @@ MSFT_wso_px <- na.locf(MSFT_wso_px)
 MSFT_wso_px <- na.trim(MSFT_wso_px)
 
 
-
-market_cap <- function(price, sharesOutstanding){
-  return(price*sharesOutstanding)
+# Calculate Market Cap function
+market_cap <- function(price, shares){
+  return(price*shares)
 }
 
-msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted, sharesOutstanding = MSFT_wso_px$WSO)
+msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted,
+                        shares = MSFT_wso_px$WSO)
 
+
+# Visual exploration
 plot(msft_mcap)
-
-
-# ticker_mkt_cap <- ticker_wso_px$ticker.Adjusted * ticker_wso_px$WSO
-
-# Visual displays
-plot(ticker_mkt_cap)
 head(prettyNum(coredata(msft_mcap),big.mark=","))
 tail(prettyNum(coredata(msft_mcap),big.mark=","))
 

@@ -13,20 +13,25 @@
 # MSFT_wso <- as.data.frame(qk_fn(qk_ticker("MSFT"), "WSO")[])
 # MSFT_wso <- na.omit(MSFT_wso[ MSFT_wso$fq > 0, c("fq","filed")])
 # MSFT_wso$filed <- as.Date(as.character(MSFT_wso$filed), "%Y%m%d")
-#
+
+data("MSFT")
+
 # # merged price and shares outstanding for date matching
 # MSFT_wso_px <- merge(MSFT$MSFT.Adjusted, MSFT_wso)
 # names(MSFT_wso_px) <- c("MSFT.Adjusted","WSO")
 # MSFT_wso_px <- na.locf(MSFT_wso_px)
 # MSFT_wso_px <- na.trim(MSFT_wso_px)
 #
-#
+data("MSFT_wso")
 #
 # market_cap <- function(price, sharesOutstanding){
 #   return(price*sharesOutstanding)
 # }
 
-msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted, sharesOutstanding = MSFT_wso_px$WSO)
+msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted,
+                        shares = MSFT_wso_px$WSO)
+
+expect_identical(typeof(msft_mcap), "double")
 
 # plot(msft_mcap)
 
