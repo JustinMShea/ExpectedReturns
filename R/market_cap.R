@@ -10,6 +10,12 @@
 #' data(MSFT)
 #' data(MSFT_wso)
 #'
+#' # merged price and shares outstanding for date matching
+#' MSFT_wso_px <- merge(MSFT$MSFT.Adjusted, MSFT_wso)
+#' names(MSFT_wso_px) <- c("MSFT.Adjusted","WSO")
+#' MSFT_wso_px <- na.locf(MSFT_wso_px)
+#' MSFT_wso_px <- na.trim(MSFT_wso_px)
+#'
 #' msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted,
 #'                          shares_outstanding = MSFT_wso_px$WSO)
 #'
