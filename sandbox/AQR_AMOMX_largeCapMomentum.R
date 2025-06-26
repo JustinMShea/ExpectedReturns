@@ -32,6 +32,7 @@ library(FactorAnalytics)
 # get data
 symbols <- stockSymbols()
 
+qk_
 # exclude ones not listed on described exchanges
 
 # exclude ones not listed on acceptable company types

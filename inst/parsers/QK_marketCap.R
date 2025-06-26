@@ -1,22 +1,28 @@
 # Microsoft Market Cap
-require(colorDF)
 library(qkiosk)
+library(quantmod)
 
-getSymbols("MSFT")
+getMarketCap <- function(ticker){
+  getSymbols(ticker)
 
-MSFT_wso <- as.data.frame(qk_fn(qk_ticker("MSFT"), "WSO")[])
-MSFT_wso <- na.omit(MSFT_wso[ MSFT_wso$fq > 0, c("fq","filed")])
-msft_wso <- xts(MSFT_wso$fq, order.by=as.Date(as.character(MSFT_wso$filed), "%Y%m%d"))
+  ticker_wso <- as.data.frame(qk_fn(qk_ticker(ticker), "WSO")[])
+  ticker_wso <- na.omit(ticker_wso[ ticker_wso$fq > 0, c("fq","filed")])
+  ticker_wso <- xts(ticker_wso$fq, order.by=as.Date(as.character(ticker_wso$filed), "%Y%m%d"))
 
-msft_wso_px <- merge(MSFT$MSFT.Adjusted, msft_wso)
-names(msft_wso_px) <- c("MSFT.Adjusted","WSO")
-msft_wso_px <- na.locf(msft_wso_px)
-msft_wso_px <- na.trim(msft_wso_px)
+  ticker_wso_px <- merge(ticker$ticker.Adjusted, ticker_wso)
+  names(ticker_wso_px) <- c("ticker.Adjusted","WSO")
+  ticker_wso_px <- na.locf(ticker_wso_px)
+  ticker_wso_px <- na.trim(ticker_wso_px)
 
-msft_mkt_cap <- msft_wso_px$MSFT.Adjusted * msft_wso_px$WSO
+  ticker_mkt_cap <- ticker_wso_px$ticker.Adjusted * ticker_wso_px$WSO
+
+  return(ticker_mkt_cap)
+}
+
+
 
 # Visual displays
-plot(msft_mkt_cap)
-head(prettyNum(coredata(msft_mkt_cap),big.mark=","))
+plot(ticker_mkt_cap)
+head(prettyNum(coredata(ticker_mkt_cap),big.mark=","))
 
 
