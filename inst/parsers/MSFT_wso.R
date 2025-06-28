@@ -8,4 +8,6 @@ MSFT_wso <- as.data.frame(qk_fn(qk_ticker("MSFT"), "WSO")[])
 MSFT_wso <- na.omit(MSFT_wso[ MSFT_wso$fq > 0, c("fq","filed")])
 MSFT_wso$filed <- as.Date(as.character(MSFT_wso$filed), "%Y%m%d")
 
+str(MSFT_wso)
+
 save(MSFT_wso, file = "data/MSFT_wso.RData")
