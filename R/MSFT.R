@@ -1,47 +1,37 @@
-#' @title Daniel-Hirshleifer-Sun Three-Factors Data Set
+#' @title Microsoft Returns Data Set
 #'
 #' @docType data
 #'
 #' @description
-#' `DHS3.monthly` is the Daniel-Hirshleifer-Sun (2020) three-factors monthly data
-#' series on U.S. stock market from 1972-07 to 2018-12.
+#' 'MSFT' is open, high, low, close, volume, and adjusted data for Microsoft stock dating from
+#' the start of 2007 to 2025-06-25*
+#'
+#' *Can run MSFT.R parser to obtain present day data.
 #'
 #' @usage
-#' data("DHS3.monthly")
+#' data("MSFT")
 #'
 #' @format
-#' An `xts` object containing observations of Daniel-Hirshleifer-Sun (2020)
-#' three-factors data set on the U.S. Stock Market.
+#' An `xts` object containing observations on return data for Microsoft.
 #'
 #' * __Frequency__: Daily.
 #' * __Date Range__: 2007-01-03 to 2025-06-25.
 #' * __Data updated__: 2025-06-25 14:58 CDT.
 #' * __MSFT.Open__: A numeric. Opening Daily Price for MSFT.
-#' * __MKT.RF__: A numeric. The market portfolio proxy return net of risk-free rate factor. See 'MKT.RF factor' section below.
-#' * __PEAD__: A numeric. The _post-earnings announcement drift_ behavioral mispricing factor. See 'PEAD factor' section below.
-#' * __FIN__: A numeric. The _financing_ behavioral mispricing factor. See 'FIN factor' section below.
+#' * __MSFT.High__: A numeric. High daily price for MSFT.
+#' * __MSFT.Low__: A numeric. Low daily price for MSFT.
+#' * __MSFT.Close__: A numeric. The daily close of MSFT.
+#' * __MSFT.Volume__: A numeric. The daily volume of MSFT stock traded.
+#' * __MSFT.Adjusted__: A numeric. Contains adjusted closing prices.
 #'
-#' The object consists of 558 rows and 2 columns.
-#'
-#' @details
-#' In addition to column definitions, this section contains a glimpse into factors
-#' construction and their underlying variables.
-#'
-#' @template construction-factor-dhs
-#' @template variable-rf
-#' @template factor-mktrf
-#' @template factor-pead
-#' @template factor-fin
-#'
-#' @references
-#' Daniel, K. and Hirshleifer, D. and Sun, L. (2020). *Short-and long-horizon behavioral factors*. The Review of Financial Studies.
+#' The object consists of 4649 rows and 6 columns.
 #'
 #' @source
-#' <http://www.kentdaniel.net/data/DHS_factors.xlsx>
+#' quantmod & Yahoo Finance
 #'
 #' @examples
-#' data(DHS3.monthly)
+#' data(MSFT)
 #'
-#' head(DHS3.monthly)
+#' head(MSFT)
 #'
-"DHS3.monthly"
+"MSFT"
