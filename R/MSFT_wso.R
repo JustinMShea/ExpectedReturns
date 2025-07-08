@@ -1,4 +1,4 @@
-#' @title Microsoft Returns Data Set
+#' @title Microsoft Weighted Shares Outstanding Data Set
 #'
 #' @docType data
 #'
