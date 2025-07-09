@@ -3,35 +3,29 @@
 #' @docType data
 #'
 #' @description
-#' 'MSFT' is open, high, low, close, volume, and adjusted data for Microsoft stock dating from
-#' the start of 2007 to 2025-06-25*
+#' 'MSFT_wso' is data on weighted shares outstanding of Microsoft going back to 2011-07-28,
+#' up to 2025-04-30*
 #'
-#' *Can run MSFT.R parser to obtain present day data. Needs library quantmod.
+#' *Can run MSFT_wso.R parser to obtain present day data. Needs library quantkiosk and API
+#' key (free non-institutional version available online).
 #'
 #' @usage
-#' data("MSFT")
+#' data("MSFT_wso")
 #'
 #' @format
-#' An `xts` object containing observations on return data for Microsoft.
+#' A `data.frame` object containing observations on return data for Microsoft.
 #'
-#' * __Frequency__: Daily.
-#' * __Date Range__: 2007-01-03 to 2025-06-25.
-#' * __Data updated__: 2025-06-25 14:58 CDT.
-#' * __MSFT.Open__: A numeric. Opening Daily Price for MSFT.
-#' * __MSFT.High__: A numeric. High daily price for MSFT.
-#' * __MSFT.Low__: A numeric. Low daily price for MSFT.
-#' * __MSFT.Close__: A numeric. The daily close of MSFT.
-#' * __MSFT.Volume__: A numeric. The daily volume of MSFT stock traded.
-#' * __MSFT.Adjusted__: A numeric. Contains adjusted closing prices.
+#' * __fq__: Amount of weighted shares outstanding at that point. In scientific notation.
+#' * __filed__: Quarterly frequency from 2011-07028 to 2025-04-30.
 #'
-#' The object consists of 4649 rows and 6 columns.
+#' The object consists of 61 rows and 2 columns.
 #'
 #' @source
-#' quantmod & Yahoo Finance
+#' quantkiosk
 #'
 #' @examples
-#' data(MSFT)
+#' data(MSFT_wso)
 #'
-#' head(MSFT)
+#' head(MSFT_wso)
 #'
-"MSFT"
+"MSFT_wso"

@@ -6,7 +6,7 @@
 #' 'MSFT' is open, high, low, close, volume, and adjusted data for Microsoft stock dating from
 #' the start of 2007 to 2025-06-25*
 #'
-#' *Can run MSFT.R parser to obtain present day data. Needs library quantmod.
+#' *Can run MSFT.R parser in inst folder to obtain present day data. Needs library quantmod.
 #'
 #' @usage
 #' data("MSFT")
