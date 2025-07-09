@@ -20,6 +20,8 @@ market_cap <- function(price, shares){
 msft_mcap <- market_cap(price = MSFT_wso_px$MSFT.Adjusted,
                         shares = MSFT_wso_px$WSO)
 
+colnames(msft_mcap) <- "MarketCap"
+
 save(msft_mcap, file = "data/MSFT_marketCap.RData")
 
 # Optional visualizations
