@@ -1,4 +1,4 @@
-# Microsoft Market Cap
+# Microsoft Price Data
 library(quantmod)
 
 # get price data
