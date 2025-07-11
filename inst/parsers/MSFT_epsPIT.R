@@ -6,7 +6,7 @@ library(qkiosk)
 
 # Get qk earnings per share and return file date and earnings per share. Returns data frame.
 MSFT_epsPIT <- as.data.frame(qk_fn(qk_ticker("MSFT"), "EPS")[])
-MSFT_epsPIT <- na.omit(MSFT_epsPIT1[, c("fq", "fpe")])
+MSFT_epsPIT <- na.omit(MSFT_epsPIT[, c("fq", "fpe")])
 MSFT_epsPIT$fpe <- as.Date(as.character(MSFT_epsPIT$fpe), "%Y%m%d")
 
 str(MSFT_epsPIT)
