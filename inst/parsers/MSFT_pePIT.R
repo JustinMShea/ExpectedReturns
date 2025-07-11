@@ -24,9 +24,6 @@ colnames(msft_pe) <- "PEratioPIT"
 
 save(msft_pe, file = "data/MSFT_pePIT.RData")
 
-# KNOWN ISSUES - qk data has multiple fq measurements for certain singular dates, this causes the data to look
-# fine when plotted but in actuality theres some sort of issue.
-
 # Optional visualizations
 # plot(msft_mcap)
 # head(prettyNum(coredata(msft_mcap),big.mark=","))
