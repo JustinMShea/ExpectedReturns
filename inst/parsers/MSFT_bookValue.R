@@ -1,7 +1,8 @@
 # Microsoft Book Value Time Series Parser
 
-# Load qk library
+# Load libraries
 library(qkiosk)
+library(xts)
 
 # May need to add qk API key into environment variables for data to be fetched.
 # Free keys available online.
