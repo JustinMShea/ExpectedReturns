@@ -28,9 +28,9 @@ merged$BookValue <-merged$AT - merged$LT
 
 # Convert fpe to date for xts conversion
 merged$Date <- as.Date(as.character(merged$fpe), format = "%Y%m%d")
-merged <- xts(merged$BookValue, order.by=merged$Date)
+BookValue <- xts(merged$BookValue, order.by=merged$Date)
 
-str(merged)
+str(BookValue)
 
 # Save data
-save(merged, file = "data/MSFT_BookValue.RData")
+save(BookValue, file = "data/MSFT_BookValue.RData")
