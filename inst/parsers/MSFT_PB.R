@@ -1,30 +1,30 @@
 # Microsoft Price to Book Ratio
 
-#scaffolding currently, needs to all be changed
+# attach market cap data
+load("data/MSFT_marketCap.RData")
 
-# attach price data
-load("data/MSFT.RData")
+# attach book value data
+load("data/MSFT_BookValue.RData")
 
-# attach eps data
-load("data/MSFT_epsPIT.RData")
+# merge, fill bookvalue data, and remove NA afterwards
+PB <- merge(BookValue, msft_mcap, join="outer")
 
-# merged price and pe for date matching
-MSFT_pe_px <- merge(MSFT$MSFT.Adjusted, MSFT_epsPIT)
-names(MSFT_pe_px) <- c("MSFT.Adjusted","epsPIT")
-MSFT_pe_px <- na.locf(MSFT_pe_px)
-MSFT_pe_px <- na.trim(MSFT_pe_px)
+# fill quarterly bookvalue for daily market cap granularity
+PB$BookValue <- na.locf(PB$BookValue)
 
-# Calculate PE ratio function
-pe_ratio <- function(price, pe){
-  return(price/pe)
+# get rid of rows where market cap is NA (weekends and where there is more early data for bookvalue)
+PB <- PB[!is.na(PB$MarketCap),]
+
+# Calculate PB ratio function
+pb_ratio <- function(mcap, bvalue){
+  return(mcap/bvalue)
 }
 
-msft_pe <- pe_ratio(price = MSFT_pe_px$MSFT.Adjusted,
-                        pe = MSFT_pe_px$epsPIT)
+msft_pbratio <- pb_ratio(mcap = PB$MarketCap, bvalue = PB$BookValue)
 
-colnames(msft_pe) <- "PEratioPIT"
+colnames(msft_pbratio) <- "PBratio"
 
-save(msft_pe, file = "data/MSFT_pePIT.RData")
+save(msft_pbratio, file = "data/MSFT_pbRatio.RData")
 
 # Optional visualizations
 # plot(msft_mcap)
