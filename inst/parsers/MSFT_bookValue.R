@@ -30,6 +30,8 @@ merged$BookValue <-merged$AT - merged$LT
 merged$Date <- as.Date(as.character(merged$fpe), format = "%Y%m%d")
 BookValue <- xts(merged$BookValue, order.by=merged$Date)
 
+colnames(BookValue) <- "BookValue"
+
 str(BookValue)
 
 # Save data
