@@ -17,12 +17,12 @@ pe_ratio <- function(price, pe){
   return(price/pe)
 }
 
-msft_pe <- pe_ratio(price = MSFT_pe_px$MSFT.Adjusted,
+msft_pe_res <- pe_ratio(price = MSFT_pe_px$MSFT.Adjusted,
                         pe = MSFT_pe_px$epsRes)
 
-colnames(msft_pe) <- "PEratioRes"
+colnames(msft_pe_res) <- "PEratioRes"
 
-save(msft_pe, file = "data/MSFT_peRes.RData")
+save(msft_pe_res, file = "data/MSFT_peRes.RData")
 
 # Optional visualizations
 # plot(msft_mcap)
