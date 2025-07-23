@@ -60,11 +60,15 @@ TBD
 
 ## Week 6, 14th to 20th
 
-TBD
+Read Allyn Young (add more about this)
+
+Read white papers (add more about this)
+
+***Other stuff, check commit history to update
 
 ## Week 7, 21st to 27th
 
-TBD
+Earnings Yield Point in Time and Restated Factors created.
 
 ## Week 8, 28th to August 3rd
 
