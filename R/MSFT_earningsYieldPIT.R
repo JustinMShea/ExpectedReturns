@@ -1,33 +1,29 @@
-#' @title Microsoft Earnings Per Share Restated Data Set
+#' @title Microsoft Earnings Yield Point in Time Data Set
 #'
 #' @docType data
 #'
 #' @description
-#' 'MSFT_epsRes' is data on earnings per share of Microsoft going back to 2011-07-28,
-#' up to 2025-04-30*. This is the data that you'd see in fundamental analysis, it includes
-#' restatements of financial documents by MSFT - this is the "true" value of this data,
-#' but it is not the data that MSFT released initially. For point in time values use MSFT_epsPIT.
-#'
-#' *Can run MSFT_epsRes.R parser to obtain present day data. Needs library quantkiosk and API
-#' key (free non-institutional version available online).
-#'
+#' 'MSFT_earningsYieldPIT.RData' is data on earnings yield of Microsoft going back to 2009-07-28, It
+#' based on point in time data from Microsoft, which is the data that Microsoft released initially.
+#' For restated values use MSFT_earningsYieldRes.RData.
+#' 
 #' @usage
-#' data("MSFT_epsRes")
+#' data("MSFT_earningsYieldPIT")
 #'
 #' @format
 #' A `data.frame` object containing observations on return data for Microsoft.
 #'
 #' * __fq__: Earnings per share.
-#' * __filed__: Quarterly frequency from 2011-07028 to 2025-04-30.
+#' * __filed__: Quarterly frequency from 2090 to most recent parse.
 #'
-#' The object consists of 63 rows and 2 columns.
+#' The object consists of 3995 rows and 1 columns.
 #'
 #' @source
 #' quantkiosk
 #'
 #' @examples
-#' data(MSFT_epsRes)
+#' data("MSFT_earningsYieldPIT")
 #'
-#' head(MSFT_epsRes)
+#' head("MSFT_earningsYieldPIT")
 #'
-"MSFT_epsRes"
+"MSFT_earningsYieldPIT"
