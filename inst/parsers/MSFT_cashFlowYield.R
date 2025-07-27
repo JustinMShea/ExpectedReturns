@@ -28,6 +28,9 @@ MSFT_cashFlowPrice <- merge(MSFT_cashFlowPrice, msft_mcap, join = "outer")
 # Fill NA values of cash flow column using last available value
 MSFT_cashFlowPrice$MSFT_cashFlowPrice <- na.locf(MSFT_cashFlowPrice$MSFT_cashFlowPrice)
 
+# Get rid of rows where market cap is NA
+MSFT_cashFlowPrice <- MSFT_cashFlowPrice[!is.na(MSFT_cashFlowPrice$MarketCap),]
+
 # rename columns
 colnames(MSFT_cashFlowPrice) <- c("CashFlow", "MarketCap")
 
