@@ -10,7 +10,7 @@ MSFT_cashFlowPrice <- as.data.frame(qk_fn(qk_ticker("MSFT"), "NI")[])
 
 # Check if data isnt empty
 if (nrow(MSFT_cashFlowPrice) == 0) {
-    stop("No data returned from qk_fn for MSFT cash flow price.")
+  stop("No data returned from qk_fn for MSFT cash flow price.")
 }
 
 MSFT_cashFlowPrice <- na.omit(MSFT_cashFlowPrice[, c("fq", "fpe")])
@@ -26,8 +26,19 @@ load("data/MSFT_marketCap.RData")
 MSFT_cashFlowPrice <- merge(MSFT_cashFlowPrice, msft_mcap, join = "outer")
 
 # Fill NA values of cash flow column using last available value
-MSFT_cashFlowPrice$fq <- na.locf(MSFT_cashFlowPrice$fq, na.rm = FALSE)
+MSFT_cashFlowPrice$MSFT_cashFlowPrice <- na.locf(MSFT_cashFlowPrice$MSFT_cashFlowPrice)
 
-str(MSFT_cashFlowPrice)
+# rename columns
+colnames(MSFT_cashFlowPrice) <- c("CashFlow", "MarketCap")
 
-save(MSFT_cashFlowPrice, file = "data/MSFT_cashFlowPrice.RData")
+# compute cash flow yield data
+cashFlowYield <- function(cashFlow, marketCap) {
+  return(cashFlow / marketCap)
+}
+
+# call function on data
+MSFT_cashFlowYield <- cashFlowYield(MSFT_cashFlowPrice$CashFlow, MSFT_cashFlowPrice$MarketCap)
+
+str(MSFT_cashFlowYield)
+
+save(MSFT_cashFlowPrice, file = "data/MSFT_cashFlowYield.RData")
