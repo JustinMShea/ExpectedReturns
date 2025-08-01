@@ -46,42 +46,78 @@ Continue reading through *Investing Amid Low Expected Returns*
 
 ## Week 3, 23rd to 29th
 
-TBD
+Weighted Shares Outstanding Factor Created
+
+Debugging
 
 ## Week 4, 30th to July 6th
 
-TBD
-
-### Contributor and Mentor Evals Due July 4th 
+Midterm Evaluation - Passed
 
 ## Week 5, 7th to 13th
 
-TBD
+Factors:
+* Market Capitlization
+* Earnings per Share Point in Time
+* Earnings per Share Restated
+* PE Ratio Point in Time
+* PE Ratio Restated
+
+Testing and Debugging
+
+pe_ratio function created
 
 ## Week 6, 14th to 20th
 
-Read Allyn Young (add more about this)
+Read Allyn Young selected papers
 
-Read white papers (add more about this)
+Read and take notes on Antti Ilmanen white papers 
 
-***Other stuff, check commit history to update
+\#4: [How Did We Get Here? A Brief History of Expected Return Formation](https://www.aqr.com/Insights/Research/White-Papers/How-Did-We-Get-Here-A-Brief-History-of-Expected-Returns-Formation)\
+\#5: [Equity Market Focus: Interrogating the Historical Data](https://www.aqr.com/Insights/Research/White-Papers/Equity-Market-Focus-Interrogating-the-Historical-Data)
+
+Factors:
+* Book Value
+* Price to Book Ratio
+
+Testing and more Debugging
+
+pb_ratio function created
 
 ## Week 7, 21st to 27th
 
-Earnings Yield Point in Time and Restated Factors created.
+Factors:
+* Earnings Yield Point in Time
+* Earnings Yield Restated
+* Liquidity
+* Momentum
+* Cash Flow Yield
+
+More debugging
+
+earnings_yield function created
 
 ## Week 8, 28th to August 3rd
 
-TBD
+Factors:
+* Volatility
+* Free Cash Flow Yield
 
-## Week 9, 4th to 10th
+Debugging
 
-TBD
+Read and take notes on Antti Ilmanen white papers 
 
-### Contributor Final Submission Due August 4th
+\#6: [Equity Market Focus: Objective Expected Returns](https://www.aqr.com/Insights/Research/White-Papers/Equity-Market-Focus-Objective-Expected-Returns)
 
-## Week 10, 11th to 17th
+Factor Framework Function: 
+One final main factor function that can use any of the created factors to help find alpha for research or trading purposes.
 
-TBD 
+<!-- ## Week 9, 4th to 10th -->
+
+## Final Submission Due on the 4th
+
+<!-- ## Week 10, 11th to 17th
+
+TBD  -->
 
 ### Mentor Final Eval Due August 11th
