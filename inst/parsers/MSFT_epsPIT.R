@@ -1,5 +1,6 @@
-# Load qk library
+# Load libraries
 library(qkiosk)
+library(xts)
 
 # May need to add qk API key into environment variables for data to be fetched.
 # Free keys available online.
@@ -12,6 +13,9 @@ MSFT_epsPIT <- as.data.frame(qk_fn(qk_ticker("MSFT"), "EPS", asfiled = TRUE)[])
 # }
 MSFT_epsPIT <- na.omit(MSFT_epsPIT[, c("fq", "fpe")])
 MSFT_epsPIT$fpe <- as.Date(as.character(MSFT_epsPIT$fpe), "%Y%m%d")
+
+# convert to xts object
+MSFT_epsPIT <- xts(as.numeric(MSFT_epsPIT$fq), order.by = MSFT_epsPIT$fpe)
 
 str(MSFT_epsPIT)
 
