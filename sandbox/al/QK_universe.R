@@ -1,14 +1,14 @@
 library(qkiosk)
 
 ## Universe
-universe <- qk_univ("QK1000")
+universe <- qk_univ("QK100")
 universe_symbol <- to_ticker(universe)
 
-qk1000 <- new.env()
+qk100 <- new.env()
 library(quantmod)
-getSymbols(Symbols=universe_symbol, env=qk1000)
+getSymbols(Symbols=universe_symbol, env=qk100)
 
-getSymbols("BRK-B")
-getSymbols("UTX-W")
+getSymbols("BRK-B", env=qk100)
+getSymbols("UTX-W", env=qk100)
 
 qk_fncodes()
