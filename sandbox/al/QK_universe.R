@@ -12,3 +12,7 @@ getSymbols("BRK-B", env=qk100)
 getSymbols("UTX-W", env=qk100)
 
 qk_fncodes()
+
+load("data/MSFT.RData")
+
+factor_framework()
