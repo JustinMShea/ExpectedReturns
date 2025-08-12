@@ -43,10 +43,10 @@ fetch_price_data <- function(tickers, frequency = "daily") {
   for (ticker in tickers) {
     yahoo_ticker <- gsub("/", "-", ticker)  # for issues with symbol like BRK/B
 
-    try_result <- tryCatch({ # use try catch so if one ticker doesn't work it doesn't mess up the whole loop, try_result will be TRUE when ticker data can be fetched, and FALSE when it cannot - which is put into failed tickers
+    tryCatch({ # use try catch so if one ticker doesn't work it doesn't mess up the whole loop, try_result will be TRUE when ticker data can be fetched, and FALSE when it cannot - which is put into failed tickers
       data <- quantmod::getSymbols(Symbols = yahoo_ticker,
-                         src = "yahoo",
-                         auto.assign = FALSE)
+                                   src = "yahoo",
+                                   auto.assign = FALSE)
       adjusted <- quantmod::Ad(data) # quantmod function to get adjusted close prices
 
       # adjust frequency
@@ -73,7 +73,7 @@ fetch_price_data <- function(tickers, frequency = "daily") {
       all_data[[ticker]] <- df # tucks the specific ticker's data into the list, keyed by it's ticker
       TRUE # returns TRUE to the tryCatch block to indicate success
     }, warning = function(w) {
-      warning_tickers <<- c(warning_tickers, ticker)
+      warning_tickers <<- c(warning_tickers, ticker) # <<- super assignment operator that reaches out of this trycatch block and assigns warning tickers to the list created in the main funct
       FALSE
     }, error = function(e) {
       failed_tickers <<- c(failed_tickers, ticker)
