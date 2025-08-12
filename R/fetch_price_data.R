@@ -7,8 +7,6 @@
 #'
 #' @param tickers type character. Vector of tickers.
 #' @param frequency type character string. Set to "daily". Frequency of data to fetch: "daily", "weekly", or "monthly".
-#' @param from Date or character "YYYY-MM-DD". Start date (inclusive). Default: NULL (Yahoo’s earliest).
-#' @param to Date or character "YYYY-MM-DD". End date (inclusive). Default: Sys.Date().
 #'
 #' @return list with:
 #'   \item{data}{long data.frame: ticker, date, price, return (log).}
